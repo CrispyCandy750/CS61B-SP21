@@ -26,7 +26,7 @@ public class TimeSLList {
         AList<Double> times = new AList<>();
         AList<Integer> opCounts = new AList<>();
 
-        for (int i = 0, N = 1000; i < 8; i++, N *= 2) {
+        for (int i = 0, N = 1000; i < 7; i++, N *= 2) {
             runWithDataSizeOf(N, Ns, times, opCounts);
         }
 

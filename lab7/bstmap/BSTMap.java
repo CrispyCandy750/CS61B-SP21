@@ -6,10 +6,11 @@ import java.util.Set;
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     private BSTNode root;
+    private int size;
 
     @Override
     public void clear() {
-
+        size = 0;
     }
 
     /**
@@ -29,7 +30,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     /**
@@ -105,6 +106,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
      */
     private BSTNode put(BSTNode node, K key, V value) {
         if (node == null) {
+            size++;
             return new BSTNode(key, value);
         }
 

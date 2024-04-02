@@ -89,6 +89,15 @@ public class BSTMapTest {
     }
 
     @Test
+    public void printInOrder() {
+        BSTMap<String, Integer> map = new BSTMap<>();
+        map.put("1", 1);
+        map.put("5", 5);
+        map.put("3", 3);
+        map.printInOrder();
+    }
+
+    @Test
     public void keySet() {
     }
 }

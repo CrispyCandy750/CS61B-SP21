@@ -9,6 +9,18 @@ public class BSTMapTest {
 
     @Test
     public void clear() {
+        BSTMap<String, Integer> map = new BSTMap<>();
+        map.put("1", 1);
+        map.put("2", 2);
+        map.put("3", 3);
+        map.clear();
+
+        Integer actual1 = map.size();
+        Integer expect1 = 0;
+        assertEquals(expect1, actual1);
+
+        Integer object2 = map.get("1");
+        assertNull(object2);
     }
 
     @Test

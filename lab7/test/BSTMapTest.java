@@ -3,7 +3,9 @@ package test;
 import bstmap.BSTMap;
 import org.junit.Test;
 
+import java.net.Socket;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -118,5 +120,19 @@ public class BSTMapTest {
 
         boolean condition3 = keySet.contains("4");
         assertFalse(condition3);
+    }
+
+    @Test
+    public void iterator() {
+        BSTMap<String, Integer> map = new BSTMap<>();
+        map.put("1", 1);
+        map.put("5", 5);
+        map.put("3", 3);
+        map.put("4", 4);
+
+        Iterator<String> iterator = map.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
     }
 }

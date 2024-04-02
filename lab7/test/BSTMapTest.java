@@ -3,6 +3,9 @@ package test;
 import bstmap.BSTMap;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import static org.junit.Assert.*;
 
 public class BSTMapTest {
@@ -99,5 +102,21 @@ public class BSTMapTest {
 
     @Test
     public void keySet() {
+        BSTMap<String, Integer> map = new BSTMap<>();
+        map.put("1", 1);
+        map.put("5", 5);
+        map.put("3", 3);
+
+        Set<String> keySet = map.keySet();
+
+        int actual1 = keySet.size();
+        int expect1 = 3;
+        assertEquals(expect1, actual1);
+
+        boolean condition2 = keySet.containsAll(Arrays.asList("1", "5", "3"));
+        assertTrue(condition2);
+
+        boolean condition3 = keySet.contains("4");
+        assertFalse(condition3);
     }
 }

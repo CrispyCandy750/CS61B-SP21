@@ -1,8 +1,6 @@
 package bstmap;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
@@ -83,7 +81,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return new BSTMapKeyIterator(root);
     }
 
     /* ------------------------ Private class & methods ------------------------ */
@@ -96,6 +94,40 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         public BSTNode(K key, V value) {
             this.key = key;
             this.value = value;
+        }
+    }
+
+    private class BSTMapKeyIterator implements Iterator<K> {
+
+        /* queue is also available */
+        private Stack<BSTNode> stack;
+
+        public BSTMapKeyIterator(BSTNode node) {
+            stack = new Stack<>();
+            stack.push(root);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !stack.empty();
+        }
+
+        @Override
+        public K next() {
+
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            BSTNode curr = stack.pop();
+            if (curr.lChild != null) {
+                stack.push(curr.lChild);
+            }
+            if (curr.rChild != null) {
+                stack.push(curr.rChild);
+            }
+
+            return curr.key;
         }
     }
 

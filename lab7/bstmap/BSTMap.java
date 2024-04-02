@@ -3,7 +3,7 @@ package bstmap;
 import java.util.Iterator;
 import java.util.Set;
 
-public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
+public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     private BSTNode root;
     private int size;
@@ -15,6 +15,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     /**
      * Check if the BST contains a given key.
+     *
      * @param key The key to search for.
      * @return True if the key is found in the BST, false otherwise.
      */
@@ -23,9 +24,15 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
         return containsKey(root, key);
     }
 
+    /**
+     * Get the value associated with a given key in the BST.
+     *
+     * @param key  The key to search for.
+     * @return The value associated with the key, or null if the key is not found.
+     */
     @Override
     public V get(K key) {
-        return null;
+        return get(root, key);
     }
 
     @Override
@@ -121,5 +128,27 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
         }
 
         return node;
+    }
+
+    /**
+     * Get the value associated with a given key in the BST.
+     *
+     * @param node The current node being checked.
+     * @param key  The key to search for.
+     * @return The value associated with the key, or null if the key is not found.
+     */
+    private V get(BSTNode node, K key) {
+        if (node == null) {
+            return null;
+        }
+
+        int cmp = node.key.compareTo(key);
+        if (cmp > 0) {
+            return get(node.lChild, key);
+        } else if (cmp < 0) {
+            return get(node.rChild, key);
+        } else {
+            return node.value;
+        }
     }
 }

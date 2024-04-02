@@ -34,6 +34,22 @@ public class BSTMapTest {
 
     @Test
     public void size() {
+        BSTMap<String, Integer> map = new BSTMap<>();
+
+        int actual1 = map.size();
+        int expect1 = 0;
+        assertEquals(expect1, actual1);
+
+        map.put("1", 1);
+        map.put("2", 2);
+        int actual2 = map.size();
+        int expect2 = 2;
+        assertEquals(expect2, actual2);
+
+        map.put("3", 3);
+        int actual3 = map.size();
+        int expect3 = 3;
+        assertEquals(expect3, actual3);
     }
 
     @Test

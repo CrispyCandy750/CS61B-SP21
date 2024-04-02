@@ -30,6 +30,22 @@ public class BSTMapTest {
 
     @Test
     public void get() {
+        BSTMap<String, Integer> map = new BSTMap<>();
+        map.put("1", 1);
+
+        Integer actual1 = map.get("1");
+        Integer expect1 = 1;
+        assertEquals(expect1, actual1);
+
+        map.put("2", 2);
+        map.put("3", 3);
+
+        Integer actual2 = map.get("3");
+        Integer expect2 = 3;
+        assertEquals(expect2, actual2);
+
+        Integer object3 = map.get("5");
+        assertNull(object3);
     }
 
     @Test

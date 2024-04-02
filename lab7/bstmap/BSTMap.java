@@ -80,6 +80,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         throw new UnsupportedOperationException();
     }
 
+    /* ------------------------ Private class & methods ------------------------ */
     private class BSTNode {
         K key;
         V value;

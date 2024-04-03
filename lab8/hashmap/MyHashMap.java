@@ -1,15 +1,66 @@
 package hashmap;
 
-import java.util.Collection;
+import java.util.*;
 
 /**
- *  A hash table-backed Map implementation. Provides amortized constant time
- *  access to elements via get(), remove(), and put() in the best case.
+ * A hash table-backed Map implementation. Provides amortized constant time
+ * access to elements via get(), remove(), and put() in the best case.
+ * <p>
+ * Assumes null keys will never be inserted, and does not resize down upon remove().
  *
- *  Assumes null keys will never be inserted, and does not resize down upon remove().
- *  @author YOUR NAME HERE
+ * @author YOUR NAME HERE
  */
 public class MyHashMap<K, V> implements Map61B<K, V> {
+
+    @Override
+    public void clear() {
+
+    }
+
+    /**
+     * Check if the HashMap contains the key
+     */
+    @Override
+    public boolean containsKey(K key) {
+        return containsKey(buckets, key);
+    }
+
+    @Override
+    public V get(K key) {
+        return get(buckets, key);
+    }
+
+    @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public void put(K key, V value) {
+        put(buckets, key, value);
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return null;
+    }
+
+    @Override
+    public V remove(K key) {
+        return null;
+    }
+
+    @Override
+    public V remove(K key, V value) {
+        return null;
+    }
+
+    @Override
+    public Iterator<K> iterator() {
+        return null;
+    }
+
+    /* ------------------------ private class & methods ------------------------ */
 
     /**
      * Protected helper class to store key/value pairs

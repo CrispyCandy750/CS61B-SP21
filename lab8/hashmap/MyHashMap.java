@@ -99,6 +99,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     private double maxLoad = 0.75;
     private int initialSize = 16;
     private int size = 0;
+    private double factor = 1.1;
 
     /**
      * Constructors
@@ -182,7 +183,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     private void put(Collection<Node>[] buckets, K key, V value) {
 
-        int index = getIndex(key);
+        int index = getIndex(buckets, key);
 
         Iterator<Node> iterator = buckets[index].iterator();
         while (iterator.hasNext()) {
@@ -195,12 +196,16 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
         buckets[index].add(createNode(key, value));
         size++;
+
+        if (buckets.length * maxLoad <= size) {
+            resize((int) (buckets.length * factor));
+        }
     }
 
     /**
      * Compute the bucket index with key
      */
-    private int getIndex(K key) {
+    private int getIndex(Collection<Node>[] buckets, K key) {
         int hashCode = key.hashCode();
         int index = hashCode % buckets.length;
 
@@ -211,7 +216,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * Check if the HashMap contains the key
      */
     private boolean containsKey(Collection<Node>[] buckets, K key) {
-        int index = getIndex(key);
+        int index = getIndex(buckets, key);
 
         Iterator<Node> iterator = buckets[index].iterator();
         while (iterator.hasNext()) {
@@ -226,7 +231,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * Returns the value which the key corresponds to
      */
     private V get(Collection<Node>[] buckets, K key) {
-        int index = getIndex(key);
+        int index = getIndex(buckets, key);
         Iterator<Node> iterator = buckets[index].iterator();
 
         while (iterator.hasNext()) {
@@ -267,7 +272,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * Removes the items which key corresponds to
      */
     private V remove(Collection<Node> [] buckets, K key) {
-        int index = getIndex(key);
+        int index = getIndex(buckets, key);
 
         V v = get(buckets, key);
         if (v != null) {
@@ -276,4 +281,23 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
         return v;
     }
+
+    /**
+     * Resize the length of the buckets.
+     */
+    private void resize(int newSize) {
+        Collection<Node>[] newBuckets = createTable(newSize);
+
+        for (int i = 0; i < buckets.length; i++) {
+            Iterator<Node> iterator = buckets[i].iterator();
+            while (iterator.hasNext()) {
+                Node next = iterator.next();
+                int index = getIndex(newBuckets, next.key);
+                newBuckets[index].add(next);
+            }
+        }
+
+        this.buckets = newBuckets;
+    }
+
 }

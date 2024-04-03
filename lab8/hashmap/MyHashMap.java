@@ -50,7 +50,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public V remove(K key) {
-        return null;
+        return remove(buckets, key);
     }
 
     @Override
@@ -79,6 +79,17 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         Node(K k, V v) {
             key = k;
             value = v;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            } else if (!(obj instanceof MyHashMap.Node)) {
+                return false;
+            }
+            Node o = (Node) obj;
+            return key.equals(o.key);
         }
     }
 
@@ -250,5 +261,19 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             }
         }
         return keySet;
+    }
+
+    /**
+     * Removes the items which key corresponds to
+     */
+    private V remove(Collection<Node> [] buckets, K key) {
+        int index = getIndex(key);
+
+        V v = get(buckets, key);
+        if (v != null) {
+            buckets[index].remove(createNode(key, null));
+        }
+
+        return v;
     }
 }

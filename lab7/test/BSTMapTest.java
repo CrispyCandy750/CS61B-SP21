@@ -196,7 +196,7 @@ public class BSTMapTest {
 
         int N = 10000;
         for (int i = 0; i < N; i++) {
-            int operatorNumber = StdRandom.uniform(0, 4);
+            int operatorNumber = StdRandom.uniform(0, 5);
             switch (operatorNumber) {
                 case 0: // size()
                     assertEquals(treeMap.size(), bstMap.size());
@@ -210,9 +210,14 @@ public class BSTMapTest {
                     String getNumber = StdRandom.uniform(0, 100) + "";
                     assertEquals(treeMap.get(getNumber), bstMap.get(getNumber));
                     break;
-                case 3: // removed()
+                case 3: // remove(key)
                     String removedNumber = StdRandom.uniform(0, 100) + "";
                     assertEquals(treeMap.remove(removedNumber), bstMap.remove(removedNumber));
+                    break;
+                case 4: // remove(key, value)
+                    int removedValue = StdRandom.uniform(0, 100);
+                    String removedKey = StdRandom.uniform(removedValue - 2, removedValue + 2) + "";
+                    assertEquals(treeMap.remove(removedKey, removedValue), bstMap.remove(removedKey, removedValue));
             }
         }
     }

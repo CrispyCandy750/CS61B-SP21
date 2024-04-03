@@ -37,7 +37,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public void put(K key, V value) {
-        put(buckets, key, value);
+        putInMap(key, value);
     }
 
     /**
@@ -175,13 +175,20 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     // TODO: Implement the methods of the Map61B Interface below
     // Your code won't compile until you do so!
 
+    private void putInMap(K key, V value) {
+        if (putInBuckets(buckets, key, value)) {
+            size++;
+        }
+
+        if (size >= buckets.length * maxLoad) {
+            resize((int) (buckets.length * factor));
+        }
+    }
+
     /**
-     * put 就是要与bucket里面的每一项都比较一次，不能直接add
-     * @param buckets
-     * @param key
-     * @param value
+     * add the key-value to the Map if key doesn't exist, else change the value.
      */
-    private void put(Collection<Node>[] buckets, K key, V value) {
+    private boolean putInBuckets(Collection<Node>[] buckets, K key, V value) {
 
         int index = getIndex(buckets, key);
 
@@ -190,16 +197,13 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             Node next = iterator.next();
             if (next.key.equals(key)) {
                 next.value = value;
-                return;
+                return false;
             }
         }
 
         buckets[index].add(createNode(key, value));
-        size++;
-
-        if (buckets.length * maxLoad <= size) {
-            resize((int) (buckets.length * factor));
-        }
+        // 这里仅仅是put的，size++是不能用于这里的
+        return true;
     }
 
     /**
@@ -292,8 +296,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             Iterator<Node> iterator = buckets[i].iterator();
             while (iterator.hasNext()) {
                 Node next = iterator.next();
-                int index = getIndex(newBuckets, next.key);
-                newBuckets[index].add(next);
+                putInBuckets(newBuckets, next.key, next.value);
             }
         }
 

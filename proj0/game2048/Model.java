@@ -201,7 +201,9 @@ public class Model extends Observable {
             return false;
         }
 
-        for (Tile adjTile: getNotNullAdjacentTiles(b, col, row)) {
+        Iterator<Tile> iterator = getNotNullAdjacentTiles(b, col, row);
+        while (iterator.hasNext()) {
+            Tile adjTile = iterator.next();
             if (adjTile.value() == tile.value()) {
                 return true;
             }
@@ -211,33 +213,49 @@ public class Model extends Observable {
     }
 
     /** Returns the not null adjacent tiles of (col, row) */
-    private static Iterable<Tile> getNotNullAdjacentTiles(Board b, int col, int row) {
-        // up, right, down, left
-        int[] dcols = new int[]{0, 1, 0, -1};
-        int[] drows = new int[]{1, 0, -1, 0};
-        int adjCol, adjRow;
-        ArrayList<Tile> tiles = new ArrayList<>();
-
-
-        for (int dir = 0; dir < dcols.length; dir++) {
-            adjCol = col + dcols[dir];
-            adjRow = row + drows[dir];
-
-            if (!isValidSite(b, adjCol, adjRow))
-                continue;
-
-            Tile tile = b.tile(adjCol, adjRow);
-            if (tile != null)
-                tiles.add(tile);
-        }
-
-        return tiles;
+    private static Iterator<Tile> getNotNullAdjacentTiles(Board b, int col, int row) {
+        return new AdjacentTilesIterator(b, col, row);
     }
 
-    /** Returns true if the (col, row) is valid site i.e. not out of the bound. */
-    private static boolean isValidSite(Board b, int col, int row) {
-        int size = b.size();
-        return col > 0 && row > 0 && col < size && row < size;
+    private static class AdjacentTilesIterator implements Iterator<Tile> {
+        // up, right, down, left
+        static final int[] DCOL = new int[]{0, 1, 0, -1};
+        static final int[] DROW = new int[]{1, 0, -1, 0};
+        Board b;
+        int col, row, cur;
+
+        AdjacentTilesIterator(Board b, int col, int row) {
+            this.col = col;
+            this.row = row;
+            this.b = b;
+            cur = 0;
+            moveCur();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return cur < DCOL.length;
+        }
+
+        @Override
+        public Tile next() {
+            Tile tile = b.tile(col + DCOL[cur], row + DROW[cur]);
+            cur++;
+            moveCur();
+            return tile;
+        }
+
+        private void moveCur() {
+            while (cur < DCOL.length && (!isValidSite(b, col + DCOL[cur], row + DROW[cur])
+                    || b.tile(col + DCOL[cur], row + DROW[cur]) == null))
+                cur++;
+        }
+
+        /** Returns true if the (col, row) is valid site i.e. not out of the bound. */
+        private static boolean isValidSite(Board b, int col, int row) {
+            int size = b.size();
+            return col > 0 && row > 0 && col < size && row < size;
+        }
     }
 
     @Override

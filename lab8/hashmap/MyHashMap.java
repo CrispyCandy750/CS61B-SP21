@@ -112,45 +112,113 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * Returns a new node to be placed in a hash table bucket
      */
     private Node createNode(K key, V value) {
-        return null;
+        return new Node(key, value);
     }
 
     /**
      * Returns a data structure to be a hash table bucket
-     *
+     * <p>
      * The only requirements of a hash table bucket are that we can:
-     *  1. Insert items (`add` method)
-     *  2. Remove items (`remove` method)
-     *  3. Iterate through items (`iterator` method)
-     *
+     * 1. Insert items (`add` method)
+     * 2. Remove items (`remove` method)
+     * 3. Iterate through items (`iterator` method)
+     * <p>
      * Each of these methods is supported by java.util.Collection,
      * Most data structures in Java inherit from Collection, so we
      * can use almost any data structure as our buckets.
-     *
+     * <p>
      * Override this method to use different data structures as
      * the underlying bucket type
-     *
+     * <p>
      * BE SURE TO CALL THIS FACTORY METHOD INSTEAD OF CREATING YOUR
      * OWN BUCKET DATA STRUCTURES WITH THE NEW OPERATOR!
      */
     protected Collection<Node> createBucket() {
-        return null;
+        return new ArrayList<>();
     }
 
     /**
      * Returns a table to back our hash table. As per the comment
      * above, this table can be an array of Collection objects
-     *
+     * <p>
      * BE SURE TO CALL THIS FACTORY METHOD WHEN CREATING A TABLE SO
      * THAT ALL BUCKET TYPES ARE OF JAVA.UTIL.COLLECTION
      *
      * @param tableSize the size of the table to create
      */
     private Collection<Node>[] createTable(int tableSize) {
-        return null;
+        Collection<Node>[] buckets = new Collection[tableSize];
+        for (int i = 0; i < tableSize; i++) {
+            buckets[i] = createBucket();
+        }
+        return buckets;
     }
 
     // TODO: Implement the methods of the Map61B Interface below
     // Your code won't compile until you do so!
 
+    /**
+     * put 就是要与bucket里面的每一项都比较一次，不能直接add
+     * @param buckets
+     * @param key
+     * @param value
+     */
+    private void put(Collection<Node>[] buckets, K key, V value) {
+
+        int index = getIndex(key);
+
+        Iterator<Node> iterator = buckets[index].iterator();
+        while (iterator.hasNext()) {
+            Node next = iterator.next();
+            if (next.key.equals(key)) {
+                next.value = value;
+                return;
+            }
+        }
+
+        buckets[index].add(createNode(key, value));
+        size++;
+    }
+
+    /**
+     * Compute the bucket index with key
+     */
+    private int getIndex(K key) {
+        int hashCode = key.hashCode();
+        int index = hashCode % buckets.length;
+
+        return index < 0 ? index + buckets.length : index;
+    }
+
+    /**
+     * Check if the HashMap contains the key
+     */
+    private boolean containsKey(Collection<Node>[] buckets, K key) {
+        int index = getIndex(key);
+
+        Iterator<Node> iterator = buckets[index].iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().key.equals(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the value which the key corresponds to
+     */
+    private V get(Collection<Node>[] buckets, K key) {
+        int index = getIndex(key);
+        Iterator<Node> iterator = buckets[index].iterator();
+
+        while (iterator.hasNext()) {
+            Node next = iterator.next();
+            if (next.key.equals(key)) {
+                return next.value;
+            }
+        }
+
+        return null;
+    }
 }

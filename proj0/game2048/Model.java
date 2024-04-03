@@ -1,6 +1,8 @@
 package game2048;
 
+import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.Observable;
 
 
@@ -173,10 +175,70 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+        return emptySpaceExists(b) || equivalentAdjacentTilesExist(b);
+    }
+
+    /**
+     * Returns true if there are two adjacent tiles with the same value.
+     */
+    private static boolean equivalentAdjacentTilesExist(Board b) {
+        int size = b.size();
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                if (equivalentAdjacentTileExists(b, col, row)) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
+    /** Returns true if there is equivalent adjacent tile of (col, row) tile */
+    private static boolean equivalentAdjacentTileExists(Board b, int col, int row) {
+        Tile tile = b.tile(col, row);
+        if (tile == null) {
+            return false;
+        }
+
+        for (Tile adjTile: getNotNullAdjacentTiles(b, col, row)) {
+            if (adjTile.value() == tile.value()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** Returns the not null adjacent tiles of (col, row) */
+    private static Iterable<Tile> getNotNullAdjacentTiles(Board b, int col, int row) {
+        // up, right, down, left
+        int[] dcols = new int[]{0, 1, 0, -1};
+        int[] drows = new int[]{1, 0, -1, 0};
+        int adjCol, adjRow;
+        ArrayList<Tile> tiles = new ArrayList<>();
+
+
+        for (int dir = 0; dir < dcols.length; dir++) {
+            adjCol = col + dcols[dir];
+            adjRow = row + drows[dir];
+
+            if (!isValidSite(b, adjCol, adjRow))
+                continue;
+
+            Tile tile = b.tile(adjCol, adjRow);
+            if (tile != null)
+                tiles.add(tile);
+        }
+
+        return tiles;
+    }
+
+    /** Returns true if the (col, row) is valid site i.e. not out of the bound. */
+    private static boolean isValidSite(Board b, int col, int row) {
+        int size = b.size();
+        return col > 0 && row > 0 && col < size && row < size;
+    }
 
     @Override
      /** Returns the model as a string, used for debugging. */

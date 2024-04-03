@@ -71,7 +71,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        BSTNode removedNode = new BSTNode(null, null);
+        root = remove(root, key, removedNode);
+        return removedNode.value;
     }
 
     @Override
@@ -226,5 +228,99 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         keySet.add(node.key);
         populateKeySet(node.lChild, keySet);
         populateKeySet(node.rChild, keySet);
+    }
+
+    /**
+     * Returns the value which key corresponding to.
+     *
+     * @param node the current node to be visited.
+     * @param key the key searching for.
+     * @param removedNode the node which contains the removed value
+     * @return the value which key corresponding to.
+     */
+    private BSTNode remove(BSTNode node, K key, BSTNode removedNode) {
+        if (node == null) {
+            return null;
+        }
+
+        int cmp = node.key.compareTo(key);
+
+        if (cmp > 0) {
+            node.lChild = remove(node.lChild, key, removedNode);
+        } else if (cmp < 0) {
+            node.rChild = remove(node.rChild, key, removedNode);
+        } else {  // cmp == 0, find the key
+            size--;
+            removedNode.value = node.value;
+            return removeNode(node);
+        }
+        return node;
+    }
+
+    /**
+     * Remove the node from BST and returns the removed node
+     * @param node the node to be removed
+     * @return the removed node
+     */
+    private BSTNode removeNode(BSTNode node) {
+        if (node.lChild == null && node.rChild == null) {  // contains no child
+            return null;
+        } else if (node.rChild == null || node.lChild == null) {  // contains one child
+            return getNotNullNode(node.lChild, node.rChild);
+        } else {  // contains two child
+
+            BSTNode removedNode = new BSTNode(null, null);
+            node.lChild = removeMax(node.lChild, removedNode);
+            node.key = removedNode.key;
+            node.value = removedNode.value;
+            return node;
+        }
+    }
+
+    /**
+     * Returns the not null node in node1 and node2
+     */
+    private BSTNode getNotNullNode(BSTNode node1, BSTNode node2) {
+        if (node1 == null)
+            return node2;
+        return node1;
+    }
+
+    /*
+    * 1. 找到前继，但是前继可能为null
+    * 2. 删除前继，并且返回前继的key和value，实际上就是可能是赋值
+    * 3. 如果前继为null，那么就找后继
+    * */
+
+    /**
+     * Returns the max-key node starting at `node` and save the key-value in removedNode
+     */
+    private BSTNode removeMax(BSTNode node, BSTNode removedNode) {
+        if (node == null) {
+            return null;
+        } else if (node.rChild != null) {
+            node.rChild = removeMax(node.rChild, removedNode);
+            return node;
+        } else {  // node.rChild == null, current node is the max
+            removedNode.key = node.key;
+            removedNode.value = node.value;
+            return node.lChild;
+        }
+    }
+
+    /**
+     * Returns the min-key node starting at `node` and save the key-value in removedNode
+     */
+    private BSTNode removeMin(BSTNode node, BSTNode removedNode) {
+        if (node == null) {
+            return null;
+        } else if (node.lChild != null) {
+            node.lChild = removeMax(node.lChild, removedNode);
+            return node;
+        } else {  // node.rChild == null, current node is the max
+            removedNode.key = node.key;
+            removedNode.value = node.value;
+            return node.rChild;
+        }
     }
 }

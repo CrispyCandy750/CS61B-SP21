@@ -164,6 +164,28 @@ public class BSTMapTest {
         assertNull(object4);
     }
 
+    @Test
+    public void removeWithValue() {
+        BSTMap<String, Integer> map = new BSTMap<>();
+        map.put("3", 3);
+        map.put("1", 1);
+        map.put("2", 2);
+        map.put("5", 5);
+        map.put("4", 4);
+
+        boolean condition1 = map.remove("3", 4);
+        assertFalse(condition1);
+
+        boolean condition2 = map.remove("1", 1);
+        assertTrue(condition2);
+
+        boolean condition3 = map.remove("5", 5);
+        assertTrue(condition3);
+
+        boolean condition4 = map.remove("3", 3);
+        assertTrue(condition4);
+    }
+
     /**
      * Randomized test BSTMap with built-in TreeMap
      */

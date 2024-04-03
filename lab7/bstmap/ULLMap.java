@@ -134,7 +134,7 @@ public class ULLMap<K, V>  implements Map61B<K, V> {
     }
 
     @Override
-    public V remove(K key, V value) {
+    public boolean remove(K key, V value) {
         throw new UnsupportedOperationException();
     }
 

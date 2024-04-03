@@ -49,4 +49,17 @@ public class TestMyHashMapExtra {
         assertTrue(q.containsKey("b"));
         assertTrue(q.containsKey("f"));
     }
+
+    @Test
+    public void testRemoveWithValue() {
+        MyHashMap<String, String> q = new MyHashMap<>();
+        q.put("c", "a");
+        q.put("b", "a");
+        q.put("a", "a");
+        q.put("d", "a");
+        q.put("e", "a"); // a b c d e
+        assertNotNull(q.remove("c", "a"));
+        assertNull(q.remove("b", "b"));
+        assertEquals(q.remove("d", "a"), "a");
+    }
 }

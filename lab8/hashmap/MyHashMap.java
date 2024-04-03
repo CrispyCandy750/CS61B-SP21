@@ -4,9 +4,9 @@ import java.util.*;
 
 /**
  * A hash table-backed Map implementation. Provides amortized constant time
- * access to elements via get(), remove(), and put() in the best case.
+ * access to elements via get(), removeFromBucket(), and put() in the best case.
  * <p>
- * Assumes null keys will never be inserted, and does not resize down upon remove().
+ * Assumes null keys will never be inserted, and does not resize down upon removeFromBucket().
  *
  * @author YOUR NAME HERE
  */
@@ -50,12 +50,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public V remove(K key) {
-        return remove(buckets, key);
+        return removeFromMap(key, null, false);
     }
 
     @Override
     public V remove(K key, V value) {
-        return null;
+        return removeFromMap(key, value, true);
     }
 
     /**
@@ -79,17 +79,6 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         Node(K k, V v) {
             key = k;
             value = v;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            } else if (!(obj instanceof MyHashMap.Node)) {
-                return false;
-            }
-            Node o = (Node) obj;
-            return key.equals(o.key);
         }
     }
 
@@ -138,7 +127,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * <p>
      * The only requirements of a hash table bucket are that we can:
      * 1. Insert items (`add` method)
-     * 2. Remove items (`remove` method)
+     * 2. Remove items (`removeFromBucket` method)
      * 3. Iterate through items (`iterator` method)
      * <p>
      * Each of these methods is supported by java.util.Collection,
@@ -261,7 +250,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /**
      * Returns a set which contains all key in MyHashMap
      */
-    private Set<K> keySet(Collection<Node> [] buckets) {
+    private Set<K> keySet(Collection<Node>[] buckets) {
         HashSet<K> keySet = new HashSet<>();
         for (int i = 0; i < buckets.length; i++) {
             Iterator<Node> iterator = buckets[i].iterator();
@@ -273,17 +262,41 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     }
 
     /**
+     * Remove items from Map (this.buckets).
+     *
+     * @param matchValue match the value if true, otherwise only match the key.
+     * @return
+     */
+    private V removeFromMap(K key, V value, boolean matchValue) {
+        V removedValue = removeFromBucket(buckets, key, value, matchValue);
+        if (removedValue != null) {
+            size--;
+        }
+        return removedValue;
+    }
+
+    /**
      * Removes the items which key corresponds to
      */
-    private V remove(Collection<Node> [] buckets, K key) {
+    private V removeFromBucket(Collection<Node>[] buckets, K key, V value, boolean matchValue) {
         int index = getIndex(buckets, key);
+        Collection<Node> bucket = createBucket();
+        Iterator<Node> iterator = buckets[index].iterator();
+        V removedValue = null;
 
-        V v = get(buckets, key);
-        if (v != null) {
-            buckets[index].remove(createNode(key, null));
+        while (iterator.hasNext()) {
+            Node node = iterator.next();
+            if ((matchValue && node.key.equals(key) && node.value.equals(value))
+                    || (!matchValue && node.key.equals(key))) {
+                removedValue = node.value;
+            } else {
+                bucket.add(node);
+            }
         }
 
-        return v;
+        buckets[index] = bucket;
+
+        return removedValue;
     }
 
     /**

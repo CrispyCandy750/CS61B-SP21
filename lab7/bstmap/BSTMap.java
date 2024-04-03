@@ -72,13 +72,15 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     @Override
     public V remove(K key) {
         BSTNode removedNode = new BSTNode(null, null);
-        root = remove(root, key, removedNode);
+        root = remove(root, key, null, false, removedNode);
         return removedNode.value;
     }
 
     @Override
-    public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+    public boolean remove(K key, V value) {
+        BSTNode removedNode = new BSTNode(null, null);
+        root = remove(root, key, value, true, removedNode);
+        return removedNode.value != null;
     }
 
     @Override
@@ -236,9 +238,10 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      * @param node the current node to be visited.
      * @param key the key searching for.
      * @param removedNode the node which contains the removed value
+     * @param matchValue if true, remove if and only if the node.key == key && node.value = value
      * @return the value which key corresponding to.
      */
-    private BSTNode remove(BSTNode node, K key, BSTNode removedNode) {
+    private BSTNode remove(BSTNode node, K key, V value, boolean matchValue, BSTNode removedNode) {
         if (node == null) {
             return null;
         }
@@ -246,10 +249,15 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         int cmp = node.key.compareTo(key);
 
         if (cmp > 0) {
-            node.lChild = remove(node.lChild, key, removedNode);
+            node.lChild = remove(node.lChild, key, value, matchValue, removedNode);
         } else if (cmp < 0) {
-            node.rChild = remove(node.rChild, key, removedNode);
+            node.rChild = remove(node.rChild, key, value, matchValue, removedNode);
         } else {  // cmp == 0, find the key
+
+            if (matchValue && node.value != value) {
+                return node;
+            }
+
             size--;
             removedNode.value = node.value;
             return removeNode(node);

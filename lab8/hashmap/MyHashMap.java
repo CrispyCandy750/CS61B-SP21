@@ -58,9 +58,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return null;
     }
 
+    /**
+     * Returns the iterator which iterate all keys in MyHashMap
+     */
     @Override
     public Iterator<K> iterator() {
-        return null;
+        return keySet().iterator();
     }
 
     /* ------------------------ private class & methods ------------------------ */

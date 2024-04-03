@@ -1,12 +1,14 @@
 package test;
 
 import bstmap.BSTMap;
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeMap;
 
 import static org.junit.Assert.*;
 
@@ -133,6 +135,63 @@ public class BSTMapTest {
         Iterator<String> iterator = map.iterator();
         while (iterator.hasNext()) {
             System.out.println(iterator.next());
+        }
+    }
+
+    @Test
+    public void remove() {
+        BSTMap<String, Integer> map = new BSTMap<>();
+        map.put("3", 3);
+        map.put("1", 1);
+        map.put("2", 2);
+        map.put("5", 5);
+        map.put("4", 4);
+
+        Integer actual1 = map.remove("3");
+        Integer expect1 = 3;
+        assertEquals(expect1, actual1);
+
+        Integer actual2 = map.remove("1");
+        Integer expect2 = 1;
+        assertEquals(expect2, actual2);
+
+
+        Integer actual3 = map.remove("5");
+        Integer expect3 = 5;
+        assertEquals(expect3, actual3);
+
+        Integer object4 = map.remove("0");
+        assertNull(object4);
+    }
+
+    /**
+     * Randomized test BSTMap with built-in TreeMap
+     */
+    @Test
+    public void randomizedTest() {
+        TreeMap<String, Integer> treeMap = new TreeMap<>();
+        BSTMap<String, Integer> bstMap = new BSTMap<>();
+
+        int N = 10000;
+        for (int i = 0; i < N; i++) {
+            int operatorNumber = StdRandom.uniform(0, 4);
+            switch (operatorNumber) {
+                case 0: // size()
+                    assertEquals(treeMap.size(), bstMap.size());
+                    break;
+                case 1: // put()
+                    int putNumber = StdRandom.uniform(0, 100);
+                    treeMap.put(putNumber + "", putNumber);
+                    bstMap.put(putNumber + "", putNumber);
+                    break;
+                case 2: // get()
+                    String getNumber = StdRandom.uniform(0, 100) + "";
+                    assertEquals(treeMap.get(getNumber), bstMap.get(getNumber));
+                    break;
+                case 3: // removed()
+                    String removedNumber = StdRandom.uniform(0, 100) + "";
+                    assertEquals(treeMap.remove(removedNumber), bstMap.remove(removedNumber));
+            }
         }
     }
 }

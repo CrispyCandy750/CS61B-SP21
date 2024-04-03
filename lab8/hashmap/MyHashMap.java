@@ -14,7 +14,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public void clear() {
-
+        clearBuckets(buckets);
     }
 
     /**
@@ -40,9 +40,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         put(buckets, key, value);
     }
 
+    /**
+     * Returns a set which contains all key in MyHashMap
+     */
     @Override
     public Set<K> keySet() {
-        return null;
+        return keySet(buckets);
     }
 
     @Override
@@ -220,5 +223,29 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         }
 
         return null;
+    }
+
+    /**
+     * Clear the buckets
+     */
+    private void clearBuckets(Collection<Node>[] buckets) {
+        for (int i = 0; i < buckets.length; i++) {
+            buckets[i] = createBucket();
+        }
+        size = 0;
+    }
+
+    /**
+     * Returns a set which contains all key in MyHashMap
+     */
+    private Set<K> keySet(Collection<Node> [] buckets) {
+        HashSet<K> keySet = new HashSet<>();
+        for (int i = 0; i < buckets.length; i++) {
+            Iterator<Node> iterator = buckets[i].iterator();
+            while (iterator.hasNext()) {
+                keySet.add(iterator.next().key);
+            }
+        }
+        return keySet;
     }
 }

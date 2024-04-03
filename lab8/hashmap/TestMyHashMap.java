@@ -158,4 +158,19 @@ public class TestMyHashMap {
         assertEquals(345, studentIDs.get("evil alan").intValue());
         assertEquals(studentIDs.get("evil alan"), studentIDs.get("alan"));
     }
+
+    @Test
+    public void sanityResizeTest() {
+        sanityResizeTest(new MyHashMap<String, Integer>());
+    }
+
+    public static void sanityResizeTest(MyHashMap<String, Integer> b) {
+        for (int i = 0; i < 100; i++) {
+            b.put(i + "", i);
+        }
+
+        assertEquals(b.size(), 100);
+    }
+
+
 }

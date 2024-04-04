@@ -188,6 +188,23 @@ public class ArrayDequeTest {
         for (int i = 1; i <= 12; i++) {
             assertEquals("str" + i, deque.get(i - 1));
         }
+    }
 
+    @Test
+    public void equalsTest() {
+        ArrayDeque<String> deque1 = new ArrayDeque<>();
+        deque1.addLast("1");
+        deque1.addLast("2");
+        deque1.addLast("3");
+
+        ArrayDeque<String> deque2 = new ArrayDeque<>();
+        deque2.addLast("1");
+        deque2.addLast("2");
+        deque2.addLast("3");
+
+        assertEquals(deque1, deque2);
+
+        deque2.addLast("4");
+        assertNotEquals(deque1, deque2);
     }
 }

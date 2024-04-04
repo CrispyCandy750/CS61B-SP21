@@ -28,4 +28,23 @@ public class ArrayDequeTest {
         boolean condition2 = deque.isEmpty();
         assertFalse(condition2);
     }
+
+    @Test
+    public void size() {
+        ArrayDeque<String> deque = new ArrayDeque<>();
+
+        int actual1 = deque.size();
+        int expect1 = 0;
+        assertEquals(expect1, actual1);
+
+        deque.addFirst("abc");
+        int actual2 = deque.size();
+        int expect2 = 1;
+        assertEquals(expect2, actual2);
+
+        deque.addLast("def");
+        int actual3 = deque.size();
+        int expect3 = 2;
+        assertEquals(expect3, actual3);
+    }
 }

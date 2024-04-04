@@ -1,6 +1,9 @@
 package deque;
 
 import org.junit.Test;
+
+import java.util.Iterator;
+
 import static org.junit.Assert.*;
 
 
@@ -258,5 +261,23 @@ public class LinkedListDequeTest {
 
         String object4 = deque.get(4);
         assertNull(object4);
+    }
+
+    @Test
+    public void iterator() {
+        LinkedListDeque<String> deque = new LinkedListDeque<>();
+        deque.addLast("1");
+        deque.addLast("2");
+        deque.addLast("3");
+        Iterator<String> iterator = deque.iterator();
+
+        String actualStr = "";
+        String expectStr = "123";
+
+        while (iterator.hasNext()) {
+            actualStr += iterator.next();
+        }
+
+        assertEquals(expectStr, actualStr);
     }
 }

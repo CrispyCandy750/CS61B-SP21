@@ -115,14 +115,10 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
-        // 从上往下走，设置bound
 
-        MoveResult moveResult = new MoveResult(0, false);
-
-        switch (side) {
-            case NORTH: moveResult = moveUp(board); break;
-
-        }
+        board.setViewingPerspective(side);
+        MoveResult moveResult = moveUp(board);
+        board.setViewingPerspective(Side.NORTH);
 
         score += moveResult.score;
         changed = changed || moveResult.changed;

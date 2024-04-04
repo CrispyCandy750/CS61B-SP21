@@ -136,4 +136,12 @@ public class LinkedListDequeTest {
 
         */
     }
+
+    @Test
+    public void addFirst() {
+        LinkedListDeque<String> deque = new LinkedListDeque<>();
+        deque.addFirst("1");
+        deque.addFirst("2");
+        deque.addFirst("3");
+    }
 }

@@ -50,7 +50,7 @@ public class ArrayDeque<T> implements Deque<T> {
     /** Returns the number of items in the deque. */
     @Override
     public int size() {
-        return 0;
+        return (rear - first + deque.length) % deque.length;
     }
 
     /**

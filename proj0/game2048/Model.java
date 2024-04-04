@@ -167,8 +167,8 @@ public class Model extends Observable {
                 changed = true;
             } else { // curTile.value() != boundTile.value()
                 bound--;
-                if (bound != curTile.row()) {
-                    board.move(col, bound, curTile);
+                board.move(col, bound, curTile);
+                if (board.tile(col, row) == null) { // curTile is null, means changed
                     changed = true;
                 }
             }

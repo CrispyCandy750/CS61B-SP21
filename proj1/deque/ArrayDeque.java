@@ -24,7 +24,7 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public void addFirst(T item) {
         first = prev(deque, first);
-        addToArr(deque, first, item);
+        deque[first] = item;
         if (isFull()) {
             // TODO: implement the iterable and implements the resize.
             resize((int) (deque.length * EXPAND_FACTOR));
@@ -35,7 +35,7 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public void addLast(T item) {
         // 1. addToArr  2. isFull  3. resize()
-        addToArr(deque, rear, item);
+        deque[rear] = item;
         rear = next(deque, rear);
         if (isFull()) {
             resize((int) (deque.length * EXPAND_FACTOR));
@@ -100,7 +100,12 @@ public class ArrayDeque<T> implements Deque<T> {
      */
     @Override
     public T get(int index) {
-        return null;
+
+        if (index >= size()) {
+            return null;
+        }
+
+        return deque[getIndex(deque, first, index)];
     }
 
     /* --------------------------- private class & methods --------------------------- */
@@ -114,7 +119,6 @@ public class ArrayDeque<T> implements Deque<T> {
         return false;
     }
 
-    /* --------------------------- abstraction barrier --------------------------- */
     /** Returns the previous index of the param index. */
     private int prev(T[] deque, int index) {
         return (index - 1 + deque.length) % deque.length;
@@ -125,8 +129,8 @@ public class ArrayDeque<T> implements Deque<T> {
         return (index + 1) % deque.length;
     }
 
-    /** Add before the index-th item. */
-    private void addToArr(T[] deque, int index, T item) {
-        deque[index] = item;
+    /** Returns the index starting at start with offset */
+    private int getIndex(T[] deque, int start, int offset) {
+        return (start + offset) % deque.length;
     }
 }

@@ -28,7 +28,6 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         first = prevIndex(deque, first);
         deque[first] = item;
         if (isFull()) {
-            // TODO: implement the iterable and implements the resize.
             resize((int) (deque.length * EXPAND_FACTOR));
         }
     }
@@ -156,8 +155,21 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return nextIndex(deque, rear) == first;
     }
 
-    private boolean resize(int newSize) {
-        return false;
+    /** Resize the deque array. */
+    private void resize(int newSize) {
+
+        T[] newDeque = (T[]) new Object[newSize];
+        int newRear = 0;
+
+        Iterator<T> iterator = this.iterator();
+        while (iterator.hasNext()) {
+            newDeque[newRear] = iterator.next();
+            newRear = nextIndex(newDeque, newRear);
+        }
+
+        first = 0;
+        rear = newRear;
+        deque = newDeque;
     }
 
     /** Returns the previous index of the param index. */

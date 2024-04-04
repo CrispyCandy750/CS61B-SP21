@@ -74,4 +74,31 @@ public class ArrayDequeTest {
         String object5 = deque.removeFirst();
         assertNull(object5);
     }
+
+    @Test
+    public void removeLast() {
+        ArrayDeque<String> deque = new ArrayDeque<>();
+
+        String object1 = deque.removeLast();
+        assertNull(object1);
+
+        deque.addFirst("str1");
+        deque.addFirst("str2");
+        deque.addLast("str3");
+
+        String actual2 = deque.removeLast();
+        String expect2 = "str3";
+        assertEquals(expect2, actual2);
+
+        String actual3 = deque.removeLast();
+        String expect3 = "str1";
+        assertEquals(expect3, actual3);
+
+        String actual4 = deque.removeLast();
+        String expect4 = "str2";
+        assertEquals(expect3, actual3);
+
+        String object5 = deque.removeLast();
+        assertNull(object5);
+    }
 }

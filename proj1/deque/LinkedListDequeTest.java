@@ -144,4 +144,12 @@ public class LinkedListDequeTest {
         deque.addFirst("2");
         deque.addFirst("3");
     }
+
+    @Test
+    public void addLast() {
+        LinkedListDeque<String> deque = new LinkedListDeque<>();
+        deque.addLast("1");
+        deque.addLast("2");
+        deque.addLast("3");
+    }
 }

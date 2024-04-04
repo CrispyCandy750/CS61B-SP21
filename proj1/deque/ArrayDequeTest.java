@@ -167,4 +167,27 @@ public class ArrayDequeTest {
 
         assertEquals(expect1, actual1);
     }
+
+    @Test
+    public void resize() {
+        ArrayDeque<String> deque = new ArrayDeque<>();
+
+        deque.addFirst("str6");
+        deque.addLast("str7");
+        deque.addFirst("str5");
+        deque.addLast("str8");
+        deque.addFirst("str4");
+        deque.addLast("str9");
+        deque.addFirst("str3");
+        deque.addLast("str10");
+        deque.addFirst("str2");
+        deque.addLast("str11");
+        deque.addFirst("str1");
+        deque.addLast("str12");
+
+        for (int i = 1; i <= 12; i++) {
+            assertEquals("str" + i, deque.get(i - 1));
+        }
+
+    }
 }

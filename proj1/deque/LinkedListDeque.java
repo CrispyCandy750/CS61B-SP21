@@ -46,7 +46,7 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public T removeFirst() {
-        return null;
+        return removeNext(sentinel);
     }
 
     /**
@@ -133,5 +133,17 @@ public class LinkedListDeque<T> implements Deque<T> {
         return res;
     }
 
+    /**
+     * Removes and returns the item at the back of the node.
+     * If no such item exists, returns null.
+     */
+    private T removeNext(Node node) {
+        T res = node.next.item;
+
+        node.next = node.next.next;
+        node.next.prev = node;
+
+        return res;
+    }
 
 }

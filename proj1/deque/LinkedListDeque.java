@@ -4,6 +4,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     public LinkedListDeque() {
         this.sentinel = new Node(null);
+        this.size = 0;
     }
 
     /** Adds an item of type T to the front of the deque. */
@@ -27,7 +28,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     /** Returns the number of items in the deque. */
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     /**
@@ -69,6 +70,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     /* --------------------------- private class & methods --------------------------- */
 
     private Node sentinel;
+    private int size;
 
     private class Node {
         Node prev;
@@ -88,6 +90,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         node.next = predecessor.next;
         predecessor.next = node;
         node.prev = predecessor;
+        size++;
     }
 
     /** Add the value before the successor. */
@@ -97,6 +100,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         node.prev = successor.prev;
         successor.prev = node;
         node.next = successor;
+        size++;
     }
 
     /** Returns true if the `prev` and `node` points the node itself, false otherwise. */

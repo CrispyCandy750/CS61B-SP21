@@ -280,4 +280,22 @@ public class LinkedListDequeTest {
 
         assertEquals(expectStr, actualStr);
     }
+
+    @Test
+    public void equalsTest() {
+        LinkedListDeque<String> deque1 = new LinkedListDeque<>();
+        deque1.addLast("1");
+        deque1.addLast("2");
+        deque1.addLast("3");
+
+        LinkedListDeque<String> deque2 = new LinkedListDeque<>();
+        deque2.addLast("1");
+        deque2.addLast("2");
+        deque2.addLast("3");
+
+        assertEquals(deque1, deque2);
+
+        deque2.addLast("4");
+        assertNotEquals(deque1, deque2);
+    }
 }

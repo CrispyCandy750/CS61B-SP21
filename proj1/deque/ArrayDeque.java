@@ -13,8 +13,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     private static final int INITIAL_SIZE = 8;
     private static final double MIN_USAGE_FACTOR = 0.25;
-    private static final double EXPAND_FACTOR = 1.25;
-    private static final double SHRINK_FACTOR = 0.75;
+    private static final double EXPAND_FACTOR = 1.5;
+    private static final double SHRINK_FACTOR = 0.5;
 
     @SuppressWarnings("unchecked")
     public ArrayDeque() {
@@ -78,6 +78,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         T res = deque[first];
         first = nextIndex(deque, first);
 
+        if (needShrink()) {
+            resize((int) (deque.length * SHRINK_FACTOR));
+        }
+
         return res;
     }
 
@@ -92,7 +96,13 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
 
         rear = prevIndex(deque, rear);
-        return deque[rear];
+        T res = deque[rear];
+
+        if (needShrink()) {
+            resize((int) (deque.length * SHRINK_FACTOR));
+        }
+
+        return res;
     }
 
     /**
@@ -153,6 +163,11 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     /** Returns true if the deque is full, false otherwise. */
     private boolean isFull() {
         return nextIndex(deque, rear) == first;
+    }
+
+    /** Returns true if the deque need shrinking, false otherwise. */
+    private boolean needShrink() {
+        return deque.length > 8 && size() < deque.length * MIN_USAGE_FACTOR;
     }
 
     /** Resize the deque array. */

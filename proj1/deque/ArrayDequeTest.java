@@ -153,4 +153,18 @@ public class ArrayDequeTest {
             assertEquals(expectStr[i++], iterator.next());
         }
     }
+
+    @Test
+    public void toStringTest() {
+        ArrayDeque<String> deque = new ArrayDeque<>();
+
+        deque.addFirst("str1");
+        deque.addFirst("str2");
+        deque.addLast("str3");
+
+        String actual1 = deque.toString();
+        String expect1 = "str2 str1 str3";
+
+        assertEquals(expect1, actual1);
+    }
 }

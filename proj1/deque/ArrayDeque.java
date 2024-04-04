@@ -62,7 +62,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
      */
     @Override
     public void printDeque() {
-        // TODO: implement the iterable and implements the printDeque.
+        System.out.println(this.toString());
     }
 
     /**
@@ -113,6 +113,18 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return new DequeIterator();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        Iterator<T> iterator = this.iterator();
+
+        while (iterator.hasNext()) {
+            stringBuilder.append(iterator.next() + " ");
+        }
+
+        return stringBuilder.toString().trim();
     }
 
     /* --------------------------- private class & methods --------------------------- */

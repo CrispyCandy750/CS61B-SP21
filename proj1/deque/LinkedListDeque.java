@@ -11,12 +11,14 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public void addFirst(T item) {
         addAfter(sentinel, item);
+        size++;
     }
 
     /** Adds an item of type T to the back of the deque. */
     @Override
     public void addLast(T item) {
         addBefore(sentinel, item);
+        size++;
     }
 
     /** Returns true if deque is empty, false otherwise. */
@@ -46,7 +48,11 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public T removeFirst() {
-        return removeNext(sentinel);
+        T res = removeNext(sentinel);
+        if (res != null) {
+            size--;
+        }
+        return res;
     }
 
     /**
@@ -55,7 +61,11 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public T removeLast() {
-        return removePrevious(sentinel);
+        T res = removePrevious(sentinel);
+        if (res != null) {
+            size--;
+        }
+        return res;
     }
 
     /**
@@ -90,7 +100,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         node.next = predecessor.next;
         predecessor.next = node;
         node.prev = predecessor;
-        size++;
+        // size++;
     }
 
     /** Add the value before the successor. */
@@ -100,7 +110,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         node.prev = successor.prev;
         successor.prev = node;
         node.next = successor;
-        size++;
+        // size++;
     }
 
     /** Returns true if the `prev` and `node` points the node itself, false otherwise. */
@@ -128,7 +138,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
         node.prev = node.prev.prev;
         node.prev.next = node;
-        size--;
+        // size--;
 
         return res;
     }

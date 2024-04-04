@@ -2,10 +2,14 @@ package deque;
 
 public class LinkedListDeque<T> implements Deque<T> {
 
+    public LinkedListDeque() {
+        this.sentinel = new Node(null);
+    }
+
     /** Adds an item of type T to the front of the deque. */
     @Override
     public void addFirst(T item) {
-
+        addAfter(sentinel, item);
     }
 
     /** Adds an item of type T to the back of the deque. */
@@ -60,5 +64,29 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public T get(int index) {
         return null;
+    }
+
+    /* --------------------------- private class & methods --------------------------- */
+
+    private Node sentinel;
+
+    private class Node {
+        Node prev;
+        T value;
+        Node next;
+
+        Node(T value) {
+            this.value = value;
+            prev = next = this;
+        }
+    }
+
+    /** Add the value after the node. */
+    private void addAfter(Node predecessor, T value) {
+        Node node = new Node(value);
+        predecessor.next.prev = node;
+        node.next = predecessor.next;
+        predecessor.next = node;
+        node.prev = predecessor;
     }
 }

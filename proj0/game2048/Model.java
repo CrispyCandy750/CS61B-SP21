@@ -1,6 +1,5 @@
 package game2048;
 
-import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.Iterator;
 import java.util.Observable;
@@ -112,15 +111,84 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
+
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        // 从上往下走，设置bound
+
+        MoveResult moveResult = new MoveResult(0, false);
+
+        switch (side) {
+            case NORTH: moveResult = moveUp(board); break;
+
+        }
+
+        score += moveResult.score;
+        changed = changed || moveResult.changed;
 
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+
+    /**
+     * Execute move up operation.
+     */
+    private static MoveResult moveUp(Board board) {
+        int totalScore = 0;
+        boolean changed = false;
+        for (int col = 0; col < board.size(); col++) {
+            MoveResult moveResult = moveUpInCol(col, board);
+            totalScore += moveResult.score;
+            changed = changed || moveResult.changed;
+        }
+        return new MoveResult(totalScore, changed);
+    }
+
+    /**
+     * Move up in col and returns score.
+     */
+    private static MoveResult moveUpInCol(int col, Board board) {
+        int score = 0;
+        boolean changed = false;
+
+        for (int row = board.size() - 2, bound = board.size() - 1; row >= 0; row--) {
+
+            Tile boundTile = board.tile(col, bound);
+            Tile curTile = board.tile(col, row);
+            if (curTile == null) {
+                continue;
+            } else if (boundTile == null) {
+                board.move(col, bound, curTile);
+                changed = true;
+            } else if (curTile.value() == boundTile.value()) {
+                board.move(col, bound, curTile);
+                bound--;
+                score += curTile.value() * 2;
+                changed = true;
+            } else { // curTile.value() != boundTile.value()
+                bound--;
+                if (bound != curTile.row()) {
+                    board.move(col, bound, curTile);
+                    changed = true;
+                }
+            }
+        }
+
+        return new MoveResult(score, changed);
+    }
+
+    private static class MoveResult {
+        int score;
+        boolean changed;
+
+        public MoveResult(int score, boolean changed) {
+            this.score = score;
+            this.changed = changed;
+        }
     }
 
     /** Checks if the game is over and sets the gameOver variable

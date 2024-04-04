@@ -15,7 +15,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     /** Adds an item of type T to the back of the deque. */
     @Override
     public void addLast(T item) {
-
+        addBefore(sentinel, item);
     }
 
     /** Returns true if deque is empty, false otherwise. */
@@ -81,12 +81,21 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
     }
 
-    /** Add the value after the node. */
+    /** Add the value after the predecessor. */
     private void addAfter(Node predecessor, T value) {
         Node node = new Node(value);
         predecessor.next.prev = node;
         node.next = predecessor.next;
         predecessor.next = node;
         node.prev = predecessor;
+    }
+
+    /** Add the value before the successor. */
+    private void addBefore(Node successor, T value) {
+        Node node = new Node(value);
+        successor.prev.next = node;
+        node.prev = successor.prev;
+        successor.prev = node;
+        node.next = successor;
     }
 }

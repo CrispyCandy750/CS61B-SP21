@@ -236,4 +236,27 @@ public class LinkedListDequeTest {
         int expect5 = 0;
         assertEquals(expect5, actual5);
     }
+
+    @Test
+    public void get() {
+        LinkedListDeque<String> deque = new LinkedListDeque<>();
+        deque.addLast("1");
+        deque.addLast("2");
+        deque.addLast("3");
+
+        String actual1 = deque.get(0);
+        String expect1 = "1";
+        assertEquals(expect1, actual1);
+
+        String actual2 = deque.get(1);
+        String expect2 = "2";
+        assertEquals(expect2, actual2);
+
+        String actual3 = deque.get(2);
+        String expect3 = "3";
+        assertEquals(expect3, actual3);
+
+        String object4 = deque.get(4);
+        assertNull(object4);
+    }
 }

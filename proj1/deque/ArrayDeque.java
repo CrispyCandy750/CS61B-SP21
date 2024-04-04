@@ -1,6 +1,8 @@
 package deque;
 
-public class ArrayDeque<T> implements Deque<T> {
+import java.util.Iterator;
+
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private T[] deque;
 
     /* first always points the first item. */
@@ -23,7 +25,7 @@ public class ArrayDeque<T> implements Deque<T> {
     /** Adds an item of type T to the front of the deque. */
     @Override
     public void addFirst(T item) {
-        first = prev(deque, first);
+        first = prevIndex(deque, first);
         deque[first] = item;
         if (isFull()) {
             // TODO: implement the iterable and implements the resize.
@@ -36,7 +38,7 @@ public class ArrayDeque<T> implements Deque<T> {
     public void addLast(T item) {
         // 1. addToArr  2. isFull  3. resize()
         deque[rear] = item;
-        rear = next(deque, rear);
+        rear = nextIndex(deque, rear);
         if (isFull()) {
             resize((int) (deque.length * EXPAND_FACTOR));
         }
@@ -75,7 +77,7 @@ public class ArrayDeque<T> implements Deque<T> {
         }
 
         T res = deque[first];
-        first = next(deque, first);
+        first = nextIndex(deque, first);
 
         return res;
     }
@@ -90,7 +92,7 @@ public class ArrayDeque<T> implements Deque<T> {
             return null;
         }
 
-        rear = prev(deque, rear);
+        rear = prevIndex(deque, rear);
         return deque[rear];
     }
 
@@ -108,11 +110,38 @@ public class ArrayDeque<T> implements Deque<T> {
         return deque[getIndex(deque, first, index)];
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return new DequeIterator();
+    }
+
     /* --------------------------- private class & methods --------------------------- */
+
+    private class DequeIterator implements Iterator<T> {
+
+        /* Cur points the next elements */
+        int cur;
+
+        public DequeIterator() {
+            cur = first;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return cur != rear;
+        }
+
+        @Override
+        public T next() {
+            T res = deque[cur];
+            cur = nextIndex(deque, cur);
+            return res;
+        }
+    }
 
     /** Returns true if the deque is full, false otherwise. */
     private boolean isFull() {
-        return next(deque, rear) == first;
+        return nextIndex(deque, rear) == first;
     }
 
     private boolean resize(int newSize) {
@@ -120,12 +149,12 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     /** Returns the previous index of the param index. */
-    private int prev(T[] deque, int index) {
+    private int prevIndex(T[] deque, int index) {
         return (index - 1 + deque.length) % deque.length;
     }
 
     /** Returns the next index of the param index */
-    private int next(T[] deque, int index) {
+    private int nextIndex(T[] deque, int index) {
         return (index + 1) % deque.length;
     }
 

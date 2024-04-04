@@ -37,7 +37,7 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public void printDeque() {
-
+        System.out.println(getCycleStringStartingAtExclusively(sentinel));
     }
 
     /**
@@ -106,5 +106,16 @@ public class LinkedListDeque<T> implements Deque<T> {
     /** Returns true if the `prev` and `node` points the node itself, false otherwise. */
     private boolean isPointingSelf(Node node) {
         return node.next == node && node.prev == node;
+    }
+
+    /** Prints the cycle-list starting at the specified node exclusively. */
+    private String getCycleStringStartingAtExclusively(Node starter) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Node cur = starter.next;
+        while (cur != starter) {
+            stringBuilder.append(cur.value + " ");
+            cur = cur.next;
+        }
+        return stringBuilder.toString();
     }
 }

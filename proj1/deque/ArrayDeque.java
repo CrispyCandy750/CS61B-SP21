@@ -34,13 +34,17 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public void addLast(T item) {
         // 1. addToArr  2. isFull  3. resize()
-
+        addToArr(deque, rear, item);
+        rear = next(deque, rear);
+        if (isFull()) {
+            resize((int) (deque.length * EXPAND_FACTOR));
+        }
     }
 
     /** Returns true if deque is empty, false otherwise. */
     @Override
     public boolean isEmpty() {
-        return false;
+        return first == rear;
     }
 
     /** Returns the number of items in the deque. */

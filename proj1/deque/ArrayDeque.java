@@ -86,7 +86,12 @@ public class ArrayDeque<T> implements Deque<T> {
      */
     @Override
     public T removeLast() {
-        return null;
+        if (isEmpty()) {
+            return null;
+        }
+
+        rear = prev(deque, rear);
+        return deque[rear];
     }
 
     /**

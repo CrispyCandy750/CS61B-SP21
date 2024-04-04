@@ -55,7 +55,7 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public T removeLast() {
-        return null;
+        return removePrevious(sentinel);
     }
 
     /**
@@ -74,18 +74,18 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     private class Node {
         Node prev;
-        T value;
+        T item;
         Node next;
 
-        Node(T value) {
-            this.value = value;
+        Node(T item) {
+            this.item = item;
             prev = next = this;
         }
     }
 
     /** Add the value after the predecessor. */
-    private void addAfter(Node predecessor, T value) {
-        Node node = new Node(value);
+    private void addAfter(Node predecessor, T item) {
+        Node node = new Node(item);
         predecessor.next.prev = node;
         node.next = predecessor.next;
         predecessor.next = node;
@@ -94,8 +94,8 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     /** Add the value before the successor. */
-    private void addBefore(Node successor, T value) {
-        Node node = new Node(value);
+    private void addBefore(Node successor, T item) {
+        Node node = new Node(item);
         successor.prev.next = node;
         node.prev = successor.prev;
         successor.prev = node;
@@ -113,9 +113,25 @@ public class LinkedListDeque<T> implements Deque<T> {
         StringBuilder stringBuilder = new StringBuilder();
         Node cur = starter.next;
         while (cur != starter) {
-            stringBuilder.append(cur.value + " ");
+            stringBuilder.append(cur.item + " ");
             cur = cur.next;
         }
         return stringBuilder.toString();
     }
+
+    /**
+     * Removes and returns the item at the front of the node.
+     * If no such item exists, returns null.
+     */
+    private T removePrevious(Node node) {
+        T res = node.prev.item;
+
+        node.prev = node.prev.prev;
+        node.prev.next = node;
+        size--;
+
+        return res;
+    }
+
+
 }

@@ -172,4 +172,27 @@ public class LinkedListDequeTest {
 
         deque.printDeque();
     }
+
+    @Test
+    public void removeFirst() {
+        LinkedListDeque<String> deque = new LinkedListDeque<>();
+        deque.addLast("1");
+        deque.addLast("2");
+        deque.addLast("3");
+
+        String actual1 = deque.removeLast();
+        String expect1 = "3";
+        assertEquals(expect1, actual1);
+
+        String actual2 = deque.removeLast();
+        String expect2 = "2";
+        assertEquals(expect2, actual2);
+
+        String actual3 = deque.removeLast();
+        String expect3 = "1";
+        assertEquals(expect3, actual3);
+
+        String object4 = deque.removeLast();
+        assertNull(object4);
+    }
 }

@@ -74,7 +74,10 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public T get(int index) {
-        return null;
+        if (index < 0) {
+            return null;
+        }
+        return getIthItemStartingAt(sentinel, index);
     }
 
     /* --------------------------- private class & methods --------------------------- */
@@ -156,4 +159,17 @@ public class LinkedListDeque<T> implements Deque<T> {
         return res;
     }
 
+    /** Returns the i-th item starting at node exclusively, returns null if index out of size. */
+    private T getIthItemStartingAt(Node node, int index) {
+        int i = 0;
+        Node cur = node.next;
+
+        while (i < index && cur != node) {
+            cur = cur.next;
+            i++;
+        }
+
+        // if cur == node, returns null
+        return cur.item;
+    }
 }

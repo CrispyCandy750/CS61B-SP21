@@ -162,4 +162,14 @@ public class LinkedListDequeTest {
         boolean condition2 = deque.isEmpty();
         assertFalse(condition2);
     }
+
+    @Test
+    public void printDeque() {
+        LinkedListDeque<String> deque = new LinkedListDeque<>();
+        deque.addLast("1");
+        deque.addLast("2");
+        deque.addLast("3");
+
+        deque.printDeque();
+    }
 }

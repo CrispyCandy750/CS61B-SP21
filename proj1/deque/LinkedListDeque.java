@@ -21,7 +21,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     /** Returns true if deque is empty, false otherwise. */
     @Override
     public boolean isEmpty() {
-        return false;
+        return isPointingSelf(sentinel);
     }
 
     /** Returns the number of items in the deque. */
@@ -97,5 +97,10 @@ public class LinkedListDeque<T> implements Deque<T> {
         node.prev = successor.prev;
         successor.prev = node;
         node.next = successor;
+    }
+
+    /** Returns true if the `prev` and `node` points the node itself, false otherwise. */
+    private boolean isPointingSelf(Node node) {
+        return node.next == node && node.prev == node;
     }
 }

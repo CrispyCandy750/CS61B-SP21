@@ -26,6 +26,7 @@ public class ArrayDeque<T> implements Deque<T> {
         first = prev(deque, first);
         addToArr(deque, first, item);
         if (isFull()) {
+            // TODO: implement the iterable and implements the resize.
             resize((int) (deque.length * EXPAND_FACTOR));
         }
     }
@@ -59,7 +60,7 @@ public class ArrayDeque<T> implements Deque<T> {
      */
     @Override
     public void printDeque() {
-
+        // TODO: implement the iterable and implements the printDeque.
     }
 
     /**
@@ -68,7 +69,15 @@ public class ArrayDeque<T> implements Deque<T> {
      */
     @Override
     public T removeFirst() {
-        return null;
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        T res = deque[first];
+        first = next(deque, first);
+
+        return res;
     }
 
     /**

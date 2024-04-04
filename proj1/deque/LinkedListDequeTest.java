@@ -15,7 +15,6 @@ public class LinkedListDequeTest {
     public void addIsEmptySizeTest() {
 
         System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-        /*
         LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
 
 		assertTrue("A newly initialized LLDeque should be empty", lld1.isEmpty());
@@ -34,7 +33,6 @@ public class LinkedListDequeTest {
 
 		System.out.println("Printing out deque: ");
 		lld1.printDeque();
-		*/
     }
 
     @Test
@@ -151,5 +149,17 @@ public class LinkedListDequeTest {
         deque.addLast("1");
         deque.addLast("2");
         deque.addLast("3");
+    }
+
+    @Test
+    public void isEmpty() {
+        LinkedListDeque<String> deque = new LinkedListDeque<>();
+
+        boolean condition1 = deque.isEmpty();
+        assertTrue(condition1);
+
+        deque.addLast("1");
+        boolean condition2 = deque.isEmpty();
+        assertFalse(condition2);
     }
 }

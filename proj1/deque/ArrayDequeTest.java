@@ -1,6 +1,10 @@
 package deque;
 
 import org.junit.Test;
+
+import java.net.Socket;
+import java.util.Iterator;
+
 import static org.junit.Assert.*;
 
 public class ArrayDequeTest {
@@ -130,5 +134,23 @@ public class ArrayDequeTest {
 
         String object5 = deque.get(3);
         assertNull(object5);
+    }
+
+    @Test
+    public void iterator() {
+        ArrayDeque<String> deque = new ArrayDeque<>();
+
+        deque.addFirst("str1");
+        deque.addFirst("str2");
+        deque.addLast("str3");
+        deque.addLast("str4");
+
+        Iterator<String> iterator = deque.iterator();
+        String[] expectStr = new String[]{"str2", "str1", "str3", "str4"};
+        int i = 0;
+
+        while (iterator.hasNext()) {
+            assertEquals(expectStr[i++], iterator.next());
+        }
     }
 }

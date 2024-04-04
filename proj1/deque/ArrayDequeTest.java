@@ -8,7 +8,9 @@ public class ArrayDequeTest {
     @Test
     public void addFirst() {
         ArrayDeque<String> deque = new ArrayDeque<>();
-        deque.addFirst("abc");
+        deque.addFirst("str1");
+        deque.addFirst("str2");
+        deque.addFirst("str3");
     }
 
     @Test
@@ -99,6 +101,34 @@ public class ArrayDequeTest {
         assertEquals(expect3, actual3);
 
         String object5 = deque.removeLast();
+        assertNull(object5);
+    }
+
+    @Test
+    public void get() {
+        ArrayDeque<String> deque = new ArrayDeque<>();
+
+        String object1 = deque.get(0);
+        assertNull(object1);
+
+        deque.addFirst("str1");
+        deque.addFirst("str2");
+        deque.addLast("str3");
+        /* The deque is ["str2", "str1", "str3"] */
+
+        String actual2 = deque.get(0);
+        String expect2 = "str2";
+        assertEquals(expect2, actual2);
+
+        String actual3 = deque.get(1);
+        String expect3 = "str1";
+        assertEquals(expect3, actual3);
+
+        String actual4 = deque.get(2);
+        String expect4 = "str3";
+        assertEquals(expect3, actual3);
+
+        String object5 = deque.get(3);
         assertNull(object5);
     }
 }

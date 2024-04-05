@@ -164,11 +164,9 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     /* --------------------------- private class & methods --------------------------- */
 
     private class DequeIterator implements Iterator<T> {
-
         /* Cur points the next elements */
         int cur;
-
-        public DequeIterator() {
+        DequeIterator() {
             cur = first;
         }
 

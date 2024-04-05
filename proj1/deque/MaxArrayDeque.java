@@ -13,7 +13,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> implements MaxDeque<T> {
 
     @Override
     public T max() {
-        return null;
+        return max(this.comparator);
     }
 
 

@@ -124,8 +124,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return new DequeIterator();
     }
 
-    @Override
-    public String toString() {
+
+    private String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         Iterator<T> iterator = this.iterator();
 

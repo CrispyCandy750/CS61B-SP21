@@ -8,8 +8,10 @@ import static org.junit.Assert.*;
 
 public class MaxArrayDequeTest {
 
+
+    /** Test the max(Comparator<T> c) interface. */
     @Test
-    public void max() {
+    public void maxWithComparator() {
         MaxArrayDeque<Student> studentDeque = new MaxArrayDeque<>(null);
         Student nameMax = new Student("zed", 1, 150, 120);
         Student ageMax = new Student("abc", 4, 143, 130);
@@ -24,6 +26,29 @@ public class MaxArrayDequeTest {
         assertEquals(ageMax, studentDeque.max(Student.getAgeComparator()));
         assertEquals(heightMax, studentDeque.max(Student.getHeightComparator()));
         assertEquals(weightMax, studentDeque.max(Student.getWeightComparator()));
+
+        MaxArrayDeque<Student> emptyDeque = new MaxArrayDeque<>(null);
+        assertNull("the returns should be null because the deque is empty", emptyDeque.max(Student.getNameComparator()));
+    }
+
+
+    /** Test the max() interface. */
+    @Test
+    public void max() {
+        MaxArrayDeque<Student> studentDeque = new MaxArrayDeque<>(Student.getNameComparator());
+        Student nameMax = new Student("zed", 1, 150, 120);
+        Student ageMax = new Student("abc", 4, 143, 130);
+        Student heightMax = new Student("bcd", 3, 180, 140);
+        Student weightMax = new Student("def", 2, 160, 180);
+        studentDeque.addFirst(nameMax);
+        studentDeque.addFirst(ageMax);
+        studentDeque.addLast(heightMax);
+        studentDeque.addLast(weightMax);
+
+        assertEquals(nameMax, studentDeque.max());
+
+        MaxArrayDeque<Student> emptyDeque = new MaxArrayDeque<>(Student.getNameComparator());
+        assertNull("the returns should be null because the deque is empty", emptyDeque.max());
     }
 
     private static class Student {

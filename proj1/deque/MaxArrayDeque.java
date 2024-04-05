@@ -12,7 +12,8 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
     }
 
     /**
-     * returns the maximum element in the deque as governed by the previously given Comparator in constructor.
+     * returns the maximum element in the deque as governed by the previously given Comparator in
+     * constructor.
      * If the MaxArrayDeque is empty, simply return null.
      */
     public T max() {

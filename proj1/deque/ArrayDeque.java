@@ -61,7 +61,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
      */
     @Override
     public void printDeque() {
-        System.out.println(this.toString());
+        System.out.println(this.getString());
     }
 
     /**
@@ -125,7 +125,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
 
-    private String toString() {
+    private String getString() {
         StringBuilder stringBuilder = new StringBuilder();
         Iterator<T> iterator = this.iterator();
 

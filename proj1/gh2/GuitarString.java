@@ -1,11 +1,10 @@
 package gh2;
 
-// TODO: uncomment the following import once you're ready to start this portion
  import deque.Deque;
  import deque.LinkedListDeque;
-// TODO: maybe more imports
 
 //Note: This file will not compile until you complete the Deque implementations
+
 public class GuitarString {
     /** Constants. Do not change. In case you're curious, the keyword final
      * means the values cannot be changed at runtime. We'll discuss this and
@@ -14,32 +13,26 @@ public class GuitarString {
     private static final double DECAY = .996; // energy decay factor
 
     /* Buffer for storing sound data. */
-    // TODO: uncomment the following line once you're ready to start this portion
      private Deque<Double> buffer;
-     private long capacity;
 
     /* Create a guitar string of the given frequency.  */
     public GuitarString(double frequency) {
-        // TODO: Create a buffer with capacity = SR / frequency. You'll need to
-        //       cast the result of this division operation into an int. For
-        //       better accuracy, use the Math.round() function before casting.
-        //       Your should initially fill your buffer array with zeros.
-        capacity = Math.round(SR / frequency);
+        long capacity = Math.round(SR / frequency);
+
         buffer = new LinkedListDeque<>();
+        for (int i = 0; i < capacity; i++) {
+            buffer.addLast(0.0);
+        }
     }
 
 
     /* Pluck the guitar string by replacing the buffer with white noise. */
     public void pluck() {
-        // TODO: Dequeue everything in buffer, and replace with random numbers
-        //       between -0.5 and 0.5. You can get such a number by using:
-        //       double r = Math.random() - 0.5;
-        //
-        //       Make sure that your random numbers are different from each
-        //       other. This does not mean that you need to check that the numbers
-        //       are different from each other. It means you should repeatedly call
-        //       Math.random() - 0.5 to generate new random numbers for each array index.
+
+        int capacity = buffer.size();
+
         for (int i = 0; i < capacity; i++) {
+            buffer.removeFirst();
             buffer.addLast(Math.random() - 0.5);
         }
     }
@@ -48,18 +41,13 @@ public class GuitarString {
      * the Karplus-Strong algorithm.
      */
     public void tic() {
-        // TODO: Dequeue the front sample and enqueue a new sample that is
-        //       the average of the two multiplied by the DECAY factor.
-        //       **Do not call StdAudio.play().**
         Double front = buffer.removeFirst();
-        Double rear = (front * buffer.get(0)) / 2 * DECAY;
+        Double rear = (front + buffer.get(0)) * 0.5 * DECAY;
         buffer.addLast(rear);
     }
 
     /* Return the double at the front of the buffer. */
     public double sample() {
-        // TODO: Return the correct thing.
-        return buffer.get(buffer.size() - 1);
+        return buffer.get(0);
     }
 }
-    // TODO: Remove all comments that say TODO when you're done.

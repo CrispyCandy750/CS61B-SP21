@@ -110,6 +110,32 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         return new DequeIterator();
     }
 
+    /** Returns the index-th item, returns null if index exceeds size. */
+    public T getRecursive(int index) {
+        if (index > size()) {
+            return null;
+        }
+        Node cur = sentinel.next;
+
+        /* Move the cur to the index-th node. */
+        for (int i = 0; i < index; i++, cur = cur.next);
+
+        return cur.item;
+    }
+
+    /* --------------------------- private class & methods --------------------------- */
+
+    private class Node {
+        Node prev;
+        T item;
+        Node next;
+
+        Node(T item) {
+            this.item = item;
+            prev = next = this;
+        }
+    }
+
     private class DequeIterator implements Iterator<T> {
         Node cur;
         DequeIterator() {
@@ -126,19 +152,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             T item = cur.item;
             cur = cur.next;
             return item;
-        }
-    }
-
-    /* --------------------------- private class & methods --------------------------- */
-
-    private class Node {
-        Node prev;
-        T item;
-        Node next;
-
-        Node(T item) {
-            this.item = item;
-            prev = next = this;
         }
     }
 

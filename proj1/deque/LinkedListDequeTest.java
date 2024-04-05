@@ -298,4 +298,27 @@ public class LinkedListDequeTest {
         deque2.addLast("4");
         assertNotEquals(deque1, deque2);
     }
+
+    @Test
+    public void getRecursive() {
+        LinkedListDeque<String> deque = new LinkedListDeque<>();
+        deque.addLast("1");
+        deque.addLast("2");
+        deque.addLast("3");
+
+        String actual1 = deque.getRecursive(0);
+        String expect1 = "1";
+        assertEquals(expect1, actual1);
+
+        String actual2 = deque.getRecursive(1);
+        String expect2 = "2";
+        assertEquals(expect2, actual2);
+
+        String actual3 = deque.getRecursive(2);
+        String expect3 = "3";
+        assertEquals(expect3, actual3);
+
+        String object4 = deque.getRecursive(4);
+        assertNull(object4);
+    }
 }

@@ -198,7 +198,7 @@ public class LinkedListDequeTest {
 
         String actual1 = deque.removeFirst();
         String expect1 = "1";
-        assertEquals(expect1, actual1);
+        assertEquals("the first items in deque is 1", expect1, actual1);
 
         String actual2 = deque.removeFirst();
         String expect2 = "2";

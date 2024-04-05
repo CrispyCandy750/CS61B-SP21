@@ -213,17 +213,17 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     /** Returns the previous index of the param index. */
-    private int prevIndex(T[] deque, int index) {
-        return (index - 1 + deque.length) % deque.length;
+    private int prevIndex(T[] arr, int index) {
+        return (index - 1 + arr.length) % arr.length;
     }
 
     /** Returns the next index of the param index */
-    private int nextIndex(T[] deque, int index) {
-        return (index + 1) % deque.length;
+    private int nextIndex(T[] arr, int index) {
+        return (index + 1) % arr.length;
     }
 
     /** Returns the index starting at start with offset */
-    private int getIndex(T[] deque, int start, int offset) {
-        return (start + offset) % deque.length;
+    private int getIndex(T[] arr, int start, int offset) {
+        return (start + offset) % arr.length;
     }
 }

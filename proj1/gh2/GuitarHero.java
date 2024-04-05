@@ -6,12 +6,12 @@ import edu.princeton.cs.algs4.StdDraw;
 public class GuitarHero {
 
     private static final String KEYBOARD = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
-    private static final double[] CONCERTs;
+    private static final double[] CONCERTS;
 
     static {
-        CONCERTs = new double[KEYBOARD.length()];
+        CONCERTS = new double[KEYBOARD.length()];
         for (int i = 0; i < KEYBOARD.length(); i++) {
-            CONCERTs[i] = 440.0 * Math.pow(2, (i - 24.0) / 12.0);
+            CONCERTS[i] = 440.0 * Math.pow(2, (i - 24.0) / 12.0);
         }
     }
 
@@ -19,7 +19,7 @@ public class GuitarHero {
         /* create all strings, for concerts of all characters in keyboard. */
         GuitarString[] strings = new GuitarString[KEYBOARD.length()];
         for (int i = 0; i < strings.length; i++) {
-            strings[i] = new GuitarString(CONCERTs[i]);
+            strings[i] = new GuitarString(CONCERTS[i]);
         }
         /* All the Strings are empty which is static. */
 

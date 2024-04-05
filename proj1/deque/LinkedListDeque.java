@@ -26,11 +26,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         size++;
     }
 
-    /** Returns true if deque is empty, false otherwise. */
-    @Override
-    public boolean isEmpty() {
-        return isPointingSelf(sentinel);
-    }
 
     /** Returns the number of items in the deque. */
     @Override
@@ -165,11 +160,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         successor.prev = node;
         node.next = successor;
         // size++;
-    }
-
-    /** Returns true if the `prev` and `node` points the node itself, false otherwise. */
-    private boolean isPointingSelf(Node node) {
-        return node.next == node && node.prev == node;
     }
 
     /** Prints the cycle-list starting at the specified node exclusively. */

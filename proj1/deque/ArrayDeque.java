@@ -43,12 +43,6 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
-    /** Returns true if deque is empty, false otherwise. */
-    @Override
-    public boolean isEmpty() {
-        return first == rear;
-    }
-
     /** Returns the number of items in the deque. */
     @Override
     public int size() {

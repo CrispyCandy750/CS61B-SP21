@@ -2,7 +2,6 @@ package deque;
 
 import org.junit.Test;
 
-import java.net.Socket;
 import java.util.Iterator;
 
 import static org.junit.Assert.*;

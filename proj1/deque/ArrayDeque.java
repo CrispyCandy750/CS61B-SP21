@@ -8,8 +8,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     /* first always points the first item. */
     private int first;
 
-    /* last always points the successor of the last item. */
-    private int rear;
+    /* nextLast always points the successor of the last item. */
+    private int nextLast;
 
     private static final int INITIAL_SIZE = 8;
     private static final double MIN_USAGE_FACTOR = 0.25;
@@ -19,7 +19,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     @SuppressWarnings("unchecked")
     public ArrayDeque() {
         deque = (T[]) new Object[INITIAL_SIZE];
-        first = rear = 0;
+        first = nextLast = 0;
     }
 
     /** Adds an item of type T to the front of the deque. */
@@ -36,8 +36,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     @Override
     public void addLast(T item) {
         // 1. addToArr  2. isFull  3. resize()
-        deque[rear] = item;
-        rear = nextIndex(deque, rear);
+        deque[nextLast] = item;
+        nextLast = nextIndex(deque, nextLast);
         if (isFull()) {
             resize((int) (deque.length * EXPAND_FACTOR));
         }
@@ -46,7 +46,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     /** Returns the number of items in the deque. */
     @Override
     public int size() {
-        return (rear - first + deque.length) % deque.length;
+        return (nextLast - first + deque.length) % deque.length;
     }
 
     /**
@@ -89,8 +89,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return null;
         }
 
-        rear = prevIndex(deque, rear);
-        T res = deque[rear];
+        nextLast = prevIndex(deque, nextLast);
+        T res = deque[nextLast];
 
         if (needShrink()) {
             resize((int) (deque.length * SHRINK_FACTOR));
@@ -165,7 +165,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
         @Override
         public boolean hasNext() {
-            return cur != rear;
+            return cur != nextLast;
         }
 
         @Override
@@ -178,7 +178,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     /** Returns true if the deque is full, false otherwise. */
     private boolean isFull() {
-        return nextIndex(deque, rear) == first;
+        return nextIndex(deque, nextLast) == first;
     }
 
     /** Returns true if the deque need shrinking, false otherwise. */
@@ -199,7 +199,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
 
         first = 0;
-        rear = newRear;
+        nextLast = newRear;
         deque = newDeque;
     }
 

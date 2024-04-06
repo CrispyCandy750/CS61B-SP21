@@ -2,6 +2,7 @@ package tester;
 
 import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
+import student.Deque;
 import student.StudentArrayDeque;
 
 import static org.junit.Assert.*;
@@ -17,7 +18,6 @@ public class TestArrayDequeEC {
         int operationNumber = 0;
 
         StringBuilder operationSequence = new StringBuilder();
-        String operation = "";
 
         int N = 10000;
 
@@ -25,42 +25,75 @@ public class TestArrayDequeEC {
             operationNumber = StdRandom.uniform(0, 4);
             switch (operationNumber) {
                 case 0:  // addFirst
-                    int addNumber = StdRandom.uniform(0, 100);
-                    buggyDeque.addFirst(addNumber);
-                    correctDeque.addFirst(addNumber);
-
-                    operation = "addFirst(" + addNumber + ")";
-                    operationSequence.append(operation + "\n");
-
+                    testAddFirst(buggyDeque, correctDeque, operationSequence);
                     break;
                 case 1:  // addLast
-                    addNumber = StdRandom.uniform(0, 100);
-                    buggyDeque.addLast(addNumber);
-                    correctDeque.addLast(addNumber);
-
-                    operation = "addLast(" + addNumber + ")";
-                    operationSequence.append(operation + "\n");
-
+                    testAddLast(buggyDeque, correctDeque, operationSequence);
                     break;
                 case 2:  // removeFirst
-                    if (!buggyDeque.isEmpty() && !correctDeque.isEmpty()) {
-
-                        operation = "removeFirst()";
-                        operationSequence.append(operation + "\n");
-
-                        assertEquals(operationSequence.toString(), correctDeque.removeFirst(),
-                                buggyDeque.removeFirst());
-                    }
+                    testRemoveFirst(buggyDeque, correctDeque, operationSequence);
                     break;
                 case 3:  // removeLast
-                    if (!buggyDeque.isEmpty() && !correctDeque.isEmpty()) {
-                        operation = "removeLast()";
-                        operationSequence.append(operation + "\n");
-                        assertEquals(operationSequence.toString(), correctDeque.removeLast(),
-                                buggyDeque.removeLast());
-                    }
+                    testRemoveLast(buggyDeque, correctDeque, operationSequence);
+                    break;
+                case 4: // size
+                    testSize(buggyDeque, correctDeque, operationSequence);
                     break;
             }
         }
+    }
+
+    private void testAddFirst(Deque buggyDeque, Deque correctDeque, StringBuilder operationSequence) {
+        int addNumber = StdRandom.uniform(0, 100);
+        buggyDeque.addFirst(addNumber);
+        correctDeque.addFirst(addNumber);
+
+        String operation = "addFirst(" + addNumber + ")";
+        operationSequence.append(operation + "\n");
+    }
+
+    private void testAddLast(Deque buggyDeque, Deque correctDeque, StringBuilder operationSequence) {
+        int addNumber = StdRandom.uniform(0, 100);
+        buggyDeque.addLast(addNumber);
+        correctDeque.addLast(addNumber);
+
+        String operation = "addLast(" + addNumber + ")";
+        operationSequence.append(operation + "\n");
+    }
+
+    private void testRemoveFirst(Deque buggyDeque, Deque correctDeque, StringBuilder operationSequence) {
+        if (!buggyDeque.isEmpty() && !correctDeque.isEmpty()) {
+
+            String operation = "removeFirst()";
+            operationSequence.append(operation + "\n");
+
+            Object expect = correctDeque.removeFirst();
+            Object actual = buggyDeque.removeFirst();
+
+            assertEquals(operationSequence.toString(), expect, actual);
+        }
+    }
+
+    private void testRemoveLast(Deque buggyDeque, Deque correctDeque, StringBuilder operationSequence) {
+        if (!buggyDeque.isEmpty() && !correctDeque.isEmpty()) {
+
+            String operation = "removeLast()";
+            operationSequence.append(operation + "\n");
+
+            Object expect = correctDeque.removeLast();
+            Object actual = buggyDeque.removeLast();
+
+            assertEquals(operationSequence.toString(), expect, actual);
+        }
+    }
+
+    private void testSize(Deque buggyDeque, Deque correctDeque, StringBuilder operationSequence) {
+        String operation = "size()";
+        operationSequence.append(operation + "\n");
+
+        Object expect = correctDeque.size();
+        Object actual = buggyDeque.size();
+
+        assertEquals(operationSequence.toString(), expect, actual);
     }
 }

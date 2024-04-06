@@ -43,7 +43,7 @@ public class TestArrayDequeEC {
         }
     }
 
-    private void testAddFirst(Deque buggyDeque, Deque correctDeque, StringBuilder operationSequence) {
+    private void testAddFirst(StudentArrayDeque buggyDeque, ArrayDequeSolution correctDeque, StringBuilder operationSequence) {
         int addNumber = StdRandom.uniform(0, 100);
         buggyDeque.addFirst(addNumber);
         correctDeque.addFirst(addNumber);
@@ -52,7 +52,7 @@ public class TestArrayDequeEC {
         operationSequence.append(operation + "\n");
     }
 
-    private void testAddLast(Deque buggyDeque, Deque correctDeque, StringBuilder operationSequence) {
+    private void testAddLast(StudentArrayDeque buggyDeque, ArrayDequeSolution correctDeque, StringBuilder operationSequence) {
         int addNumber = StdRandom.uniform(0, 100);
         buggyDeque.addLast(addNumber);
         correctDeque.addLast(addNumber);
@@ -61,7 +61,7 @@ public class TestArrayDequeEC {
         operationSequence.append(operation + "\n");
     }
 
-    private void testRemoveFirst(Deque buggyDeque, Deque correctDeque, StringBuilder operationSequence) {
+    private void testRemoveFirst(StudentArrayDeque buggyDeque, ArrayDequeSolution correctDeque, StringBuilder operationSequence) {
         if (!buggyDeque.isEmpty() && !correctDeque.isEmpty()) {
 
             String operation = "removeFirst()";
@@ -74,7 +74,7 @@ public class TestArrayDequeEC {
         }
     }
 
-    private void testRemoveLast(Deque buggyDeque, Deque correctDeque, StringBuilder operationSequence) {
+    private void testRemoveLast(StudentArrayDeque buggyDeque, ArrayDequeSolution correctDeque, StringBuilder operationSequence) {
         if (!buggyDeque.isEmpty() && !correctDeque.isEmpty()) {
 
             String operation = "removeLast()";
@@ -87,7 +87,7 @@ public class TestArrayDequeEC {
         }
     }
 
-    private void testSize(Deque buggyDeque, Deque correctDeque, StringBuilder operationSequence) {
+    private void testSize(StudentArrayDeque buggyDeque, ArrayDequeSolution correctDeque, StringBuilder operationSequence) {
         String operation = "size()";
         operationSequence.append(operation + "\n");
 

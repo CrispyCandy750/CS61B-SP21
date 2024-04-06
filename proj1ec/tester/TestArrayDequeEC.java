@@ -22,7 +22,7 @@ public class TestArrayDequeEC {
         int N = 10000;
 
         for (int i = 0; i < N; i++) {
-            operationNumber = StdRandom.uniform(0, 4);
+            operationNumber = StdRandom.uniform(0, 5);
             switch (operationNumber) {
                 case 0:  // addFirst
                     testAddFirst(buggyDeque, correctDeque, operationSequence);

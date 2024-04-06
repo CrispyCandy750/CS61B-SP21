@@ -110,17 +110,10 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
     /** Returns the index-th item, returns null if index exceeds size. */
     public T getRecursive(int index) {
-        if (index > size()) {
+        if (index >= size) {
             return null;
         }
-        Node cur = sentinel.next;
-
-        /* Move the cur to the index-th node. */
-        for (int i = 0; i < index; i++) {
-            cur = cur.next;
-        }
-
-        return cur.item;
+        return getRecursive(sentinel.next, 0, index);
     }
 
     /* --------------------------- private class & methods --------------------------- */
@@ -213,7 +206,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         return res;
     }
 
-    /** Returns the i-th item starting at node exclusively, returns null if index out of size. */
+    /** Returns the i-th item starting at node exclusively, returns null if index exceeds size. */
     private T getIthItemStartingAt(Node node, int index) {
         int i = 0;
         Node cur = node.next;
@@ -225,5 +218,13 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
         // if cur == node, returns null
         return cur.item;
+    }
+
+    /** Returns the i-th item starting at node exclusively. */
+    private T getRecursive(Node node, int cur, int index) {
+        if (cur == index) {
+            return node.item;
+        }
+        return getRecursive(node.next, cur + 1, index);
     }
 }

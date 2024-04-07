@@ -1,12 +1,9 @@
 package capers;
 
-import java.io.File;
-import java.util.Arrays;
-
-import static capers.Utils.*;
+import static capers.Utils.exitWithError;
 
 /** Canine Capers: A Gitlet Prelude.
- * @author TODO
+ * @author Crispy Candy
 */
 public class Main {
     /**

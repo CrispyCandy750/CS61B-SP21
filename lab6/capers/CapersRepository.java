@@ -42,7 +42,24 @@ public class CapersRepository {
      * @param text String of the text to be appended to the story
      */
     public static void writeStory(String text) {
-        // TODO
+        File storyFile = join(CAPERS_FOLDER, "story");
+
+        /* Create the file if not exists. */
+        if (!storyFile.exists()) {
+            try {
+                storyFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        /* Print the content after writing. */
+        String content = new String(readContents(storyFile));
+        content += (text + "\n");
+        System.out.println(content);
+
+        /* Append the content to the file. */
+        writeContents(storyFile, content);
     }
 
     /**

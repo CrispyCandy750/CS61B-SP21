@@ -59,11 +59,15 @@ public class Dog implements Serializable{
      * Saves a dog to a file for future use.
      */
     public void saveDog() {
-        // TODO (hint: don't forget dog names are unique)
         File dogFile = join(DOG_FOLDER, this.name);
         if (!dogFile.exists()) {
-            Utils.writeObject(dogFile, this);
+            try {
+                dogFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+        Utils.writeObject(dogFile, this);
     }
 
     @Override

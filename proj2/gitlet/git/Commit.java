@@ -5,14 +5,17 @@ package gitlet.git;
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Map;
 
-/** Represents a gitlet commit object.
+/**
+ * Represents a gitlet commit object.
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- *  @author TODO
+ * @author TODO
  */
+
 /** Represents a gitlet commit object and manipulate all commits objects. */
 public class Commit implements Serializable {
     /**
@@ -29,13 +32,15 @@ public class Commit implements Serializable {
     private String message;
     private Timestamp timestamp;
     private String parent;
-    private Map<File, Blob> files;
 
-    public Commit(String message, String parent, Map<File, Blob> files) {
+    /** Represents the pointers from FileName to blob. */
+    private Map<String, String> files;
+
+    public Commit(String message, String parent, Map<String, String> files) {
         new Commit(message, parent, System.currentTimeMillis(), files);
     }
 
-    private Commit(String message, String parent, long time, Map<File, Blob> files) {
+    private Commit(String message, String parent, long time, Map<String, String> files) {
         this.message = message;
         this.parent = parent;
         this.timestamp = new Timestamp(time);
@@ -54,11 +59,32 @@ public class Commit implements Serializable {
 
     /** Creates the initial commit. */
     private static Commit initialCommit() {
-        return new Commit("initial message", null, 0, null);
+        return new Commit("initial message", null, 0, new HashMap<>());
+    }
+
+    /** Returns commit by commit id. */
+    public static Commit fromCommitId(String commitId) {
+        File commitFile = Utils.join(Utils.join(COMMITS_DIR, commitId.substring(0, 2)),
+                commitId.substring(2));
+        return Utils.readObject(commitFile, Commit.class);
+    }
+
+    /* ----------------------------------- instance methods ----------------------------------- */
+
+    /** Returns the sha1 of this commit. */
+    public String sha1() {
+        return Utils.sha1(Utils.serialize(this));
+    }
+
+    /** Returns true if the commit contains the file and is identical to the version in the
+     * current commit, false otherwise. */
+    public boolean containsAndIsIdentical(MediatorFile file) {
+        String blobId = files.getOrDefault(file.getFileName(), null);
+        return blobId != null && blobId.equals(file.sha1());
     }
 
     /** Save the commit in the objects directory with the name as its hashcode. */
-    private String saveCommit() {
+    public String saveCommit() {
         String commitId = this.sha1();
 
         /* Creates the directory contains this commit. */
@@ -74,7 +100,6 @@ public class Commit implements Serializable {
         return commitId;
     }
 
-    public String sha1() {
-        return Utils.sha1(Utils.serialize(this));
-    }
+    /* ----------------------------------- private methods ----------------------------------- */
+
 }

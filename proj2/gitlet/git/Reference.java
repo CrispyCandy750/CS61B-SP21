@@ -20,4 +20,15 @@ public class Reference {
         File branch = Utils.join(REF_DIR, branchName);
         Utils.writeContents(branch, commitId);
     }
+
+    /** Returns the furthest commit in the specific branch. */
+    public static Commit furthestCommit(String branch) {
+        return Commit.fromCommitId(furthestCommitId(branch));
+    }
+
+    /** Returns the hash id of the furthest commit in the branch. */
+    public static String furthestCommitId(String branch) {
+        File branchFile = Utils.join(REF_DIR, branch);
+        return new String(Utils.readContents(branchFile));
+    }
 }

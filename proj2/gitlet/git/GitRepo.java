@@ -6,7 +6,7 @@ import java.io.File;
 public class GitRepo {
 
     /** The .getlet directory */
-    public final static File GIT_REPO = Utils.join(Repository.CWD, ".getlet");
+    public final static File GIT_REPO = Utils.join(Repository.CWD, ".gitlet");
     public final static String DEFAULT_INITIAL_BRANCH = "master";
 
     /**
@@ -23,5 +23,23 @@ public class GitRepo {
         StagingArea.init();
         Reference.init(DEFAULT_INITIAL_BRANCH, initialCommitId);
         HEADPointer.init(DEFAULT_INITIAL_BRANCH);
+    }
+
+    /**
+     * 1. Check if the current working version of the file is identical to the version in the current commit.
+     * 2. Store the file as a blob object
+     * 3. add the Map in the INDEX file.
+     */
+    public static void add(MediatorFile file) {
+
+        Commit commit = HEADPointer.currentCommit();
+        if (commit.containsAndIsIdentical(file)) {
+            return;
+        }
+
+        Blob blob = new Blob(file.getContent());
+        blob.saveBlob();
+
+        StagingArea.add(file.getFileName(), blob.getBlobId());
     }
 }

@@ -39,4 +39,23 @@ public class Repository {
     public static void init() {
         GitRepo.init();
     }
+
+
+    /**
+     * Adds a copy of the file as it currently exists to the staging area (see the description of
+     * the commit command).
+     * Staging an already-staged file overwrites the previous entry in the staging area with the
+     * new contents.
+     * The staging area should be somewhere in .gitlet.
+     * If the current working version of the file is identical to the version in the current commit,
+     * do not stage it to be added, and remove it from the staging area if it is already there
+     * (as can happen when a file is changed, added, and then changed back to it's original version).
+     */
+    public static void add(String fileName) {
+        File addedFile = Utils.join(CWD, fileName);
+        if (!addedFile.exists()) {
+            return;
+        }
+        GitRepo.add(new MediatorFile(addedFile));
+    }
 }

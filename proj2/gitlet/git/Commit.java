@@ -13,14 +13,14 @@ import java.util.Map;
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- * @author TODO
+ * @author Crispy Candy
  */
 
 /** Represents a gitlet commit object and manipulate all commits objects. */
 public class Commit implements Serializable {
     /**
      * TODO: add instance variables here.
-     *
+     * <p>
      * List all instance variables of the Commit class here with a useful
      * comment above them describing what that variable represents and how that
      * variable is used. We've provided one example for `message`.
@@ -31,20 +31,25 @@ public class Commit implements Serializable {
     /** The message of this Commit. */
     private String message;
     private Timestamp timestamp;
+
+    /** The hash code of last parent. */
     private String parent;
 
-    /** Represents the pointers from FileName to blob. */
-    private Map<String, String> files;
+    /** The mapping from file name to blob file. */
+    private Map<String, String> fileBlobMap;
 
-    public Commit(String message, String parent, Map<String, String> files) {
-        new Commit(message, parent, System.currentTimeMillis(), files);
+    public Commit(String message, String parent, Map<String, String> fileBlobMap) {
+        this.message = message;
+        this.parent = parent;
+        this.timestamp = new Timestamp(System.currentTimeMillis());
+        this.fileBlobMap = fileBlobMap;
     }
 
-    private Commit(String message, String parent, long time, Map<String, String> files) {
+    private Commit(String message, String parent, long time, Map<String, String> fileBlobMap) {
         this.message = message;
         this.parent = parent;
         this.timestamp = new Timestamp(time);
-        this.files = files;
+        this.fileBlobMap = fileBlobMap;
     }
 
     /* TODO: fill in the rest of this class. */
@@ -76,10 +81,12 @@ public class Commit implements Serializable {
         return Utils.sha1(Utils.serialize(this));
     }
 
-    /** Returns true if the commit contains the file and is identical to the version in the
-     * current commit, false otherwise. */
+    /**
+     * Returns true if the commit contains the file and is identical to the version in the
+     * current commit, false otherwise.
+     */
     public boolean containsAndIsIdentical(MediatorFile file) {
-        String blobId = files.getOrDefault(file.getFileName(), null);
+        String blobId = fileBlobMap.getOrDefault(file.getFileName(), null);
         return blobId != null && blobId.equals(file.sha1());
     }
 
@@ -98,6 +105,21 @@ public class Commit implements Serializable {
         Utils.writeObject(commitFile, this);
 
         return commitId;
+    }
+
+    /** Returns the mapping from */
+    public Map<String, String> getFileBlobMap() {
+        return fileBlobMap;
+    }
+
+    /** Add or modify the mapping from fileName to blobId. */
+    public void put(String fileName, String blobId) {
+        fileBlobMap.put(fileName, blobId);
+    }
+
+    /** Remove the file. */
+    public void remove(String fileName) {
+        fileBlobMap.remove(fileName);
     }
 
     /* ----------------------------------- private methods ----------------------------------- */

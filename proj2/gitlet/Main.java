@@ -22,6 +22,10 @@ public class Main {
                 Repository.add(fileName);
                 break;
             // TODO: FILL THE REST IN
+            case "commit":
+                String commitMessage = args[1];
+                Repository.commit(commitMessage);
+                break;
         }
     }
 }

@@ -16,8 +16,7 @@ public class StagingArea{
 
     /** Initialization: Create the .gitlet/index file. */
     public static void init() {
-        StagedAndRemovedArea stagedAndRemovedArea = new StagedAndRemovedArea();
-        stagedAndRemovedArea.save();
+        clear();
     }
 
     /** Add the pointer from filename to blob. */
@@ -27,15 +26,30 @@ public class StagingArea{
         stagingArea.save();
     }
 
-    /* ---------------------------- private class & methods ---------------------------- */
+    /** Returns the mapping from files to be added or modified to blob. */
+    public static Map<String, String> getFilesToAddOrModify() {
+        return getStagingArea().filesToAddOrModify;
+    }
 
+    /** Returns the files to be removed. */
+    public static Set<String> getFilesToRemove() {
+        return getStagingArea().filesToRemove;
+    }
+
+    /** Clear the mapping with empty StagedAndRemovedArea object. */
+    public static void clear() {
+        StagedAndRemovedArea stagedAndRemovedArea = new StagedAndRemovedArea();
+        stagedAndRemovedArea.save();
+    }
+
+    /* ---------------------------- private class & methods ---------------------------- */
     private static class StagedAndRemovedArea implements Serializable {
         /** Represents the pointer from files to blob */
-        private Map<String, String> filesToAdd;
+        private Map<String, String> filesToAddOrModify;
         private Set<String> filesToRemove;
 
         StagedAndRemovedArea() {
-            filesToAdd = new HashMap<>();
+            filesToAddOrModify = new HashMap<>();
             filesToRemove = new HashSet<>();
         }
 
@@ -46,7 +60,7 @@ public class StagingArea{
 
         /** Add the pointer from filename to blob. */
         void add(String fileName, String blobId) {
-            filesToAdd.put(fileName, blobId);
+            filesToAddOrModify.put(fileName, blobId);
         }
     }
 

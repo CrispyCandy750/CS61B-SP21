@@ -15,7 +15,7 @@ Usage: python3 staff-runner.py OPTIONS TEST.in ...
        --timeout=SEC  Default number of seconds allowed to each execution
                       of gitlet.
        --src=SRC      Use SRC instead of "src" as the subdirectory containing
-                      files referenced by + and =.
+                      fileBlobMap referenced by + and =.
        --tolerance=N  Set the maximum allowed edit distance between program
                       output and expected output to N (default 3).
        --verbose      Print extra information about execution.
@@ -77,7 +77,7 @@ tests.  With --keep, keeps the directories created for the tests (with names
 TEST.dir).
 
 When finished, reports number of tests passed and failed, and the number of
-faulty TEST.in files."""
+faulty TEST.in fileBlobMap."""
 
 
 DIRECTORY_LAYOUT_ERROR = """\
@@ -433,7 +433,7 @@ if __name__ == "__main__":
     output_tolerance = 0
 
     try:
-        opts, files = \
+        opts, fileBlobMap = \
             getopt(sys.argv[1:], '',
                    ['show=', 'keep', 'lib=', 'verbose', 'src=',
                     'tolerance=', 'superverbose', 'debug'])
@@ -457,22 +457,22 @@ if __name__ == "__main__":
                 TIMEOUT = 100000
     except GetoptError:
         Usage()
-    if not files:
+    if not fileBlobMap:
         print(USAGE)
         sys.exit(0)
 
     matching_files = []
-    for path in files:
+    for path in fileBlobMap:
         matching_files += glob(path)
-    files = matching_files
+    fileBlobMap = matching_files
 
-    num_tests = len(files)
+    num_tests = len(fileBlobMap)
     errs = 0
     fails = 0
 
     print(DEBUG_MSG)
 
-    for test in files:
+    for test in fileBlobMap:
         try:
             if not exists(test):
                 num_tests -= 1

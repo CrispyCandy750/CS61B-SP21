@@ -30,13 +30,11 @@ public class HEADPointer {
 
     /** Returns the current commit. */
     public static Commit currentCommit() {
-        return Commit.fromCommitId(currentId());
+        return Commit.fromCommitId(currentCommitId());
     }
 
-    /* ----------------------------------- private methods ----------------------------------- */
-
     /** Returns the id of the commit which the head points. */
-    private static String currentId() {
+    public static String currentCommitId() {
         String content = new String(Utils.readContents(HEAD_FILE));
 
         /* Check the if the head points a reference */
@@ -48,4 +46,6 @@ public class HEADPointer {
         /* The head points a specific head. */
         return content;
     }
+
+    /* ----------------------------------- private methods ----------------------------------- */
 }

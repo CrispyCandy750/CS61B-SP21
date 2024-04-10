@@ -1,6 +1,8 @@
 package gitlet.git;
 
 import java.io.File;
+import java.util.Map;
+import java.util.Set;
 
 /** GitRepo class represents the .gitlet directory. */
 public class GitRepo {
@@ -26,7 +28,8 @@ public class GitRepo {
     }
 
     /**
-     * 1. Check if the current working version of the file is identical to the version in the current commit.
+     * 1. Check if the current working version of the file is identical to the version in the
+     * current commit.
      * 2. Store the file as a blob object
      * 3. add the Map in the INDEX file.
      */
@@ -41,5 +44,33 @@ public class GitRepo {
         blob.saveBlob();
 
         StagingArea.add(file.getFileName(), blob.getBlobId());
+    }
+
+
+    /**
+     * 1. get all files in staging area
+     * 2. copy the last commit and change the map
+     * 3. save the commit
+     * 4. clean the staging area
+     */
+    public static void commit(String message) {
+        Commit currentCommit = HEADPointer.currentCommit();
+        Commit newCommit = new Commit(message, HEADPointer.currentCommitId(),
+                currentCommit.getFileBlobMap());
+
+        /* Add or modify the mapping from file name to blob file. */
+        Map<String, String> filesToAddOrModify = StagingArea.getFilesToAddOrModify();
+        for (String fileName : filesToAddOrModify.keySet()) {
+            newCommit.put(fileName, filesToAddOrModify.get(fileName));
+        }
+
+        /* Remove the file. */
+        Set<String> filesToRemove = StagingArea.getFilesToRemove();
+        for (String fileName : filesToRemove) {
+            newCommit.remove(fileName);
+        }
+
+        newCommit.saveCommit();
+        StagingArea.clear();
     }
 }

@@ -1,8 +1,6 @@
-package gitlet;
+package gitlet.git;
 
 import java.io.File;
-
-import static gitlet.Utils.*;
 
 // TODO: any imports you need here
 
@@ -32,16 +30,13 @@ public class Repository {
      * It will have a single branch: master, which initially points to this initial commit, and
      * master will be the current branch.
      * The timestamp for this initial commit will be 00:00:00 UTC, Thursday, 1 January 1970 in
-     * whatever format you choose for dates (this is called “The (Unix) Epoch”, represented internally
+     * whatever format you choose for dates (this is called "The (Unix) Epoch", represented internally
      * by the time 0.)
      * Since the initial commit in all repositories created by Gitlet will have exactly the same content,
      * it follows that all repositories will automatically share this commit (they will all have the same UID)
      * and all commits in all repositories will trace back to it.
      */
     public static void init() {
-        File gitletDir = join(CWD, ".gitlet");
-        if (gitletDir.exists()) {
-            System.out.println("the ");
-        }
+        GitRepo.init();
     }
 }

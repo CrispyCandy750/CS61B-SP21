@@ -1,11 +1,10 @@
-package gitlet;
+package gitlet.git;
 
 // TODO: any imports you need here
 
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date; // TODO: You'll likely use this in this class
 import java.util.Map;
 
 /** Represents a gitlet commit object.
@@ -46,10 +45,11 @@ public class Commit implements Serializable {
     /* TODO: fill in the rest of this class. */
 
     /** Create the .gitlet/objects/ directory and initial commit. */
-    public static void init() {
+    public static String init() {
+        /* Creates */
         COMMITS_DIR.mkdir();
         Commit initialCommit = initialCommit();
-        initialCommit.saveCommit();
+        return initialCommit.saveCommit();
     }
 
     /** Creates the initial commit. */
@@ -58,8 +58,8 @@ public class Commit implements Serializable {
     }
 
     /** Save the commit in the objects directory with the name as its hashcode. */
-    private void saveCommit() {
-        String commitId = Utils.sha1(this);
+    private String saveCommit() {
+        String commitId = this.sha1();
 
         /* Creates the directory contains this commit. */
         File commitDir = Utils.join(COMMITS_DIR, commitId.substring(0, 2));
@@ -70,5 +70,11 @@ public class Commit implements Serializable {
         /* Save the commit. */
         File commitFile = Utils.join(commitDir, commitId.substring(2));
         Utils.writeObject(commitFile, this);
+
+        return commitId;
+    }
+
+    public String sha1() {
+        return Utils.sha1(Utils.serialize(this));
     }
 }

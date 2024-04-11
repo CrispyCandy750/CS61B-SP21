@@ -14,11 +14,11 @@ Usage: python3 tester.py OPTIONS TEST.in ...
        --show=N       Show details on up to N tests.
        --show=all     Show details on all tests.
        --keep         Keep test directories
-       --progdir=DIR  Directory or JAR fileBlobMap containing gitlet application
+       --progdir=DIR  Directory or JAR files containing gitlet application
        --timeout=SEC  Default number of seconds allowed to each execution
                       of gitlet.
        --src=SRC      Use SRC instead of "src" as the subdirectory containing
-                      fileBlobMap referenced by + and =.
+                      files referenced by + and =.
        --debug        Allows you to step through commands one by one and
                       attach a remote debugger
        --tolerance=N  Set the maximum allowed edit distance between program
@@ -84,7 +84,7 @@ tests.  With --keep, keeps the directories created for the tests (with names
 TEST.dir).
 
 When finished, reports number of tests passed and failed, and the number of
-faulty TEST.in fileBlobMap."""
+faulty TEST.in files."""
 
 TIMEOUT = 10
 
@@ -397,7 +397,7 @@ if __name__ == "__main__":
     output_tolerance = 3
 
     try:
-        opts, fileBlobMap = \
+        opts, files = \
             getopt(sys.argv[1:], '',
                    ['show=', 'keep', 'progdir=', 'verbose', 'src=',
                     'tolerance=', 'debug'])
@@ -435,7 +435,7 @@ if __name__ == "__main__":
                 sys.exit(1)
     except GetoptError:
         Usage()
-    if not fileBlobMap:
+    if not files:
         print(USAGE)
         sys.exit(0)
 
@@ -452,11 +452,11 @@ if __name__ == "__main__":
             environ['CLASSPATH'] = "{}".format(prog_dir)
         JAVA_COMMAND = 'exec ' + JAVA_COMMAND
 
-    num_tests = len(fileBlobMap)
+    num_tests = len(files)
     errs = 0
     fails = 0
 
-    for test in fileBlobMap:
+    for test in files:
         try:
             if not exists(test):
                 num_tests -= 1

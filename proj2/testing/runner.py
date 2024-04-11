@@ -16,7 +16,7 @@ Usage: python3 runner.py OPTIONS TEST.in ...
        --timeout=SEC  Default number of seconds allowed to each execution
                       of gitlet.
        --src=SRC      Use SRC instead of "src" as the subdirectory containing
-                      fileBlobMap referenced by + and =.
+                      files referenced by + and =.
        --tolerance=N  Set the maximum allowed edit distance between program
                       output and expected output to N (default 3).
        --verbose      Print extra information about execution.
@@ -80,7 +80,7 @@ tests.  With --keep, keeps the directories created for the tests (with names
 TEST.dir).
 
 When finished, reports number of tests passed and failed, and the number of
-faulty TEST.in fileBlobMap."""
+faulty TEST.in files."""
 
 
 DIRECTORY_LAYOUT_ERROR = """\
@@ -453,7 +453,7 @@ if __name__ == "__main__":
     output_tolerance = 0
 
     try:
-        opts, fileBlobMap = \
+        opts, files = \
             getopt(sys.argv[1:], '',
                    ['show=', 'keep', 'lib=', 'verbose', 'src=',
                     'tolerance=', 'superverbose', 'debug'])
@@ -482,7 +482,7 @@ if __name__ == "__main__":
             lib_dir = join(abspath(getcwd()), abspath(lib_dir))
     except GetoptError:
         Usage()
-    if not fileBlobMap:
+    if not files:
         print(USAGE)
         sys.exit(0)
 
@@ -519,17 +519,17 @@ if __name__ == "__main__":
         sys.exit(1)
 
     matching_files = []
-    for path in fileBlobMap:
+    for path in files:
         matching_files += glob(path)
-    fileBlobMap = matching_files
+    files = matching_files
 
-    num_tests = len(fileBlobMap)
+    num_tests = len(files)
     errs = 0
     fails = 0
 
     print(DEBUG_MSG)
 
-    for test in fileBlobMap:
+    for test in files:
         try:
             if not exists(test):
                 num_tests -= 1

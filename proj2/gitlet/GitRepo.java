@@ -31,23 +31,30 @@ public class GitRepo {
         HEADPointer.init(DEFAULT_INITIAL_BRANCH);
     }
 
+    /** Returns true if the GIT_REPO exists, false otherwise. */
+    public static boolean isInitialized() {
+        return GIT_REPO.exists();
+    }
+
     /**
      * 1. Check if the current working version of the file is identical to the version in the
      * current commit.
      * 2. Store the file as a blob object
      * 3. add the Map in the INDEX file.
      */
-    public static void add(MediatorFile file) {
+    public static String add(MediatorFile file) {
 
         Commit commit = HEADPointer.currentCommit();
         if (commit.containsAndIsIdentical(file)) {
-            return;
+            return null;  // no message to print
         }
 
         Blob blob = new Blob(file.getContent());
         blob.saveBlob();
 
         StagingArea.add(file.getFileName(), blob.getBlobId());
+
+        return null;  // no message to print
     }
 
 

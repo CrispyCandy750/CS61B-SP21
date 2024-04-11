@@ -1,7 +1,9 @@
 package gitlet;
 
-/** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+/**
+ * Driver class for Gitlet, a subset of the Git version-control system.
+ *
+ * @author TODO
  */
 public class Main {
 
@@ -9,30 +11,48 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
 
+    /** The message when no argument. */
+    private final static String NO_ARGUMENT_MESSAGE = "Please enter a command.";
+
     /** The message when forget inputting the commit message. */
-    private final static String NO_COMMIT_MESSAGE_MESSAGE = "Please enter a commit message";
+    private final static String NO_COMMIT_MESSAGE_MESSAGE = "Please enter a commit message.";
+
+    /** The message when the inputted command doesn't exist. */
+    private final static String NO_COMMAND_MESSAGE = "No command with that name exists.";
+
+    /** The message when the number of operands is wrong. */
+    private final static String WRONG_NUMBER_OPERANDS_MESSAGE = "Incorrect operands.";
+
+    /** The message when there is no initialized .gitlet directory. */
+    private final static String NO_GIT_REPO_MESSAGE = "Not in an initialized Gitlet directory.";
 
     public static void main(String[] args) {
-        // TODO: what if args is empty?
+        validateNoArgs(args, NO_ARGUMENT_MESSAGE);
         String firstArg = args[0];
-        switch(firstArg) {
+        switch (firstArg) {
             case "init":
                 Repository.init();
                 break;
             case "add":
+                validateGitInitialization(NO_GIT_REPO_MESSAGE);
+                validateNumArgs("add", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
                 String fileName = args[1];
                 Repository.add(fileName);
                 break;
             // TODO: FILL THE REST IN
             case "commit":
-                if (args.length < 2) {
-                    printMessage(NO_COMMIT_MESSAGE_MESSAGE);
-                } else {
-                    String commitMessage = args[1];
-                    String message = Repository.commit(commitMessage);
-                    printMessage(message);
-                }
+                validateGitInitialization(NO_GIT_REPO_MESSAGE);
+                validateNumArgs("commit", args, 2, NO_COMMIT_MESSAGE_MESSAGE);
+                String commitMessage = args[1];
+                String message = Repository.commit(commitMessage);
+                printMessage(message);
                 break;
+            case "rm":  // java gitlet.Main rm <file name>
+                validateGitInitialization(NO_GIT_REPO_MESSAGE);
+                validateNumArgs("rm", args, 2);
+                break;
+            default:
+                System.out.println(NO_COMMAND_MESSAGE);
         }
     }
 
@@ -40,6 +60,55 @@ public class Main {
     private static void printMessage(String message) {
         if (message != null && !message.equals("")) {
             System.out.println(message);
+        }
+    }
+
+    /**
+     * Checks the number of arguments versus the expected number,
+     * throws a RuntimeException if they do not match.
+     *
+     * @param cmd  Name of command you are validating
+     * @param args Argument array from command line
+     * @param n    Number of expected arguments
+     */
+    public static void validateNumArgs(String cmd, String[] args, int n) {
+        if (args.length != n) {
+            throw new RuntimeException(
+                    String.format("Invalid number of arguments for: %s.", cmd));
+        }
+    }
+
+    /**
+     * Checks the number of arguments versus the expected number,
+     * print the message if they do not match.
+     *
+     * @param cmd  Name of command you are validating
+     * @param args Argument array from command line
+     * @param n    Number of expected arguments
+     */
+    private static void validateNumArgs(String cmd, String[] args, int n, String message) {
+        if (args.length != n) {
+            System.out.println(message);
+            System.exit(0);
+        }
+    }
+
+    /**
+     * Checks if there is no arguments.
+     * print the message if no arguments.
+     */
+    private static void validateNoArgs(String[] args, String message) {
+        if (args.length == 0) {
+            System.out.println(message);
+            System.exit(0);
+        }
+    }
+
+    /** Check if the git repository is initialized. */
+    private static void validateGitInitialization(String message) {
+        if (!Repository.isInitialized()) {
+            System.out.println(message);
+            System.exit(0);
         }
     }
 }

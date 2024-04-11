@@ -23,6 +23,9 @@ public class Repository {
     /** The current working directory. */
     public static final File CWD = new File(System.getProperty("user.dir"));
 
+    /** The message when added file not found. */
+    private static final String ADD_FILE_NOT_FOUND_MESSAGE = "File does not exist";
+
     /**
      * Creates a new Gitlet version-control system in the current directory.
      * This system will automatically start with one commit: a commit that contains no files and
@@ -55,12 +58,12 @@ public class Repository {
      * (as can happen when a file is changed, added, and then changed back to it's original
      * version).
      */
-    public static void add(String fileName) {
+    public static String add(String fileName) {
         File addedFile = Utils.join(CWD, fileName);
         if (!addedFile.exists()) {
-            return;
+            return ADD_FILE_NOT_FOUND_MESSAGE;
         }
-        GitRepo.add(new MediatorFile(addedFile));
+        return GitRepo.add(new MediatorFile(addedFile));
     }
 
     /**
@@ -82,5 +85,10 @@ public class Repository {
      */
     public static String commit(String message) {
         return GitRepo.commit(message);
+    }
+
+    /** Returns true if the GIT_REPO exists, false otherwise. */
+    public static boolean isInitialized() {
+        return GitRepo.isInitialized();
     }
 }

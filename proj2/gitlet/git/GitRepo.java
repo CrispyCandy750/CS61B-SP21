@@ -11,6 +11,10 @@ public class GitRepo {
     public final static File GIT_REPO = Utils.join(Repository.CWD, ".gitlet");
     public final static String DEFAULT_INITIAL_BRANCH = "master";
 
+    /** The message when there is no files have been staged. */
+    private final static String NO_STAGED_FILE_MESSAGE = "No changes added to the commit";
+
+
     /**
      * 1. creates the .git/object/ directory (Commit to do).
      * 2. creates the initial commit (Commit to do).
@@ -52,25 +56,40 @@ public class GitRepo {
      * 2. copy the last commit and change the map
      * 3. save the commit
      * 4. clean the staging area
+     * 5. Move the branch
      */
-    public static void commit(String message) {
+    public static String commit(String message) {
+        if (!StagingArea.changed()) {
+            return NO_STAGED_FILE_MESSAGE;
+        }
+
         Commit currentCommit = HEADPointer.currentCommit();
         Commit newCommit = new Commit(message, HEADPointer.currentCommitId(),
                 currentCommit.getFileBlobMap());
 
         /* Add or modify the mapping from file name to blob file. */
-        Map<String, String> filesToAddOrModify = StagingArea.getFilesToAddOrModify();
-        for (String fileName : filesToAddOrModify.keySet()) {
-            newCommit.put(fileName, filesToAddOrModify.get(fileName));
+        if (StagingArea.haveFilesToBeAddedOrModified()) {
+            Map<String, String> filesToAddOrModify = StagingArea.getFilesToAddOrModify();
+            for (String fileName : filesToAddOrModify.keySet()) {
+                newCommit.put(fileName, filesToAddOrModify.get(fileName));
+            }
         }
 
-        /* Remove the file. */
-        Set<String> filesToRemove = StagingArea.getFilesToRemove();
-        for (String fileName : filesToRemove) {
-            newCommit.remove(fileName);
+        /* Remove the files. */
+        if (StagingArea.haveFilesToBeRemoved()) {
+            Set<String> filesToRemove = StagingArea.getFilesToRemove();
+            for (String fileName : filesToRemove) {
+                newCommit.remove(fileName);
+            }
         }
 
-        newCommit.saveCommit();
+        /* Save the new commit. */
+        String newCommitId = newCommit.saveCommit();
+
+        /* Update the state of git repository. */
         StagingArea.clear();
+        Reference.move(HEADPointer.currentBranch(), newCommitId);
+
+        return null; // no message to print.
     }
 }

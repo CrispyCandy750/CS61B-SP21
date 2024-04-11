@@ -80,7 +80,7 @@ public class Repository {
      * Finally, files tracked in the current commit may be untracked in the new commit as a result
      * being staged for removal by the rm command (below).
      */
-    public static void commit(String message) {
-        GitRepo.commit(message);
+    public static String commit(String message) {
+        return GitRepo.commit(message);
     }
 }

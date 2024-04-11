@@ -36,15 +36,30 @@ public class HEADPointer {
     /** Returns the id of the commit which the head points. */
     public static String currentCommitId() {
         String content = new String(Utils.readContents(HEAD_FILE));
-
-        /* Check the if the head points a reference */
+        /*
+        *//* Check the if the head points a reference *//*
         if (content.startsWith(PREFIX_REFS)) {
             String branch = content.substring(PREFIX_REFS.length());
             return Reference.furthestCommitId(branch);
         }
 
-        /* The head points a specific head. */
+        *//* The head points a specific head. *//*
         return content;
+        */
+        return Reference.furthestCommitId(currentBranch());
+    }
+
+    /** Returns the current branch name. We suppose no detached head state. */
+    public static String currentBranch() {
+        String content = new String(Utils.readContents(HEAD_FILE));
+        /*
+        *//* Check the if the head points a reference *//*
+        if (content.startsWith(PREFIX_REFS)) {
+            String branch = content.substring(PREFIX_REFS.length());
+            return Reference.furthestCommitId(branch);
+        }
+        */
+        return content.substring(PREFIX_REFS.length());
     }
 
     /* ----------------------------------- private methods ----------------------------------- */

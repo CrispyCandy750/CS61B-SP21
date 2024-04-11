@@ -31,4 +31,10 @@ public class Reference {
         File branchFile = Utils.join(REF_DIR, branch);
         return new String(Utils.readContents(branchFile));
     }
+
+    /** Move the branch pointer to the new commit. */
+    public static void move(String branch, String commitId) {
+        File branchFile = Utils.join(REF_DIR, branch);
+        Utils.writeContents(REF_DIR, commitId);
+    }
 }

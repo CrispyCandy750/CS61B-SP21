@@ -32,7 +32,6 @@ RMAKE = "$(MAKE)"
 
 default:
 	$(RMAKE) -C $(PACKAGE) default
-	$(RMAKE) -C $(PACKAGE)/git default
 
 check: default
 	$(RMAKE) -C testing PYTHON=$(PYTHON) TESTER_FLAGS="$(TESTER_FLAGS)" check
@@ -42,5 +41,5 @@ clean:
 	$(RM) *~
 	$(RMAKE) -C $(PACKAGE) clean
 	$(RMAKE) -C testing clean
-	$(RMAKE) -C $(PACKAGE)/git clean
+#	$(RMAKE) -C $(PACKAGE)/git clean
 

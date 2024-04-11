@@ -1,7 +1,5 @@
 package gitlet;
 
-import gitlet.git.Repository;
-
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author TODO
  */
@@ -17,7 +15,6 @@ public class Main {
     public static void main(String[] args) {
         // TODO: what if args is empty?
         String firstArg = args[0];
-        System.out.println("Java Main method");
         switch(firstArg) {
             case "init":
                 Repository.init();
@@ -33,11 +30,10 @@ public class Main {
                 } else {
                     String commitMessage = args[1];
                     String message = Repository.commit(commitMessage);
-                    System.out.println(message);
+                    printMessage(message);
                 }
                 break;
         }
-        System.exit(0);
     }
 
     /** Prints the message when the message is not null or "" */

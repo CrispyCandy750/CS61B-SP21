@@ -1,7 +1,6 @@
-package gitlet.git;
+package gitlet;
 
 import java.io.File;
-import java.io.IOException;
 
 /** Represents the pointer of branch. */
 public class Reference {
@@ -35,6 +34,6 @@ public class Reference {
     /** Move the branch pointer to the new commit. */
     public static void move(String branch, String commitId) {
         File branchFile = Utils.join(REF_DIR, branch);
-        Utils.writeContents(REF_DIR, commitId);
+        Utils.writeContents(branchFile, commitId);
     }
 }

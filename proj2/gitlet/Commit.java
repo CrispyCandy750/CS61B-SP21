@@ -1,4 +1,4 @@
-package gitlet.git;
+package gitlet;
 
 // TODO: any imports you need here
 

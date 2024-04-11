@@ -1,4 +1,4 @@
-package gitlet.git;
+package gitlet;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;

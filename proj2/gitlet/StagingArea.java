@@ -1,4 +1,4 @@
-package gitlet.git;
+package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
@@ -12,12 +12,7 @@ public class StagingArea{
 
     /** Represents the .gitlet/index file. */
     public final static File INDEX_FILE = Utils.join(GitRepo.GIT_REPO, "index");
-
-    /** Represents whether there are any files to be added or modified */
-    private static boolean hasAddOrModify;
-
-    /** Represents whether there are any files to be removed */
-    private static boolean hasRemoved;
+    private static StagedAndRemovedArea stagedAndRemovedArea = null;
 
     /** Initialization: Create the .gitlet/index file. */
     public static void init() {
@@ -29,7 +24,6 @@ public class StagingArea{
         StagedAndRemovedArea stagingArea = getStagingArea();
         stagingArea.add(fileName, blobId);
         stagingArea.save();
-        hasAddOrModify = true;
     }
 
     /** Returns the mapping from files to be added or modified to blob. */
@@ -46,8 +40,6 @@ public class StagingArea{
     public static void clear() {
         StagedAndRemovedArea stagedAndRemovedArea = new StagedAndRemovedArea();
         stagedAndRemovedArea.save();
-        hasAddOrModify = false;
-        hasRemoved = false;
     }
 
     /** Returns whether there are any files to be changed. */
@@ -57,12 +49,14 @@ public class StagingArea{
 
     /** Returns whether there are any files to be added or modified. */
     public static boolean haveFilesToBeAddedOrModified() {
-        return hasAddOrModify;
+        stagedAndRemovedArea = getStagingArea();
+        return !stagedAndRemovedArea.filesToAddOrModify.isEmpty();
     }
 
     /** Returns whether there are any files to be removed. */
     public static boolean haveFilesToBeRemoved() {
-        return hasRemoved;
+        stagedAndRemovedArea = getStagingArea();
+        return !stagedAndRemovedArea.filesToRemove.isEmpty();
     }
 
     /* ---------------------------- private class & methods ---------------------------- */
@@ -89,6 +83,9 @@ public class StagingArea{
 
     /** Returns the stagedArea. */
     private static StagedAndRemovedArea getStagingArea() {
-        return Utils.readObject(INDEX_FILE, StagedAndRemovedArea.class);
+        if (stagedAndRemovedArea == null) {
+            stagedAndRemovedArea = Utils.readObject(INDEX_FILE, StagedAndRemovedArea.class);
+        }
+        return stagedAndRemovedArea;
     }
 }

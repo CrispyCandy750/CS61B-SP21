@@ -24,7 +24,7 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
 
     /** The message when added file not found. */
-    private static final String ADD_FILE_NOT_FOUND_MESSAGE = "File does not exist";
+    private static final String FILE_NOT_FOUND_MESSAGE = "File does not exist.";
 
     /**
      * Creates a new Gitlet version-control system in the current directory.
@@ -61,7 +61,7 @@ public class Repository {
     public static String add(String fileName) {
         File addedFile = Utils.join(CWD, fileName);
         if (!addedFile.exists()) {
-            return ADD_FILE_NOT_FOUND_MESSAGE;
+            return FILE_NOT_FOUND_MESSAGE;
         }
         return GitRepo.add(new MediatorFile(addedFile));
     }
@@ -90,5 +90,31 @@ public class Repository {
     /** Returns true if the GIT_REPO exists, false otherwise. */
     public static boolean isInitialized() {
         return GitRepo.isInitialized();
+    }
+
+    /**
+     * Unstage the file if it is currently staged for addition.
+     * If the file is tracked in the current commit, stage it for
+     * removal and remove the file from the working directory if the
+     * user has not already done so.
+     * (do not remove it unless it is tracked in the current commit)
+     */
+    public static String rm(String fileName) {
+        File file = Utils.join(CWD, fileName);
+
+        /* If the file does not exist. */
+        if (!file.exists()) {
+            return FILE_NOT_FOUND_MESSAGE;
+        }
+
+        String message = GitRepo.rm(fileName);
+
+        /* Add the file to the removed area which means remove from working copy. */
+        if ("remove".equals(message)) {
+            file.delete();
+            return null;
+        }
+
+        return message;
     }
 }

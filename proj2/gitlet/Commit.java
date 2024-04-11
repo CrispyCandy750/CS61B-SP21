@@ -39,10 +39,7 @@ public class Commit implements Serializable {
     private Map<String, String> fileBlobMap;
 
     public Commit(String message, String parent, Map<String, String> fileBlobMap) {
-        this.message = message;
-        this.parent = parent;
-        this.timestamp = new Timestamp(System.currentTimeMillis());
-        this.fileBlobMap = fileBlobMap;
+        this(message, parent, System.currentTimeMillis(), fileBlobMap);
     }
 
     private Commit(String message, String parent, long time, Map<String, String> fileBlobMap) {
@@ -72,6 +69,11 @@ public class Commit implements Serializable {
         File commitFile = Utils.join(Utils.join(COMMITS_DIR, commitId.substring(0, 2)),
                 commitId.substring(2));
         return Utils.readObject(commitFile, Commit.class);
+    }
+
+    /** Clone the commit with new commit message. */
+    public static Commit clone(String newMessage, Commit commit) {
+        return new Commit(newMessage, commit.sha1(), commit.fileBlobMap);
     }
 
     /* ----------------------------------- instance methods ----------------------------------- */
@@ -107,11 +109,6 @@ public class Commit implements Serializable {
         return commitId;
     }
 
-    /** Returns the mapping from */
-    public Map<String, String> getFileBlobMap() {
-        return fileBlobMap;
-    }
-
     /** Add or modify the mapping from fileName to blobId. */
     public void put(String fileName, String blobId) {
         fileBlobMap.put(fileName, blobId);
@@ -120,6 +117,11 @@ public class Commit implements Serializable {
     /** Remove the file. */
     public void remove(String fileName) {
         fileBlobMap.remove(fileName);
+    }
+
+    /** Returns true if the commit contains the file, false otherwise. */
+    public boolean contains(String fileName) {
+        return fileBlobMap.containsKey(fileName);
     }
 
     /* ----------------------------------- private methods ----------------------------------- */

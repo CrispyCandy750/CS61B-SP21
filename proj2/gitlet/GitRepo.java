@@ -12,7 +12,10 @@ public class GitRepo {
     public final static String DEFAULT_INITIAL_BRANCH = "master";
 
     /** The message when there is no files have been staged. */
-    private final static String NO_STAGED_FILE_MESSAGE = "No changes added to the commit";
+    private final static String NO_STAGED_FILE_MESSAGE = "No changes added to the commit.";
+
+    /** The message when no reason to remove the file. */
+    private final static String NO_REASON_TO_REMOVE_MESSAGE = "No reason to remove the file.";
 
 
     /**
@@ -52,7 +55,7 @@ public class GitRepo {
         Blob blob = new Blob(file.getContent());
         blob.saveBlob();
 
-        StagingArea.add(file.getFileName(), blob.getBlobId());
+        StagingArea.addToStagedArea(file.getFileName(), blob.getBlobId());
 
         return null;  // no message to print
     }
@@ -71,24 +74,13 @@ public class GitRepo {
         }
 
         Commit currentCommit = HEADPointer.currentCommit();
-        Commit newCommit = new Commit(message, HEADPointer.currentCommitId(),
-                currentCommit.getFileBlobMap());
+        /* Clone the file-blob map from the  */
+        Commit newCommit = Commit.clone(message, currentCommit);
 
         /* Add or modify the mapping from file name to blob file. */
-        if (StagingArea.haveFilesToBeAddedOrModified()) {
-            Map<String, String> filesToAddOrModify = StagingArea.getFilesToAddOrModify();
-            for (String fileName : filesToAddOrModify.keySet()) {
-                newCommit.put(fileName, filesToAddOrModify.get(fileName));
-            }
-        }
-
+        StagingArea.addOrModifyFilesToCommit(newCommit);
         /* Remove the files. */
-        if (StagingArea.haveFilesToBeRemoved()) {
-            Set<String> filesToRemove = StagingArea.getFilesToRemove();
-            for (String fileName : filesToRemove) {
-                newCommit.remove(fileName);
-            }
-        }
+        StagingArea.removeFilesFromCommit(newCommit);
 
         /* Save the new commit. */
         String newCommitId = newCommit.saveCommit();
@@ -98,5 +90,31 @@ public class GitRepo {
         Reference.move(HEADPointer.currentBranch(), newCommitId);
 
         return null; // no message to print.
+    }
+
+    /**
+     * 1. if the fileName is in staged area, remove it from staged area
+     * 2. else if the fileName is in the current commit, add it to removed Area and remove it from
+     * working copy.
+     * 3. else, print "No reason to remove the file."
+     *
+     * Returns "" when add the file to removed area.
+     */
+    public static String rm(String fileName) {
+
+        /* Check if the file is in the staged area to be added or modified. */
+        if (StagingArea.isAddedOrModified(fileName)) {
+            StagingArea.removeFromStagedArea(fileName);
+            return null;  // no message to be printed.
+        }
+
+        /* Check if the file is in the latest commit. */
+        Commit commit = HEADPointer.currentCommit();
+        if (commit.contains(fileName)) {
+            StagingArea.addToRemovedArea(fileName);
+            return "remove";  // no message to be printed.
+        }
+
+        return NO_REASON_TO_REMOVE_MESSAGE;
     }
 }

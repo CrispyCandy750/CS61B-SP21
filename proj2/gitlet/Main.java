@@ -34,6 +34,7 @@ public class Main {
         String firstArg = args[0];
         validateCommandExists(firstArg, NO_COMMAND_MESSAGE);
         validateGitRepoIsInitialized(firstArg, NO_GIT_REPO_MESSAGE);
+        String message = null;
         switch (firstArg) {
             case "init":
                 Repository.init();
@@ -41,21 +42,23 @@ public class Main {
             case "add":
                 validateNumArgs("add", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
                 String fileName = args[1];
-                Repository.add(fileName);
+                message = Repository.add(fileName);
                 break;
             // TODO: FILL THE REST IN
             case "commit":
                 validateNumArgs("commit", args, 2, NO_COMMIT_MESSAGE_MESSAGE);
                 String commitMessage = args[1];
-                String message = Repository.commit(commitMessage);
-                printMessage(message);
+                message = Repository.commit(commitMessage);
                 break;
             case "rm":  // java gitlet.Main rm <file name>
-                validateNumArgs("rm", args, 2);
+                validateNumArgs("rm", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
+                String removedFileName = args[1];
+                message = Repository.rm(removedFileName);
                 break;
             default:
                 System.out.println(NO_COMMAND_MESSAGE);
         }
+        printMessage(message);
     }
 
     /** Prints the message when the message is not null or "" */

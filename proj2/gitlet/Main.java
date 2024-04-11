@@ -1,5 +1,8 @@
 package gitlet;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
@@ -29,26 +32,25 @@ public class Main {
     public static void main(String[] args) {
         validateNoArgs(args, NO_ARGUMENT_MESSAGE);
         String firstArg = args[0];
+        validateCommandExists(firstArg, NO_COMMAND_MESSAGE);
+        validateGitRepoIsInitialized(firstArg, NO_GIT_REPO_MESSAGE);
         switch (firstArg) {
             case "init":
                 Repository.init();
                 break;
             case "add":
-                validateGitInitialization(NO_GIT_REPO_MESSAGE);
                 validateNumArgs("add", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
                 String fileName = args[1];
                 Repository.add(fileName);
                 break;
             // TODO: FILL THE REST IN
             case "commit":
-                validateGitInitialization(NO_GIT_REPO_MESSAGE);
                 validateNumArgs("commit", args, 2, NO_COMMIT_MESSAGE_MESSAGE);
                 String commitMessage = args[1];
                 String message = Repository.commit(commitMessage);
                 printMessage(message);
                 break;
             case "rm":  // java gitlet.Main rm <file name>
-                validateGitInitialization(NO_GIT_REPO_MESSAGE);
                 validateNumArgs("rm", args, 2);
                 break;
             default:
@@ -104,9 +106,19 @@ public class Main {
         }
     }
 
-    /** Check if the git repository is initialized. */
-    private static void validateGitInitialization(String message) {
-        if (!Repository.isInitialized()) {
+    /** Validate if the git repository is initialized. */
+    private static void validateGitRepoIsInitialized(String cmd, String message) {
+        if (!cmd.equals("init") && !Repository.isInitialized()) {
+            System.out.println(message);
+            System.exit(0);
+        }
+    }
+
+    /** Check if the command exists. */
+    private static void validateCommandExists(String cmd, String message) {
+        HashSet<String> set = new HashSet<>();
+        set.addAll(Arrays.asList("init", "add", "commit", "rm"));
+        if (!set.contains(cmd)) {
             System.out.println(message);
             System.exit(0);
         }

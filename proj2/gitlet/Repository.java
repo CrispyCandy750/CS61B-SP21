@@ -117,4 +117,9 @@ public class Repository {
 
         return message;
     }
+
+    /** Returns the log starting at current commit. */
+    public static String log() {
+        return GitRepo.log();
+    }
 }

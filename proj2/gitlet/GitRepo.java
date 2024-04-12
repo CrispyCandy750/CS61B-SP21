@@ -17,6 +17,9 @@ public class GitRepo {
     /** The message when no reason to remove the file. */
     private final static String NO_REASON_TO_REMOVE_MESSAGE = "No reason to remove the file.";
 
+    /** The delimiter between two log. */
+    private final static String LOGS_DELIMITER = "===";
+
 
     /**
      * 1. creates the .git/object/ directory (Commit to do).
@@ -116,5 +119,20 @@ public class GitRepo {
         }
 
         return NO_REASON_TO_REMOVE_MESSAGE;
+    }
+
+    /** Returns the logs starting at the commit head points to. */
+    public static String log() {
+        StringBuilder logs = new StringBuilder();
+        Commit currentCommit = HEADPointer.currentCommit();
+        while (currentCommit != null) {
+            logs.append(LOGS_DELIMITER);
+            logs.append("\n");
+            logs.append(currentCommit.logInfo());
+            logs.append("\n");
+            currentCommit = currentCommit.getParentCommit();
+        }
+
+        return logs.toString();
     }
 }

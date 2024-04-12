@@ -35,6 +35,7 @@ public class Main {
         validateCommandExists(firstArg, NO_COMMAND_MESSAGE);
         validateGitRepoIsInitialized(firstArg, NO_GIT_REPO_MESSAGE);
         String message = null;
+        boolean lineFeed = true;
         switch (firstArg) {
             case "init":
                 Repository.init();
@@ -55,16 +56,25 @@ public class Main {
                 String removedFileName = args[1];
                 message = Repository.rm(removedFileName);
                 break;
+            case "log":
+                validateNumArgs("log", args, 1, WRONG_NUMBER_OPERANDS_MESSAGE);
+                message = Repository.log();
+                lineFeed = false;
+                break;
             default:
                 System.out.println(NO_COMMAND_MESSAGE);
         }
-        printMessage(message);
+        printMessage(message, lineFeed);
     }
 
     /** Prints the message when the message is not null or "" */
-    private static void printMessage(String message) {
+    private static void printMessage(String message, boolean lineFeed) {
         if (message != null && !message.equals("")) {
-            System.out.println(message);
+            if (lineFeed) {
+                System.out.println(message);
+            } else {
+                System.out.print(message);
+            }
         }
     }
 
@@ -120,7 +130,7 @@ public class Main {
     /** Check if the command exists. */
     private static void validateCommandExists(String cmd, String message) {
         HashSet<String> set = new HashSet<>();
-        set.addAll(Arrays.asList("init", "add", "commit", "rm"));
+        set.addAll(Arrays.asList("init", "add", "commit", "rm", "log"));
         if (!set.contains(cmd)) {
             System.out.println(message);
             System.exit(0);

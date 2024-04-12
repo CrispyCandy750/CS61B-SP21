@@ -129,6 +129,16 @@ public class GitRepo {
         Iterable<Commit> commits = Commit.commitsStartingAt(currentCommitId);
         String logs = Commit.generateLogs(commits);
 
+        return logs;
+    }
+
+    /** Returns all commit logs with arbitrary order. */
+    public static String globalLog() {
+
+        /* Generate all commits with arbitrary order.  */
+        Iterable<Commit> commits = Commit.allCommits();
+        String logs = Commit.generateLogs(commits);
+
         return logs.toString();
     }
 }

@@ -73,11 +73,6 @@ public class Commit implements Serializable {
         return initialCommit.saveCommit();
     }
 
-    /** Creates the initial commit. */
-    private static Commit initialCommit() {
-        return new Commit(INITIAL_COMMIT_MESSAGE, null, 0, new HashMap<>());
-    }
-
     /** Returns commit by commit id. */
     public static Commit fromCommitId(String commitId) {
         if (commitId == null) {
@@ -111,7 +106,17 @@ public class Commit implements Serializable {
         return new Iterable<Commit>() {
             @Override
             public Iterator<Commit> iterator() {
-                return new CommitIterator(commitId);
+                return new CommitIteratorStartingAtSpecificCommit(commitId);
+            }
+        };
+    }
+
+    /** Returns all commits with arbitrarily order. */
+    public static Iterable<Commit> allCommits() {
+        return new Iterable<Commit>() {
+            @Override
+            public Iterator<Commit> iterator() {
+                return new AllCommitsIterator(Utils.plainFilenamesIn(COMMITS_DIR));
             }
         };
     }
@@ -175,10 +180,11 @@ public class Commit implements Serializable {
     }
     /* -------------------------- private class & methods -------------------------- */
 
-    private static class CommitIterator implements Iterator<Commit> {
+    /** The Commit Iterator with the reverse commit order starting at specific commit id. */
+    private static class CommitIteratorStartingAtSpecificCommit implements Iterator<Commit> {
         String curCommitId;
 
-        CommitIterator(String startCommitId) {
+        CommitIteratorStartingAtSpecificCommit(String startCommitId) {
             this.curCommitId = startCommitId;
         }
 
@@ -193,5 +199,29 @@ public class Commit implements Serializable {
             curCommitId = commit.parent;
             return commit;
         }
+    }
+
+    /** The commit iterator with arbitrary order. */
+    private static class AllCommitsIterator implements Iterator<Commit> {
+        Iterator<String> commitFileNameIterator;
+
+        AllCommitsIterator(Iterable<String> commitFileNames) {
+            this.commitFileNameIterator = commitFileNames.iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return commitFileNameIterator.hasNext();
+        }
+
+        @Override
+        public Commit next() {
+            return Commit.fromCommitId(commitFileNameIterator.next());
+        }
+    }
+
+    /** Creates the initial commit. */
+    private static Commit initialCommit() {
+        return new Commit(INITIAL_COMMIT_MESSAGE, null, 0, new HashMap<>());
     }
 }

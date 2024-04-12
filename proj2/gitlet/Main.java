@@ -61,6 +61,11 @@ public class Main {
                 message = Repository.log();
                 lineFeed = false;
                 break;
+            case "global-log":
+                validateNumArgs("global-log", args, 1, WRONG_NUMBER_OPERANDS_MESSAGE);
+                message = Repository.globalLog();
+                lineFeed = false;
+                break;
             default:
                 System.out.println(NO_COMMAND_MESSAGE);
         }
@@ -130,7 +135,7 @@ public class Main {
     /** Check if the command exists. */
     private static void validateCommandExists(String cmd, String message) {
         HashSet<String> set = new HashSet<>();
-        set.addAll(Arrays.asList("init", "add", "commit", "rm", "log"));
+        set.addAll(Arrays.asList("init", "add", "commit", "rm", "log", "global-log"));
         if (!set.contains(cmd)) {
             System.out.println(message);
             System.exit(0);

@@ -122,4 +122,9 @@ public class Repository {
     public static String log() {
         return GitRepo.log();
     }
+
+    /** Returns all commit logs with arbitrary order */
+    public static String globalLog() {
+        return GitRepo.globalLog();
+    }
 }

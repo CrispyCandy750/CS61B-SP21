@@ -26,7 +26,8 @@ public class Commit implements Serializable {
      * variable is used. We've provided one example for `message`.
      */
 
-    private final static File COMMITS_DIR = Utils.join(GitRepo.GIT_REPO, "objects");
+    private final static File COMMITS_DIR = Utils.join(Utils.join(GitRepo.GIT_REPO, "objects"),
+            "commits");
 
     /** The format of the time in log command, eg. Thu Nov 9 20:00:05 2017 -0800 */
     private final static SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z",
@@ -67,7 +68,7 @@ public class Commit implements Serializable {
     /** Create the .gitlet/objects/ directory and initial commit. */
     public static String init() {
         /* Creates */
-        COMMITS_DIR.mkdir();
+        COMMITS_DIR.mkdirs();
         Commit initialCommit = initialCommit();
         return initialCommit.saveCommit();
     }
@@ -82,8 +83,7 @@ public class Commit implements Serializable {
         if (commitId == null) {
             return null;
         }
-        File commitFile = Utils.join(Utils.join(COMMITS_DIR, commitId.substring(0, 2)),
-                commitId.substring(2));
+        File commitFile = Utils.join(COMMITS_DIR, commitId);
         Commit commit = Utils.readObject(commitFile, Commit.class);
         commit.sha1 = commitId;
         return commit;
@@ -97,7 +97,7 @@ public class Commit implements Serializable {
     /** Generate the logs. */
     public static String generateLogs(Iterable<Commit> commits) {
         StringBuilder logs = new StringBuilder();
-        for (Commit commit: commits) {
+        for (Commit commit : commits) {
             logs.append(LOGS_DELIMITER);
             logs.append("\n");
             logs.append(commit.logInfo());
@@ -138,13 +138,7 @@ public class Commit implements Serializable {
         String commitId = this.sha1();
 
         /* Creates the directory contains this commit. */
-        File commitDir = Utils.join(COMMITS_DIR, commitId.substring(0, 2));
-        if (!commitDir.exists()) {
-            commitDir.mkdir();
-        }
-
-        /* Save the commit. */
-        File commitFile = Utils.join(commitDir, commitId.substring(2));
+        File commitFile = Utils.join(COMMITS_DIR, commitId);
         Utils.writeObject(commitFile, this);
 
         return commitId;
@@ -179,16 +173,11 @@ public class Commit implements Serializable {
         stringBuilder.append(message + "\n");
         return stringBuilder.toString();
     }
-
-    /** Returns the first parent commit of this commit. */
-    public Commit getParentCommit() {
-        return Commit.fromCommitId(this.parent);
-    }
-
     /* -------------------------- private class & methods -------------------------- */
 
     private static class CommitIterator implements Iterator<Commit> {
         String curCommitId;
+
         CommitIterator(String startCommitId) {
             this.curCommitId = startCommitId;
         }

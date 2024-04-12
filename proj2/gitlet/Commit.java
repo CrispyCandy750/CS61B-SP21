@@ -6,10 +6,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Represents a gitlet commit object.
@@ -50,6 +47,9 @@ public class Commit implements Serializable {
 
     /** The sha1 hashcode of this commit. */
     private transient String sha1;
+
+    /** The delimiter between two log. */
+    private final static String LOGS_DELIMITER = "===";
 
     public Commit(String message, String parent, Map<String, String> fileBlobMap) {
         this(message, parent, System.currentTimeMillis(), fileBlobMap);
@@ -92,6 +92,28 @@ public class Commit implements Serializable {
     /** Clone the commit with new commit message. */
     public static Commit clone(String newMessage, Commit commit) {
         return new Commit(newMessage, commit.sha1(), commit.fileBlobMap);
+    }
+
+    /** Generate the logs. */
+    public static String generateLogs(Iterable<Commit> commits) {
+        StringBuilder logs = new StringBuilder();
+        for (Commit commit: commits) {
+            logs.append(LOGS_DELIMITER);
+            logs.append("\n");
+            logs.append(commit.logInfo());
+            logs.append("\n");
+        }
+        return logs.toString();
+    }
+
+    /** Returns the commits from specific to the initial commit. */
+    public static Iterable<Commit> commitsStartingAt(String commitId) {
+        return new Iterable<Commit>() {
+            @Override
+            public Iterator<Commit> iterator() {
+                return new CommitIterator(commitId);
+            }
+        };
     }
 
     /* ----------------------------------- instance methods ----------------------------------- */
@@ -163,6 +185,24 @@ public class Commit implements Serializable {
         return Commit.fromCommitId(this.parent);
     }
 
-    /* ----------------------------------- private methods ----------------------------------- */
+    /* -------------------------- private class & methods -------------------------- */
 
+    private static class CommitIterator implements Iterator<Commit> {
+        String curCommitId;
+        CommitIterator(String startCommitId) {
+            this.curCommitId = startCommitId;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return curCommitId != null;
+        }
+
+        @Override
+        public Commit next() {
+            Commit commit = Commit.fromCommitId(curCommitId);
+            curCommitId = commit.parent;
+            return commit;
+        }
+    }
 }

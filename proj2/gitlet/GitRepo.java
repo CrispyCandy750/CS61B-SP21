@@ -123,15 +123,11 @@ public class GitRepo {
 
     /** Returns the logs starting at the commit head points to. */
     public static String log() {
-        StringBuilder logs = new StringBuilder();
-        Commit currentCommit = HEADPointer.currentCommit();
-        while (currentCommit != null) {
-            logs.append(LOGS_DELIMITER);
-            logs.append("\n");
-            logs.append(currentCommit.logInfo());
-            logs.append("\n");
-            currentCommit = currentCommit.getParentCommit();
-        }
+        String currentCommitId = HEADPointer.currentCommitId();
+
+        /* Generate the commits from current commit to initial commit. */
+        Iterable<Commit> commits = Commit.commitsStartingAt(currentCommitId);
+        String logs = Commit.generateLogs(commits);
 
         return logs.toString();
     }

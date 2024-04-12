@@ -98,7 +98,7 @@ public class Commit implements Serializable {
             logs.append(commit.logInfo());
             logs.append("\n");
         }
-        return logs.toString();
+        return logs.deleteCharAt(logs.lastIndexOf("\n")).toString();
     }
 
     /** Returns the commits from specific to the initial commit. */

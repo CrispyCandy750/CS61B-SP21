@@ -35,7 +35,6 @@ public class Main {
         validateCommandExists(firstArg, NO_COMMAND_MESSAGE);
         validateGitRepoIsInitialized(firstArg, NO_GIT_REPO_MESSAGE);
         String message = null;
-        boolean lineFeed = true;
         switch (firstArg) {
             case "init":
                 Repository.init();
@@ -59,27 +58,21 @@ public class Main {
             case "log":
                 validateNumArgs("log", args, 1, WRONG_NUMBER_OPERANDS_MESSAGE);
                 message = Repository.log();
-                lineFeed = false;
                 break;
             case "global-log":
                 validateNumArgs("global-log", args, 1, WRONG_NUMBER_OPERANDS_MESSAGE);
                 message = Repository.globalLog();
-                lineFeed = false;
                 break;
             default:
                 System.out.println(NO_COMMAND_MESSAGE);
         }
-        printMessage(message, lineFeed);
+        printMessage(message);
     }
 
     /** Prints the message when the message is not null or "" */
-    private static void printMessage(String message, boolean lineFeed) {
+    private static void printMessage(String message) {
         if (message != null && !message.equals("")) {
-            if (lineFeed) {
-                System.out.println(message);
-            } else {
-                System.out.print(message);
-            }
+            System.out.println(message);
         }
     }
 

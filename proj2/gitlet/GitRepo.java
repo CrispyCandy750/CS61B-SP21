@@ -1,8 +1,6 @@
 package gitlet;
 
 import java.io.File;
-import java.util.Map;
-import java.util.Set;
 
 /** GitRepo class represents the .gitlet directory. */
 public class GitRepo {
@@ -115,7 +113,8 @@ public class GitRepo {
         Commit commit = HEADPointer.currentCommit();
         if (commit.contains(fileName)) {
             StagingArea.addToRemovedArea(fileName);
-            return "remove";  // no message to be printed.
+            /* no message to be printed and remove the file from working copy. */
+            return "remove";
         }
 
         return NO_REASON_TO_REMOVE_MESSAGE;
@@ -134,11 +133,11 @@ public class GitRepo {
 
     /** Returns all commit logs with arbitrary order. */
     public static String globalLog() {
+        return Commit.globalLog();
+    }
 
-        /* Generate all commits with arbitrary order.  */
-        Iterable<Commit> commits = Commit.allCommits();
-        String logs = Commit.generateLogs(commits);
-
-        return logs.toString();
+    /** Returns one-line ids of commits with specific message */
+    public static String find(String message) {
+        return Commit.findCommitsWithMessage(message);
     }
 }

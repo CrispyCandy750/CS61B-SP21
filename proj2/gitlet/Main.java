@@ -30,11 +30,16 @@ public class Main {
     private final static String NO_GIT_REPO_MESSAGE = "Not in an initialized Gitlet directory.";
 
     public static void main(String[] args) {
+
         validateNoArgs(args, NO_ARGUMENT_MESSAGE);
+
         String firstArg = args[0];
         validateCommandExists(firstArg, NO_COMMAND_MESSAGE);
         validateGitRepoIsInitialized(firstArg, NO_GIT_REPO_MESSAGE);
+
         String message = null;
+        String commitMessage = null;
+
         switch (firstArg) {
             case "init":
                 Repository.init();
@@ -47,7 +52,7 @@ public class Main {
             // TODO: FILL THE REST IN
             case "commit":
                 validateNumArgs("commit", args, 2, NO_COMMIT_MESSAGE_MESSAGE);
-                String commitMessage = args[1];
+                commitMessage = args[1];
                 message = Repository.commit(commitMessage);
                 break;
             case "rm":  // java gitlet.Main rm <file name>
@@ -62,6 +67,11 @@ public class Main {
             case "global-log":
                 validateNumArgs("global-log", args, 1, WRONG_NUMBER_OPERANDS_MESSAGE);
                 message = Repository.globalLog();
+                break;
+            case "find":
+                validateNumArgs("find", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
+                commitMessage = args[1];
+                message = Repository.find(commitMessage);
                 break;
             default:
                 System.out.println(NO_COMMAND_MESSAGE);
@@ -128,7 +138,7 @@ public class Main {
     /** Check if the command exists. */
     private static void validateCommandExists(String cmd, String message) {
         HashSet<String> set = new HashSet<>();
-        set.addAll(Arrays.asList("init", "add", "commit", "rm", "log", "global-log"));
+        set.addAll(Arrays.asList("init", "add", "commit", "rm", "log", "global-log", "find"));
         if (!set.contains(cmd)) {
             System.out.println(message);
             System.exit(0);

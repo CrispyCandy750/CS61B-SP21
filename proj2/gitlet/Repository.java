@@ -127,4 +127,9 @@ public class Repository {
     public static String globalLog() {
         return GitRepo.globalLog();
     }
+
+    /** Returns the one-line ids of commits with specific commit message. */
+    public static String find(String commitMessage) {
+        return GitRepo.find(commitMessage);
+    }
 }

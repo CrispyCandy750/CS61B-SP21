@@ -33,6 +33,10 @@ public class Commit implements Serializable {
     private final static SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z",
             Locale.ENGLISH);
 
+    /** The message when not find the commit with specific commit. */
+    private static final String NO_COMMIT_WITH_SPECIFIC_MESSAGE = "Found no commit with that " +
+            "message.";
+
     /** The message of the first commit when initialization. */
     private final static String INITIAL_COMMIT_MESSAGE = "initial message";
 
@@ -89,16 +93,20 @@ public class Commit implements Serializable {
         return new Commit(newMessage, commit.sha1(), commit.fileBlobMap);
     }
 
-    /** Generate the logs. */
+    /** Generate the log of the commit iterator. */
     public static String generateLogs(Iterable<Commit> commits) {
         StringBuilder logs = new StringBuilder();
         for (Commit commit : commits) {
-            logs.append(LOGS_DELIMITER);
-            logs.append("\n");
             logs.append(commit.logInfo());
-            logs.append("\n");
         }
         return logs.deleteCharAt(logs.lastIndexOf("\n")).toString();
+    }
+
+    /** Returns all commit information with arbitrary message. */
+    public static String globalLog() {
+        Iterable<Commit> commits = allCommits();
+        String logs = generateLogs(commits);
+        return logs;
     }
 
     /** Returns the commits from specific to the initial commit. */
@@ -121,12 +129,32 @@ public class Commit implements Serializable {
         };
     }
 
+    /** Returns one-line ids of commits with specific message */
+    public static String findCommitsWithMessage(String message) {
+        StringBuilder commitIds = new StringBuilder();
+        Iterable<Commit> commits = allCommits();
+        for (Commit commit: commits) {
+            if (commit.message.equals(message)) {
+                commitIds.append(commitIds);
+                commitIds.append("\n");
+            }
+        }
+
+        if (commitIds.length() == 0) {
+            return NO_COMMIT_WITH_SPECIFIC_MESSAGE;
+        }
+
+        return commitIds.deleteCharAt(commitIds.lastIndexOf("\n")).toString();
+    }
+
     /* ----------------------------------- instance methods ----------------------------------- */
 
     /** Returns the sha1 of this commit. */
     public String sha1() {
-        this.sha1 = Utils.sha1(Utils.serialize(this));
-        return this.sha1;
+        if (sha1 == null) {
+            sha1 = Utils.sha1(Utils.serialize(this));
+        }
+        return sha1;
     }
 
     /**
@@ -167,15 +195,19 @@ public class Commit implements Serializable {
     /**
      * Returns the log information of this commit.
      * Example:
+     * ===
      * commit a0da1ea5a15ab613bf9961fd86f010cf74c7ee48
      * Date: Thu Nov 9 20:00:05 2017 -0800
      * A commit message.
+     *
+     * <<<
      */
     public String logInfo() {
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(LOGS_DELIMITER + "\n");
         stringBuilder.append("commit " + this.sha1 + "\n");
         stringBuilder.append("Date: " + sdf.format(new Date(timestamp.getTime())) + "\n");
-        stringBuilder.append(message + "\n");
+        stringBuilder.append(message + "\n\n");
         return stringBuilder.toString();
     }
     /* -------------------------- private class & methods -------------------------- */

@@ -414,7 +414,7 @@ def doTest(test):
                 if msg != 'OK':
                     print("ERROR ({}) \n".format(msg))
                     print("CMD: {}".format(cmnd))
-                    print("expected:\n {}".format(exceeded))
+#                     print("expected:\n {}".format(expected))
                     print("actual:\n {}".format(out))
                     reportDetails(test, included_files, line_num)
                     return False

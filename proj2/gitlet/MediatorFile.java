@@ -4,12 +4,20 @@ import java.io.File;
 
 /** Represents the middle class between Repository and GitRepo. */
 class MediatorFile {
-    private File file;
+
+    /** The file path based on the CWD. */
+    private String fileName;
     private String content;
 
-    public MediatorFile(File file) {
-        this.file = file;
-        this.content = new String(Utils.readContents(file));
+    public MediatorFile() {}
+
+    public MediatorFile(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public MediatorFile(String fileName, String content) {
+        this.fileName = fileName;
+        this.content = content;
     }
 
     /** Returns the sha1 code of the content. */
@@ -19,11 +27,16 @@ class MediatorFile {
 
     /** Returns the relative file name based on the CWD. */
     String getFileName() {
-        return file.getName();
+        return fileName;
     }
 
     /** Returns the content of the file */
     String getContent() {
         return content;
+    }
+
+    /** Set the content. */
+    void setContent(String content) {
+        this.content = content;
     }
 }

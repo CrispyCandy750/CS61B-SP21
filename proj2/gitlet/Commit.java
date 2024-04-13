@@ -38,7 +38,7 @@ public class Commit implements Serializable {
             "message.";
 
     /** The message of the first commit when initialization. */
-    private final static String INITIAL_COMMIT_MESSAGE = "initial message";
+    private final static String INITIAL_COMMIT_MESSAGE = "initial commit";
 
     /** The message of this Commit. */
     private String message;
@@ -83,6 +83,9 @@ public class Commit implements Serializable {
             return null;
         }
         File commitFile = Utils.join(COMMITS_DIR, commitId);
+        if (!commitFile.exists()) {
+            return null;
+        }
         Commit commit = Utils.readObject(commitFile, Commit.class);
         commit.sha1 = commitId;
         return commit;
@@ -195,6 +198,14 @@ public class Commit implements Serializable {
     /** Returns the files in this commit. */
     public Set<String> getFiles() {
         return new HashSet<>(fileBlobMap.keySet());
+    }
+
+    /** Returns the content corresponding the fileName, returns null if the fileName does not
+     * exist. */
+    public String getContent(String fileName) {
+        String blobId = fileBlobMap.get(fileName);
+        Blob blob = Blob.fromBlobId(blobId);
+        return blob.getContent();
     }
 
     /* -------------------------- private instance methods -------------------------- */

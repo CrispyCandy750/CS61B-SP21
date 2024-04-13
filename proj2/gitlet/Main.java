@@ -77,6 +77,10 @@ public class Main {
                 validateNumArgs("status", args, 1, WRONG_NUMBER_OPERANDS_MESSAGE);
                 message = Repository.status();
                 break;
+            case "checkout":
+                validateCheckoutArgs(args, WRONG_NUMBER_OPERANDS_MESSAGE);
+                message = Repository.checkout(args);
+                break;
             default:
                 System.out.println(NO_COMMAND_MESSAGE);
         }
@@ -92,21 +96,6 @@ public class Main {
 
     /**
      * Checks the number of arguments versus the expected number,
-     * throws a RuntimeException if they do not match.
-     *
-     * @param cmd  Name of command you are validating
-     * @param args Argument array from command line
-     * @param n    Number of expected arguments
-     */
-    public static void validateNumArgs(String cmd, String[] args, int n) {
-        if (args.length != n) {
-            throw new RuntimeException(
-                    String.format("Invalid number of arguments for: %s.", cmd));
-        }
-    }
-
-    /**
-     * Checks the number of arguments versus the expected number,
      * print the message if they do not match.
      *
      * @param cmd  Name of command you are validating
@@ -117,6 +106,17 @@ public class Main {
         if (args.length != n) {
             System.out.println(message);
             System.exit(0);
+        }
+    }
+
+    /** Validate the number of arguments of checkout command. */
+    private static void validateCheckoutArgs(String[] args, String message) {
+        if ("--".equals(args[1])) {
+            validateNumArgs("checkout", args, 3, message);
+        } else if ("--".equals(args[2])) {
+            validateNumArgs("checkout", args, 4, message);
+        } else {
+            validateNumArgs("checkout", args, 2, message);
         }
     }
 
@@ -142,7 +142,8 @@ public class Main {
     /** Check if the command exists. */
     private static void validateCommandExists(String cmd, String message) {
         HashSet<String> set = new HashSet<>();
-        set.addAll(Arrays.asList("init", "add", "commit", "rm", "log", "global-log", "find", "status"));
+        set.addAll(Arrays.asList("init", "add", "commit", "rm", "log", "global-log", "find",
+                "status", "checkout"));
         if (!set.contains(cmd)) {
             System.out.println(message);
             System.exit(0);

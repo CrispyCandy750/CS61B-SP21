@@ -65,7 +65,8 @@ public class Repository {
         if (!addedFile.exists()) {
             return FILE_NOT_FOUND_MESSAGE;
         }
-        return GitRepo.add(new MediatorFile(addedFile));
+        String content = new String(Utils.readContents(addedFile));
+        return GitRepo.add(new MediatorFile(fileName, content));
     }
 
     /**
@@ -161,9 +162,50 @@ public class Repository {
         List<String> fileNames = Utils.plainFilenamesIn(CWD);
         ArrayList<MediatorFile> filesInWorkingDir = new ArrayList<>();
         /* Add all files into the list. */
-        for (String fileName: fileNames) {
-            filesInWorkingDir.add(new MediatorFile(Utils.join(CWD, fileName)));
+        for (String fileName : fileNames) {
+            String content = new String(Utils.readContents(Utils.join(CWD, fileName)));
+            filesInWorkingDir.add(new MediatorFile(fileName, content));
         }
         return GitRepo.status(filesInWorkingDir);
+    }
+
+    /** Checkout. */
+    public static String checkout(String[] args) {
+        if ("--".equals(args[1])) {  // checkout -- [file name]
+            String fileName = args[2];
+            return checkoutFileFromCurrentCommit(fileName);
+        } else if ("--".equals(args[2])) {  // checkout [commit id] -- [file name]
+            String commitId = args[1];
+            String filename = args[3];
+            return checkoutFileFromSpecificCommit(commitId, filename);
+        } else {  // checkout [branch name]
+            return null;
+        }
+    }
+
+    /** Check out file from current commit. */
+    private static String checkoutFileFromCurrentCommit(String fileName) {
+        return checkoutFileFromSpecificCommit(null, fileName);
+    }
+
+    /**
+     * Check out file from current commit.
+     * checkout from current commit if commitId == null.
+     */
+    private static String checkoutFileFromSpecificCommit(String commitId, String fileName) {
+        MediatorFile mediatorFile = new MediatorFile(fileName);
+        String message = GitRepo.checkoutCommitAndFile(commitId, fileName, mediatorFile);
+
+        /* checkout fail. */
+        if (message != null) {
+            return message;
+        }
+
+
+        File file = Utils.join(CWD, fileName);
+        String content = mediatorFile.getContent();
+        Utils.writeContents(file, content);
+
+        return null;  // checkout successfully, no message to print.
     }
 }

@@ -52,6 +52,11 @@ public class Blob {
         Utils.writeContents(blobFile, this.content);
     }
 
+    /** Returns the content. */
+    public String getContent() {
+        return content;
+    }
+
     /* ----------------------------------- private methods ----------------------------------- */
     private Blob(String blobId, String content) {
         this.blobId = blobId;

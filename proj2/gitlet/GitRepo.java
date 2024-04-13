@@ -20,6 +20,13 @@ public class GitRepo {
     /** The delimiter between two log. */
     private final static String LOGS_DELIMITER = "===";
 
+    /** The message when checkout commit does not exist. */
+    private final static String NO_COMMIT_MESSAGE = "No commit with that id exists.";
+
+    /** The message when file does not exist in the commit. */
+    private final static String FILE_DOES_NOT_EXISTS_MESSAGE = "File does not exist in that " +
+            "commit.";
+
 
     /**
      * 1. creates the .git/object/ directory (Commit to do).
@@ -281,5 +288,26 @@ public class GitRepo {
 
         Collections.sort(untrackedFiles);
         return Utils.FormatStrings(untrackedFiles, "=== Untracked Files ===");
+    }
+
+    /**
+     * Checkout a file from the specific commit.
+     * If commitId == null, means checkout from current commit.
+     */
+    public static String checkoutCommitAndFile(String commitId, String fileName,
+                                               MediatorFile mediatorFile) {
+        if (commitId == null) {
+            commitId = HEADPointer.currentCommitId();
+        }
+        Commit commit = Commit.fromCommitId(commitId);
+        if (commit == null) {
+            return NO_COMMIT_MESSAGE;
+        }
+        if (!commit.contains(fileName)) {
+            return FILE_DOES_NOT_EXISTS_MESSAGE;
+        }
+        String content = commit.getContent(fileName);
+        mediatorFile.setContent(content);
+        return null;
     }
 }

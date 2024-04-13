@@ -52,7 +52,10 @@ public class GitRepo {
 
         Commit commit = HEADPointer.currentCommit();
         if (commit.contains(file.getFileName(), file.getContent())) {
-            return null;  // no message to print
+            if (StagingArea.inAddedOrModifiedArea(file.getFileName())) {
+                StagingArea.removeFromStagedArea(file.getFileName());
+            }
+            return null;
         }
 
         Blob blob = new Blob(file.getContent());
@@ -232,6 +235,7 @@ public class GitRepo {
                     || (StagingArea.inAddedOrModifiedArea(fileName)
                     && !StagingArea.inAddedOrModifiedArea(fileName, content))) {
                 filesModifiedButNotStaged.add(fileName + " (modified)");
+//                filesModifiedButNotStaged.add(fileName);
             }
         }
 
@@ -245,6 +249,7 @@ public class GitRepo {
         for (String fileName : deletedFileNames) {
             if (!StagingArea.inRemovedArea(fileName)) {
                 filesModifiedButNotStaged.add(fileName + " (deleted)");
+//                filesModifiedButNotStaged.add(fileName);
             }
         }
 

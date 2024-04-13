@@ -412,7 +412,10 @@ def doTest(test):
                     print("Exiting Debug mode ...")
                     break
                 if msg != 'OK':
-                    print("ERROR ({})".format(msg))
+                    print("ERROR ({}) \n".format(msg))
+                    print("CMD: {}".format(cmnd))
+                    print("expected:\n {}".format(exceeded))
+                    print("actual:\n {}".format(out))
                     reportDetails(test, included_files, line_num)
                     return False
             elif Match(r'=\s*(\S+)\s+(\S+)', line):

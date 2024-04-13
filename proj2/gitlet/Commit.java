@@ -133,7 +133,7 @@ public class Commit implements Serializable {
     public static String findCommitsWithMessage(String message) {
         StringBuilder commitIds = new StringBuilder();
         Iterable<Commit> commits = allCommits();
-        for (Commit commit: commits) {
+        for (Commit commit : commits) {
             if (commit.message.equals(message)) {
                 commitIds.append(commitIds);
                 commitIds.append("\n");
@@ -155,15 +155,6 @@ public class Commit implements Serializable {
             sha1 = Utils.sha1(Utils.serialize(this));
         }
         return sha1;
-    }
-
-    /**
-     * Returns true if the commit contains the file and is identical to the version in the
-     * current commit, false otherwise.
-     */
-    public boolean containsAndIsIdentical(MediatorFile file) {
-        String blobId = fileBlobMap.getOrDefault(file.getFileName(), null);
-        return blobId != null && blobId.equals(file.sha1());
     }
 
     /** Save the commit in the objects directory with the name as its hashcode. */
@@ -193,16 +184,32 @@ public class Commit implements Serializable {
     }
 
     /**
+     * Returns true if the commit contains the file and the contents are identical,
+     * false otherwise.
+     */
+    public boolean contains(String fileName, String content) {
+        String blobId = fileBlobMap.getOrDefault(fileName, null);
+        return blobId != null && blobId.equals(Utils.sha1(content));
+    }
+
+    /** Returns the files in this commit. */
+    public Set<String> getFiles() {
+        return new HashSet<>(fileBlobMap.keySet());
+    }
+
+    /* -------------------------- private instance methods -------------------------- */
+
+    /**
      * Returns the log information of this commit.
      * Example:
      * ===
      * commit a0da1ea5a15ab613bf9961fd86f010cf74c7ee48
      * Date: Thu Nov 9 20:00:05 2017 -0800
      * A commit message.
-     *
+     * <p>
      * <<<
      */
-    public String logInfo() {
+    private String logInfo() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(LOGS_DELIMITER + "\n");
         stringBuilder.append("commit " + this.sha1 + "\n");

@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.util.List;
 
 /** Represents the pointer of branch. */
 public class Reference {
@@ -35,5 +36,10 @@ public class Reference {
     public static void move(String branch, String commitId) {
         File branchFile = Utils.join(REF_DIR, branch);
         Utils.writeContents(branchFile, commitId);
+    }
+
+    /** Returns all branches. */
+    public static List<String> branches() {
+        return Utils.plainFilenamesIn(REF_DIR);
     }
 }

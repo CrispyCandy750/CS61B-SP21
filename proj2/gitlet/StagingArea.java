@@ -2,10 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /** Represents the Staging Area. */
 public class StagingArea {
@@ -50,9 +47,22 @@ public class StagingArea {
     }
 
     /** Returns true if the file is in staged area to be added or modified. */
-    public static boolean isAddedOrModified(String fileName) {
+    public static boolean inAddedOrModifiedArea(String fileName) {
         stagedAndRemovedArea = getStagedAndRemovedArea();
         return stagedAndRemovedArea.filesToAddOrModify.containsKey(fileName);
+    }
+
+    /** Returns true if the file is in staged area and content is identical */
+    public static boolean inAddedOrModifiedArea(String fileName, String content) {
+        stagedAndRemovedArea = getStagedAndRemovedArea();
+        String blobId = stagedAndRemovedArea.filesToAddOrModify.getOrDefault(fileName, null);
+        return blobId != null && blobId.equals(Utils.sha1(content));
+    }
+
+    /** Returns true if the file is in removed area. */
+    public static boolean inRemovedArea(String fileName) {
+        stagedAndRemovedArea = getStagedAndRemovedArea();
+        return stagedAndRemovedArea.filesToRemove.contains(fileName);
     }
 
     /** Remove the file from the staged area. */
@@ -82,9 +92,41 @@ public class StagingArea {
     public static void removeFilesFromCommit(Commit commit) {
         stagedAndRemovedArea = getStagedAndRemovedArea();
         Set<String> filesToRemove = stagedAndRemovedArea.filesToRemove;
-        for (String fileName: filesToRemove) {
+        for (String fileName : filesToRemove) {
             commit.remove(fileName);
         }
+    }
+
+    /**
+     * Returns the status of staged files
+     * Example:
+     * === Staged Files ===
+     * wug.txt
+     * wug2.txt
+     */
+    public static String statusOfStagedFiles() {
+        stagedAndRemovedArea = getStagedAndRemovedArea();
+        ArrayList<String> stagedFiles =
+                new ArrayList<>(stagedAndRemovedArea.filesToAddOrModify.keySet());
+
+        Collections.sort(stagedFiles);
+
+        return Utils.FormatStrings(stagedFiles, "=== Staged Files ===");
+    }
+
+    /**
+     * Returns the status of removed files
+     * Example:
+     * === Removed Files ===
+     * goodbye.txt
+     *
+     */
+    public static String statusOfRemovedFiles() {
+        stagedAndRemovedArea = getStagedAndRemovedArea();
+        ArrayList<String> removedFiles = new ArrayList<>(stagedAndRemovedArea.filesToRemove);
+
+        Collections.sort(removedFiles);
+        return Utils.FormatStrings(removedFiles, "=== Removed Files ===");
     }
 
     /* ---------------------------- private class & methods ---------------------------- */

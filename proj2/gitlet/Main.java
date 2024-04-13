@@ -73,6 +73,10 @@ public class Main {
                 commitMessage = args[1];
                 message = Repository.find(commitMessage);
                 break;
+            case "status":
+                validateNumArgs("status", args, 1, WRONG_NUMBER_OPERANDS_MESSAGE);
+                message = Repository.status();
+                break;
             default:
                 System.out.println(NO_COMMAND_MESSAGE);
         }
@@ -138,7 +142,7 @@ public class Main {
     /** Check if the command exists. */
     private static void validateCommandExists(String cmd, String message) {
         HashSet<String> set = new HashSet<>();
-        set.addAll(Arrays.asList("init", "add", "commit", "rm", "log", "global-log", "find"));
+        set.addAll(Arrays.asList("init", "add", "commit", "rm", "log", "global-log", "find", "status"));
         if (!set.contains(cmd)) {
             System.out.println(message);
             System.exit(0);

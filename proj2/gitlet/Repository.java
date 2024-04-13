@@ -1,6 +1,8 @@
 package gitlet;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO: any imports you need here
 
@@ -131,5 +133,37 @@ public class Repository {
     /** Returns the one-line ids of commits with specific commit message. */
     public static String find(String commitMessage) {
         return GitRepo.find(commitMessage);
+    }
+
+
+    /**
+     * Returns the status of current git repository
+     * Example:
+     * === Branches ===
+     * *master
+     * other-branch
+     * <p>
+     * === Staged Files ===
+     * wug.txt
+     * wug2.txt
+     * <p>
+     * === Removed Files ===
+     * goodbye.txt
+     * <p>
+     * === Modifications Not Staged For Commit ===
+     * junk.txt (deleted)
+     * wug3.txt (modified)
+     * <p>
+     * === Untracked Files ===
+     * random.stuff
+     */
+    public static String status() {
+        List<String> fileNames = Utils.plainFilenamesIn(CWD);
+        ArrayList<MediatorFile> filesInWorkingDir = new ArrayList<>();
+        /* Add all files into the list. */
+        for (String fileName: fileNames) {
+            filesInWorkingDir.add(new MediatorFile(Utils.join(CWD, fileName)));
+        }
+        return GitRepo.status(filesInWorkingDir);
     }
 }

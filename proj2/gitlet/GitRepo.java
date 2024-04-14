@@ -310,4 +310,12 @@ public class GitRepo {
         mediatorFile.setContent(content);
         return null;
     }
+
+    /**
+     * Create a new branch pointing to the current commit.
+     * If the branch has already existed, returns the fail message.
+     */
+    public static String createBranch(String branchName) {
+        return Reference.createNewBranch(branchName, HEADPointer.currentCommitId());
+    }
 }

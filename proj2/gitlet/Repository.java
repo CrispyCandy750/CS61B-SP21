@@ -16,11 +16,14 @@ import java.util.List;
 public class Repository {
     /**
      * TODO: add instance variables here.
-     *
+     * <p>
      * List all instance variables of the Repository class here with a useful
      * comment above them describing what that variable represents and how that
      * variable is used. We've provided two examples for you.
      */
+
+    private Repository() {
+    }
 
     /** The current working directory. */
     public static final File CWD = new File(System.getProperty("user.dir"));
@@ -207,5 +210,13 @@ public class Repository {
         Utils.writeContents(file, content);
 
         return null;  // checkout successfully, no message to print.
+    }
+
+    /**
+     * Create a new branch pointing to the current commit.
+     * If the branch has already existed, returns the fail message.
+     */
+    public static String createBranch(String branchName) {
+        return GitRepo.createBranch(branchName);
     }
 }

@@ -81,6 +81,11 @@ public class Main {
                 validateCheckoutArgs(args, WRONG_NUMBER_OPERANDS_MESSAGE);
                 message = Repository.checkout(args);
                 break;
+            case "branch":
+                validateNumArgs("branch", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
+                String branchName = args[1];
+                message = Repository.createBranch(branchName);
+                break;
             default:
                 System.out.println(NO_COMMAND_MESSAGE);
         }
@@ -143,7 +148,7 @@ public class Main {
     private static void validateCommandExists(String cmd, String message) {
         HashSet<String> set = new HashSet<>();
         set.addAll(Arrays.asList("init", "add", "commit", "rm", "log", "global-log", "find",
-                "status", "checkout"));
+                "status", "checkout", "branch"));
         if (!set.contains(cmd)) {
             System.out.println(message);
             System.exit(0);

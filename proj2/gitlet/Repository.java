@@ -239,4 +239,9 @@ public class Repository {
     public static String createBranch(String branchName) {
         return GitRepo.createBranch(branchName);
     }
+
+    /** Remove the branch. */
+    public static String removeBranch(String branchName) {
+        return GitRepo.removeBranch(branchName);
+    }
 }

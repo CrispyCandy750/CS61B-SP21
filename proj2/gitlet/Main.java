@@ -86,6 +86,11 @@ public class Main {
                 String branchName = args[1];
                 message = Repository.createBranch(branchName);
                 break;
+            case "rm-branch":
+                validateNumArgs("rm-branch", args,2 , WRONG_NUMBER_OPERANDS_MESSAGE);
+                branchName = args[1];
+                message = Repository.removeBranch(branchName);
+                break;
             default:
                 System.out.println(NO_COMMAND_MESSAGE);
         }
@@ -163,7 +168,7 @@ public class Main {
     private static void validateCommandExists(String cmd, String message) {
         HashSet<String> set = new HashSet<>();
         set.addAll(Arrays.asList("init", "add", "commit", "rm", "log", "global-log", "find",
-                "status", "checkout", "branch"));
+                "status", "checkout", "branch", "rm-branch"));
         if (!set.contains(cmd)) {
             System.out.println(message);
             System.exit(0);

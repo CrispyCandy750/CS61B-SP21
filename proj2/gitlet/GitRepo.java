@@ -36,6 +36,13 @@ public class GitRepo {
     private final static String NO_NEED_TO_CHECKOUT_BRANCH_MESSAGE = "No need to checkout the " +
             "current branch.";
 
+    /** The message when remove branch and the branch does not exists. */
+    private final static String RM_BRANCH_NO_SUCH_BRANCH_MESSAGE = "A branch with that name does " +
+            "not exist.";
+
+    /** The message when removed branch is current branch. */
+    private final static String CANNOT_REMOVE_CURRENT_BRANCH_MESSAGE = "Cannot remove the current branch.";
+
 
     /**
      * 1. creates the .git/object/ directory (Commit to do).
@@ -397,7 +404,7 @@ public class GitRepo {
         /* the rest file in filesInWorkingDir is not in the commit. */
 
         /* Populate files to delete: exist in working directory but commit. */
-        for (String fileNameInWorkingDir: filesInWorkingDir.keySet()) {
+        for (String fileNameInWorkingDir : filesInWorkingDir.keySet()) {
             if (!isUntracked(fileNameInWorkingDir)) { // the untracked file is not delete.
                 filesToDelete.add(fileNameInWorkingDir);
             }
@@ -413,8 +420,19 @@ public class GitRepo {
         return Reference.createNewBranch(branchName, HEADPointer.currentCommitId());
     }
 
+    /** Remove the branch. */
+    public static String removeBranch(String branchName) {
+        if (!Reference.containsBranch(branchName)) {
+            return RM_BRANCH_NO_SUCH_BRANCH_MESSAGE;
+        } else if (HEADPointer.currentBranch().equals(branchName)) {
+            return CANNOT_REMOVE_CURRENT_BRANCH_MESSAGE;
+        }
+        Reference.removeBranch(branchName);
+        return null;
+    }
+
     /** Returns true if the file is untracked in current commit, false otherwise. */
-    public static boolean isUntracked(String fileName) {
+    private static boolean isUntracked(String fileName) {
         Commit commit = HEADPointer.currentCommit();
         return (!commit.contains(fileName)
                 && !StagingArea.inAddedOrModifiedArea(fileName)

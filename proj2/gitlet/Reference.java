@@ -54,4 +54,10 @@ public class Reference {
     public static List<String> branches() {
         return Utils.plainFilenamesIn(REF_DIR);
     }
+
+    /** Remove the branch. */
+    public static void removeBranch(String branchName) {
+        File branchFile = Utils.join(REF_DIR, branchName);
+        branchFile.delete();
+    }
 }

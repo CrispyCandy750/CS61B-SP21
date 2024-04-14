@@ -23,7 +23,7 @@ public class Reference {
         if (containsBranch(branchName)) {
             return BRANCH_EXISTS_MESSAGE;
         }
-        move(branchName, commitId);
+        moveBranch(branchName, commitId);
         return null;
     }
 
@@ -39,7 +39,7 @@ public class Reference {
     }
 
     /** Move the branch pointer to the new commit. */
-    public static void move(String branch, String commitId) {
+    public static void moveBranch(String branch, String commitId) {
         File branchFile = Utils.join(REF_DIR, branch);
         Utils.writeContents(branchFile, commitId);
     }

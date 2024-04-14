@@ -1,12 +1,7 @@
 package gitlet;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
-// TODO: any imports you need here
+import java.util.*;
 
 /**
  * Represents a gitlet repository.
@@ -163,14 +158,7 @@ public class Repository {
      * random.stuff
      */
     public static String status() {
-        List<String> fileNames = Utils.plainFilenamesIn(CWD);
-        ArrayList<MediatorFile> filesInWorkingDir = new ArrayList<>();
-        /* Add all files into the list. */
-        for (String fileName : fileNames) {
-            File file = Utils.join(CWD, fileName);
-            filesInWorkingDir.add(new MediatorFile(file, fileName));
-        }
-        return GitRepo.status(filesInWorkingDir);
+        return GitRepo.status(getAllFiles());
     }
 
     /** Check out file from current commit. */
@@ -201,13 +189,7 @@ public class Repository {
 
     /** Checkout branch. */
     public static String checkoutBranch(String branch) {
-        HashMap<String, MediatorFile> filesInWorkingDir = new HashMap<>();
-        for (String fileName : Utils.plainFilenamesIn(CWD)) {
-            File file = Utils.join(CWD, fileName);
-            filesInWorkingDir.put(fileName, new MediatorFile(file, fileName));
-        }
-
-        filesInWorkingDir.remove(GitRepo.GIT_REPO.getName());
+        Map<String, MediatorFile> filesInWorkingDir = getAllFiles();
 
         HashSet<MediatorFile> filesToWrite = new HashSet<>();
         HashSet<String> filesToDelete = new HashSet<>();
@@ -215,21 +197,45 @@ public class Repository {
         String message =
                 GitRepo.checkoutBranch(branch, filesInWorkingDir, filesToWrite, filesToDelete);
 
-        if (message != null) {
-            return message;
+        if (message == null) {  // success to check out
+            writeFiles(filesToWrite);
+            deleteFiles(filesToDelete);
         }
 
-        for (MediatorFile fileToWrite: filesToWrite) {
+        return message;
+    }
+
+    /** Reset from the specific commit. */
+    public static String reset(String commitId) {
+        Map<String, MediatorFile> filesInWorkingDir = getAllFiles();
+        HashSet<MediatorFile> filesToWrite = new HashSet<>();
+        HashSet<String> filesToDelete = new HashSet<>();
+
+        String message =
+                GitRepo.reset(commitId, filesInWorkingDir, filesToWrite, filesToDelete);
+
+        if (message == null) {  // success to check out
+            writeFiles(filesToWrite);
+            deleteFiles(filesToDelete);
+        }
+
+        return message;
+    }
+
+    /** Write the files to the CWD. */
+    private static void writeFiles(Set<MediatorFile> filesToWrite) {
+        for (MediatorFile fileToWrite : filesToWrite) {
             File file = Utils.join(CWD, fileToWrite.getFileName());
             Utils.writeContents(file, fileToWrite.getContent());
         }
+    }
 
-        for (String fileNameToDelete: filesToDelete) {
+    /** Delete the files from the CWD. */
+    private static void deleteFiles(Set<String> filesToDelete) {
+        for (String fileNameToDelete : filesToDelete) {
             File file = Utils.join(CWD, fileNameToDelete);
             file.delete();
         }
-
-        return null;
     }
 
     /**
@@ -243,5 +249,18 @@ public class Repository {
     /** Remove the branch. */
     public static String removeBranch(String branchName) {
         return GitRepo.removeBranch(branchName);
+    }
+
+    /** Returns all files map from file name to mediator file except the .gitlet */
+    private static Map<String, MediatorFile> getAllFiles() {
+        HashMap<String, MediatorFile> filesInWorkingDir = new HashMap<>();
+        for (String fileName : Utils.plainFilenamesIn(CWD)) {
+            File file = Utils.join(CWD, fileName);
+            filesInWorkingDir.put(fileName, new MediatorFile(file, fileName));
+        }
+
+        filesInWorkingDir.remove(GitRepo.GIT_REPO.getName());
+
+        return filesInWorkingDir;
     }
 }

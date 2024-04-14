@@ -98,11 +98,11 @@ public class Commit implements Serializable {
 
     /** Generate the log of the commit iterator. */
     public static String generateLogs(Iterable<Commit> commits) {
-        StringBuilder logs = new StringBuilder();
-        for (Commit commit : commits) {
-            logs.append(commit.logInfo());
+        ArrayList<String> logs = new ArrayList<>();
+        for (Commit commit: commits) {
+            logs.add(commit.logInfo());
         }
-        return logs.deleteCharAt(logs.lastIndexOf("\n")).toString();
+        return String.join("\n", logs);
     }
 
     /** Returns all commit information with arbitrary message. */
@@ -221,12 +221,12 @@ public class Commit implements Serializable {
      * <<<
      */
     private String logInfo() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(LOGS_DELIMITER + "\n");
-        stringBuilder.append("commit " + this.sha1 + "\n");
-        stringBuilder.append("Date: " + sdf.format(new Date(timestamp.getTime())) + "\n");
-        stringBuilder.append(message + "\n\n");
-        return stringBuilder.toString();
+        return String.join("\n",
+                LOGS_DELIMITER,
+                "commit " + this.sha1,
+                "Date: " + sdf.format(new Date(timestamp.getTime())),
+                message,
+                "");  // add "" for append a \n.
     }
     /* -------------------------- private class & methods -------------------------- */
 

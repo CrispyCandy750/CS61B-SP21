@@ -17,10 +17,14 @@ public class StagingArea {
     }
 
     /** Add the pointer from filename to blob. */
-    public static void addToStagedArea(String fileName, String blobId) {
-        StagedAndRemovedArea stagingArea = getStagedAndRemovedArea();
-        stagingArea.add(fileName, blobId);
-        stagingArea.save();
+    public static void addToStagedArea(String fileName, String content) {
+        stagedAndRemovedArea = getStagedAndRemovedArea();
+
+        Blob blob = new Blob(content);
+        blob.saveBlob();
+
+        stagedAndRemovedArea.add(fileName, blob.getBlobId());
+        stagedAndRemovedArea.save();
     }
 
     /** Clear the mapping with empty StagedAndRemovedArea object. */

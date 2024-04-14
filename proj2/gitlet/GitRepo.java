@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.sql.Ref;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,15 +18,23 @@ public class GitRepo {
     /** The message when no reason to remove the file. */
     private final static String NO_REASON_TO_REMOVE_MESSAGE = "No reason to remove the file.";
 
-    /** The delimiter between two log. */
-    private final static String LOGS_DELIMITER = "===";
-
     /** The message when checkout commit does not exist. */
     private final static String NO_COMMIT_MESSAGE = "No commit with that id exists.";
 
     /** The message when file does not exist in the commit. */
     private final static String FILE_DOES_NOT_EXISTS_MESSAGE = "File does not exist in that " +
             "commit.";
+
+    /** The message when checkout branch and no such branch exists. */
+    private final static String NO_SUCH_BRANCH_MESSAGE = "No such branch exists.";
+
+    /** The message when checkout commit and untracked file exists. */
+    private final static String UNTRACKED_FILE_MESSAGE = "There is an untracked file in the way; " +
+            "delete it, or add and commit it first.";
+
+    /** The message when no need to check out branch. */
+    private final static String NO_NEED_TO_CHECKOUT_BRANCH_MESSAGE = "No need to checkout the " +
+            "current branch.";
 
 
     /**
@@ -65,11 +74,7 @@ public class GitRepo {
             return null;
         }
 
-        Blob blob = new Blob(file.getContent());
-        blob.saveBlob();
-
-        StagingArea.addToStagedArea(file.getFileName(), blob.getBlobId());
-
+        StagingArea.addToStagedArea(file.getFileName(), file.getContent());
         return null;  // no message to print
     }
 
@@ -192,8 +197,12 @@ public class GitRepo {
         String untrackedFilesStatus = getUntrackedFilesStatus(filesInWorkingDir);
 
         /* split the status with '\n' */
-        return String.join("\n", Arrays.asList(branchesStatus, stagedFilesStatus,
-                removedFilesStatus, modifiedButNotStagedFilesStatus, untrackedFilesStatus));
+        return String.join("\n",
+                branchesStatus,
+                stagedFilesStatus,
+                removedFilesStatus,
+                modifiedButNotStagedFilesStatus,
+                untrackedFilesStatus);
     }
 
     /**
@@ -242,7 +251,6 @@ public class GitRepo {
                     || (StagingArea.inAddedOrModifiedArea(fileName)
                     && !StagingArea.inAddedOrModifiedArea(fileName, content))) {
                 filesModifiedButNotStaged.add(fileName + " (modified)");
-//                filesModifiedButNotStaged.add(fileName);
             }
         }
 
@@ -256,7 +264,6 @@ public class GitRepo {
         for (String fileName : deletedFileNames) {
             if (!StagingArea.inRemovedArea(fileName)) {
                 filesModifiedButNotStaged.add(fileName + " (deleted)");
-//                filesModifiedButNotStaged.add(fileName);
             }
         }
 
@@ -311,11 +318,106 @@ public class GitRepo {
         return null;
     }
 
+    /** Checkout the branch. */
+    public static String checkoutBranch(
+            String branchName, Map<String, MediatorFile> filesInWorkingDir,
+            Set<MediatorFile> filesToWrite, Set<String> filesToDelete) {
+
+        if (!Reference.containsBranch(branchName)) {
+            return NO_SUCH_BRANCH_MESSAGE;
+        }
+
+        if (HEADPointer.currentBranch().equals(branchName)) {
+            return NO_NEED_TO_CHECKOUT_BRANCH_MESSAGE;
+        }
+
+        /* Nothing to change */
+        if (Reference.furthestCommitId(branchName).equals(HEADPointer.currentCommitId())) {
+            HEADPointer.moveToRefs(branchName);
+            return null;
+        }
+
+        String message =
+                checkoutCommit(Reference.furthestCommit(branchName),
+                        filesInWorkingDir, filesToWrite, filesToDelete);
+
+        if (message != null) {
+            return message;
+        }
+
+        HEADPointer.moveToRefs(branchName);
+        StagingArea.clear();
+        return null;  // no message to print
+    }
+
+    /**
+     * Takes all files in the commit at the head of the given branch,
+     * and puts them in the working directory, overwriting the versions
+     * of the files that are already there if they exist.
+     * <p>
+     * Also, at the end of this command, the given branch will now be considered the
+     * current branch (HEAD). Any files that are tracked in the current branch but
+     * are not present in the checked-out branch are deleted.
+     * <p>
+     * The staging area is cleared, unless the checked-out branch is the current
+     * branch
+     * <p>
+     * If no branch with that name exists, print No such branch exists.
+     * If that branch is the current branch, print No need to checkout
+     * the current branch.
+     * If a working file is untracked in the current branch and would be
+     * overwritten by the checkout, print `There is an untracked file in
+     * the way; delete it, or add and commit it first`. and exit;
+     * perform this check before doing anything else. Do not change the CWD.
+     */
+    private static String checkoutCommit(
+            Commit commit, Map<String, MediatorFile> filesInWorkingDir,
+            Set<MediatorFile> filesToWrite, Set<String> filesToDelete) {
+
+        /* Populate files to write: the file and content existing in commit but not in working
+        directory. */
+        for (String fileName : commit.getFiles()) {  // iterate the file in commit
+
+            MediatorFile fileInWorkDir = filesInWorkingDir.getOrDefault(fileName, null);
+
+            if (fileInWorkDir == null) {  // the file exists in commit but working directory.
+                filesToWrite.add(new MediatorFile(fileName, commit.getContent(fileName)));
+                continue;
+            }
+            if (!commit.contains(fileName, fileInWorkDir.getContent())) { // the file need
+                // to rewrite
+                if (isUntracked(fileName)) {  // fail if the file is untracked
+                    return UNTRACKED_FILE_MESSAGE;
+                }
+                filesToWrite.add(new MediatorFile(fileName, commit.getContent(fileName)));
+            }
+            filesInWorkingDir.remove(fileName); // this file is ignore in the rest process.
+        }
+
+        /* the rest file in filesInWorkingDir is not in the commit. */
+
+        /* Populate files to delete: exist in working directory but commit. */
+        for (String fileNameInWorkingDir: filesInWorkingDir.keySet()) {
+            if (!isUntracked(fileNameInWorkingDir)) { // the untracked file is not delete.
+                filesToDelete.add(fileNameInWorkingDir);
+            }
+        }
+        return null;
+    }
+
     /**
      * Create a new branch pointing to the current commit.
      * If the branch has already existed, returns the fail message.
      */
     public static String createBranch(String branchName) {
         return Reference.createNewBranch(branchName, HEADPointer.currentCommitId());
+    }
+
+    /** Returns true if the file is untracked in current commit, false otherwise. */
+    public static boolean isUntracked(String fileName) {
+        Commit commit = HEADPointer.currentCommit();
+        return (!commit.contains(fileName)
+                && !StagingArea.inAddedOrModifiedArea(fileName)
+                && !StagingArea.inRemovedArea(fileName));
     }
 }

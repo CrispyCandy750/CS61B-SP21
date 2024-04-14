@@ -79,7 +79,7 @@ public class Main {
                 break;
             case "checkout":
                 validateCheckoutArgs(args, WRONG_NUMBER_OPERANDS_MESSAGE);
-                message = Repository.checkout(args);
+                message = checkout(args);
                 break;
             case "branch":
                 validateNumArgs("branch", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
@@ -116,12 +116,27 @@ public class Main {
 
     /** Validate the number of arguments of checkout command. */
     private static void validateCheckoutArgs(String[] args, String message) {
-        if ("--".equals(args[1])) {
-            validateNumArgs("checkout", args, 3, message);
-        } else if ("--".equals(args[2])) {
-            validateNumArgs("checkout", args, 4, message);
+        if (args.length == 3 && "--".equals(args[1])
+                || args.length == 4 && "--".equals(args[2])
+                || args.length == 2) {
+            return;
+        }
+        System.out.println(message);
+        System.exit(0);
+    }
+
+    /** Judge call which checkout command. */
+    private static String checkout(String[] args) {
+        if (args.length == 3) {
+            String fileName = args[2];
+            return Repository.checkoutFileFromCurrentCommit(fileName);
+        } else if (args.length == 4) {
+            String commitId = args[1];
+            String fileName = args[3];
+            return Repository.checkoutFileFromSpecificCommit(commitId, fileName);
         } else {
-            validateNumArgs("checkout", args, 2, message);
+            String branchName = args[1];
+            return Repository.checkoutBranch(branchName);
         }
     }
 

@@ -99,7 +99,7 @@ public class Commit implements Serializable {
     /** Generate the log of the commit iterator. */
     public static String generateLogs(Iterable<Commit> commits) {
         ArrayList<String> logs = new ArrayList<>();
-        for (Commit commit: commits) {
+        for (Commit commit : commits) {
             logs.add(commit.logInfo());
         }
         return String.join("\n", logs);
@@ -113,7 +113,7 @@ public class Commit implements Serializable {
     }
 
     /** Returns the commits from specific to the initial commit. */
-    public static Iterable<Commit> commitsStartingAt(String commitId) {
+    public static Iterable<Commit> getCommitsStartingAt(String commitId) {
         return new Iterable<Commit>() {
             @Override
             public Iterator<Commit> iterator() {
@@ -134,20 +134,128 @@ public class Commit implements Serializable {
 
     /** Returns one-line ids of commits with specific message */
     public static String findCommitsWithMessage(String message) {
-        StringBuilder commitIds = new StringBuilder();
+        List<String> commitIds = new ArrayList<>();
         Iterable<Commit> commits = allCommits();
         for (Commit commit : commits) {
             if (commit.message.equals(message)) {
-                commitIds.append(commitIds);
-                commitIds.append("\n");
+                commitIds.add(commit.sha1);
             }
         }
 
-        if (commitIds.length() == 0) {
+        if (commitIds.size() == 0) {
             return NO_COMMIT_WITH_SPECIFIC_MESSAGE;
         }
 
-        return commitIds.deleteCharAt(commitIds.lastIndexOf("\n")).toString();
+        return String.join("\n", commitIds);
+    }
+
+    /** Returns the latest common ancestor of two commits. */
+    public static Commit getLatestCommonAncestor(Commit commit1, Commit commit2) {
+        Iterator<Commit> commitIt1 = getCommitsStartingAt(commit1.sha1).iterator();
+        Iterator<Commit> commitIt2 = getCommitsStartingAt(commit2.sha1).iterator();
+        HashSet<String> visitedCommit = new HashSet<>();
+        while (commitIt1.hasNext() || commitIt2.hasNext()) {
+            if (commitIt1.hasNext()) {
+                Commit next = commitIt1.next();
+                if (visitedCommit.contains(next.sha1)) {
+                    return next;
+                }
+                visitedCommit.add(next.sha1);
+            }
+
+            if (commitIt2.hasNext()) {
+                Commit next = commitIt2.next();
+                if (visitedCommit.contains(next.sha1)) {
+                    return next;
+                }
+                visitedCommit.add(next.sha1);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Differentiate which files need to be written, which files need to be deleted, and which
+     * files have conflicts, and then fill them into the collection.
+     */
+    public static void differentiateFiles(
+            Commit currentCommit, Commit givenCommit,
+            Commit splitPointCommit, List<MediatorFile> filesToWrite,
+            List<String> filesToDelete, List<String> filesHaveConflicts
+    ) {
+        Set<String> filesInSplitCommit = splitPointCommit.getFiles();
+        Set<String> filesInGivenCommit = givenCommit.getFiles();
+        for (String fileName : filesInSplitCommit) {
+
+            /* Any files present at the split point, unmodified in the current branch, and absent
+             in the given branch should be removed (and untracked).
+             */
+            if (isContentEquals(fileName, splitPointCommit, currentCommit)
+                    && !givenCommit.contains(fileName)) {
+                filesToDelete.add(fileName);
+            }
+
+            /* Any files present at the split point, unmodified in the given branch, and absent
+            in the current branch should remain absent. */
+            else if (isContentEquals(fileName, splitPointCommit, givenCommit)
+                    && !currentCommit.contains(fileName)) {
+                // do nothing
+            }
+
+            /* Any files that have been modified in the given branch since the split point, but
+            not modified in the current branch since the split point should be changed to their
+            versions in the given branch */
+            else if (isContentEquals(fileName, splitPointCommit, currentCommit)
+                    && !isContentEquals(fileName, splitPointCommit, givenCommit)) {
+                filesToWrite.add(new MediatorFile(fileName, givenCommit.getContent(fileName)));
+            }
+            /* Any files that have been modified in the current branch but not in the given
+            branch since the split point should stay as they are. */
+            else if (!isContentEquals(fileName, splitPointCommit, currentCommit)
+                    && isContentEquals(fileName, splitPointCommit, givenCommit)) {
+                // do nothing
+            }
+            /* Any files that have been modified in both the current and given branch in the same
+             way unchanged by the merge. */
+            else if (isContentEquals(fileName, currentCommit, givenCommit)) {
+                // do nothing
+            }
+            /* Files modified in different ways in the current and given branches or are only
+            present at one commit and modified in the other commit are in conflict. */
+            else {
+                filesHaveConflicts.add(fileName);
+            }
+
+            // the file is ignored in the rest difference process.
+            filesInGivenCommit.remove(fileName);
+        }
+
+        /* The files in 'filesInGivenCommit' is only in given commit (likely in current commit)
+        but not in split point commit. */
+        for (String fileName : filesInGivenCommit) {
+            /* Any files that were not present at the split point and are present only in the
+            given branch should be checked out and staged. */
+            if (!currentCommit.contains(fileName)) {
+                filesToWrite.add(new MediatorFile(fileName, givenCommit.getContent(fileName)));
+            }
+            /* The files are present at the given commit and current commit but not split point
+            commit has different content, which means have conflict. */
+            else if (!isContentEquals(fileName, currentCommit, givenCommit)) {
+                filesHaveConflicts.add(fileName);
+            }
+        }
+
+        /* The rest are files that were not present at the split point and are present only in
+        the given branch which should be checked out and staged. Do nothing. */
+    }
+
+    public static List<MediatorFile> mergeConflictFiles(
+            List<String> filesHaveConflict, Commit currentCommit, Commit givenCommit) {
+        ArrayList<MediatorFile> conflictFiles = new ArrayList<>(filesHaveConflict.size());
+        for (String fileName : filesHaveConflict) {
+            conflictFiles.add(mergeConflictFile(fileName, currentCommit, givenCommit));
+        }
+        return conflictFiles;
     }
 
     /* ----------------------------------- instance methods ----------------------------------- */
@@ -195,17 +303,46 @@ public class Commit implements Serializable {
         return blobId != null && blobId.equals(Utils.sha1(content));
     }
 
-    /** Returns the files in this commit. */
+    /** Returns the files in this commit. (create new files) */
     public Set<String> getFiles() {
         return new HashSet<>(fileBlobMap.keySet());
     }
 
-    /** Returns the content corresponding the fileName, returns null if the fileName does not
-     * exist. */
+    /**
+     * Returns the content corresponding the fileName, returns null if the fileName does not
+     * exist.
+     */
     public String getContent(String fileName) {
+        return getContentOrDefault(fileName, null);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (!(obj instanceof Commit)) {
+            return false;
+        }
+
+        Commit o = (Commit) obj;
+        return this.sha1.equals(o.sha1);
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.parseInt(this.sha1);
+    }
+
+    /**
+     * Returns the content of the file in the commit, returns null if the commit do not contain
+     * the file.
+     */
+    public String getContentOrDefault(String fileName, String defaultRes) {
         String blobId = fileBlobMap.get(fileName);
-        Blob blob = Blob.fromBlobId(blobId);
-        return blob.getContent();
+        if (blobId == null) {
+            return defaultRes;
+        }
+        return Blob.fromBlobId(blobId).getContent();
     }
 
     /* -------------------------- private instance methods -------------------------- */
@@ -273,5 +410,55 @@ public class Commit implements Serializable {
     /** Creates the initial commit. */
     private static Commit initialCommit() {
         return new Commit(INITIAL_COMMIT_MESSAGE, null, 0, new HashMap<>());
+    }
+
+    /**
+     * Returns iff commit1 and commit2 both contains file and the content is equivalent or the
+     * both do not contains the file, false otherwise.
+     */
+    private static boolean isContentEquals(String fileName, Commit commit1, Commit commit2) {
+        String blobId1 = commit1.fileBlobMap.getOrDefault(fileName, null);
+        String blobId2 = commit2.fileBlobMap.getOrDefault(fileName, null);
+
+        if (blobId1 == null && blobId2 == null) {
+            return true;
+        }
+
+        if (blobId1 == null || blobId2 == null || !blobId1.equals(blobId2)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /** Merge all files having conflict. */
+    private static MediatorFile mergeConflictFile(
+            String fileHasConflict, Commit currentCommit, Commit givenCommit) {
+        return new MediatorFile(fileHasConflict,
+                mergeConflictContent(
+                        currentCommit.getContentOrDefault(fileHasConflict, ""),
+                        givenCommit.getContentOrDefault(fileHasConflict, "")
+                )
+        );
+    }
+
+    /**
+     * Merge the conflict content.
+     * <p>
+     * Example:
+     * <<<<<<< HEAD
+     * contents of file in current branch
+     * =======
+     * contents of file in given branch
+     * >>>>>>>
+     */
+    private static String mergeConflictContent(String currentContent, String givenContent) {
+        return String.join("\n",
+                "<<<<<<< HEAD",
+                currentContent,
+                "=======",
+                givenContent,
+                ">>>>>>>",
+                "");  // "" for append a \n
     }
 }

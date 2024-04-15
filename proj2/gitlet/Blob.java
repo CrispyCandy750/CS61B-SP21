@@ -26,10 +26,15 @@ public class Blob {
 
     /** Returns the blob saved in BLOB_DIR by id. */
     public static Blob fromBlobId(String blobId) {
-        File blobFile = Utils.join(Utils.join(BLOB_DIR, blobId.substring(0, 2)),
-                blobId.substring(2));
+        File blobFile = getBlobFile(blobId);
         String content = new String(Utils.readContents(blobFile));
         return new Blob(blobId, content);
+    }
+
+    /** Returns the blob file */
+    public static File getBlobFile(String blobId) {
+        return Utils.join(Utils.join(BLOB_DIR, blobId.substring(0, 2)),
+                blobId.substring(2));
     }
 
     /* ----------------------------------- instance methods ----------------------------------- */
@@ -49,7 +54,10 @@ public class Blob {
         }
 
         File blobFile = Utils.join(blobDir, blobId.substring(2));
-        Utils.writeContents(blobFile, this.content);
+
+        if (!blobFile.exists()) {
+            Utils.writeContents(blobFile, this.content);
+        }
     }
 
     /** Returns the content. */

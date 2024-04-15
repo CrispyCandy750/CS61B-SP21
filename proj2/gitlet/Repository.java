@@ -103,20 +103,15 @@ public class Repository {
      */
     public static String rm(String fileName) {
         File file = Utils.join(CWD, fileName);
-
         /* If the file does not exist. */
         if (!file.exists()) {
             return FILE_NOT_FOUND_MESSAGE;
         }
+        List<String> filesToRemove = new ArrayList<>();
 
-        String message = GitRepo.rm(fileName);
-
+        String message = GitRepo.rm(fileName, filesToRemove);
         /* Add the file to the removed area which means remove from working copy. */
-        if ("remove".equals(message)) {
-            file.delete();
-            return null;
-        }
-
+        deleteFiles(filesToRemove);
         return message;
     }
 
@@ -179,11 +174,9 @@ public class Repository {
             return message;
         }
 
-
         File file = Utils.join(CWD, fileName);
         String content = mediatorFile.getContent();
         Utils.writeContents(file, content);
-
         return null;  // checkout successfully, no message to print.
     }
 
@@ -191,16 +184,14 @@ public class Repository {
     public static String checkoutBranch(String branch) {
         Map<String, MediatorFile> filesInWorkingDir = getAllFiles();
 
-        HashSet<MediatorFile> filesToWrite = new HashSet<>();
-        HashSet<String> filesToDelete = new HashSet<>();
+        List<MediatorFile> filesToWrite = new ArrayList<>();
+        List<String> filesToDelete = new ArrayList<>();
 
         String message =
                 GitRepo.checkoutBranch(branch, filesInWorkingDir, filesToWrite, filesToDelete);
 
-        if (message == null) {  // success to check out
-            writeFiles(filesToWrite);
-            deleteFiles(filesToDelete);
-        }
+        writeFiles(filesToWrite);
+        deleteFiles(filesToDelete);
 
         return message;
     }
@@ -208,8 +199,8 @@ public class Repository {
     /** Reset from the specific commit. */
     public static String reset(String commitId) {
         Map<String, MediatorFile> filesInWorkingDir = getAllFiles();
-        HashSet<MediatorFile> filesToWrite = new HashSet<>();
-        HashSet<String> filesToDelete = new HashSet<>();
+        List<MediatorFile> filesToWrite = new ArrayList<>();
+        List<String> filesToDelete = new ArrayList<>();
 
         String message =
                 GitRepo.reset(commitId, filesInWorkingDir, filesToWrite, filesToDelete);
@@ -222,20 +213,11 @@ public class Repository {
         return message;
     }
 
-    /** Write the files to the CWD. */
-    private static void writeFiles(Set<MediatorFile> filesToWrite) {
-        for (MediatorFile fileToWrite : filesToWrite) {
-            File file = Utils.join(CWD, fileToWrite.getFileName());
-            Utils.writeContents(file, fileToWrite.getContent());
-        }
-    }
+    public static String merge(String branchName) {
+        List<MediatorFile> filesToWrite = new ArrayList<>();
+        List<String> filesToDelete = new ArrayList<>();
 
-    /** Delete the files from the CWD. */
-    private static void deleteFiles(Set<String> filesToDelete) {
-        for (String fileNameToDelete : filesToDelete) {
-            File file = Utils.join(CWD, fileNameToDelete);
-            file.delete();
-        }
+        return null;
     }
 
     /**
@@ -249,6 +231,22 @@ public class Repository {
     /** Remove the branch. */
     public static String removeBranch(String branchName) {
         return GitRepo.removeBranch(branchName);
+    }
+
+    /** Write the files to the CWD. */
+    private static void writeFiles(List<MediatorFile> filesToWrite) {
+        for (MediatorFile fileToWrite : filesToWrite) {
+            File file = Utils.join(CWD, fileToWrite.getFileName());
+            Utils.writeContents(file, fileToWrite.getContent());
+        }
+    }
+
+    /** Delete the files from the CWD. */
+    private static void deleteFiles(List<String> filesToDelete) {
+        for (String fileNameToDelete : filesToDelete) {
+            File file = Utils.join(CWD, fileNameToDelete);
+            file.delete();
+        }
     }
 
     /** Returns all files map from file name to mediator file except the .gitlet */

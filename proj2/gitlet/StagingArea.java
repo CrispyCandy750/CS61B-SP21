@@ -16,48 +16,86 @@ public class StagingArea {
         clear();
     }
 
-    /** Add the pointer from filename to blob. */
+    /** Add the file and content in the staged area. */
     public static void addToStagedArea(String fileName, String content) {
+        addToStagedArea(new MediatorFile(fileName, content));
+    }
+
+    /** Add the mediator file in the staged area. */
+    public static void addToStagedArea(MediatorFile file) {
+        addAllToStagedArea(Arrays.asList(file));
+    }
+
+    /** Add all the files to the staged area. */
+    public static void addAllToStagedArea(Collection<MediatorFile> files) {
+        addAllToStagedAndRemovedArea(files, null);
+    }
+
+    /** Add the file to the removed area. */
+    public static void addToRemovedArea(String fileName) {
+        addAllToRemovedArea(Arrays.asList(fileName));
+    }
+
+    public static void addAllToRemovedArea(Collection<String> filesToRemove) {
+        addAllToStagedAndRemovedArea(null, filesToRemove);
+    }
+
+    public static void addAllToStagedAndRemovedArea(
+            Collection<MediatorFile> filesToAddToStagedArea,
+            Collection<String> filesToAddToRemovedArea) {
+
         stagedAndRemovedArea = getStagedAndRemovedArea();
 
-        Blob blob = new Blob(content);
-        blob.saveBlob();
+        /* Add to staged file. */
+        if (filesToAddToStagedArea != null) {
+            for (MediatorFile fileToAddToStagedArea : filesToAddToStagedArea) {
+                Blob blob = new Blob(fileToAddToStagedArea.getContent());
+                blob.saveBlob();
+                stagedAndRemovedArea.addToStagedArea(fileToAddToStagedArea.getFileName(),
+                        blob.getBlobId());
+            }
+        }
 
-        stagedAndRemovedArea.add(fileName, blob.getBlobId());
+        if (filesToAddToRemovedArea != null) {
+            for (String fileToAddToRemovedArea : filesToAddToRemovedArea) {
+                stagedAndRemovedArea.addToRemovedArea(fileToAddToRemovedArea);
+            }
+        }
+
         stagedAndRemovedArea.save();
     }
 
     /** Clear the mapping with empty StagedAndRemovedArea object. */
     public static void clear() {
-        StagedAndRemovedArea stagedAndRemovedArea = new StagedAndRemovedArea();
+        stagedAndRemovedArea = new StagedAndRemovedArea();
         stagedAndRemovedArea.save();
     }
 
     /** Returns whether there are any files to be changed. */
-    public static boolean changed() {
-        return haveFilesToBeAddedOrModified() || haveFilesToBeRemoved();
+    public static boolean haveStagedOrRemovedFiles() {
+        return haveFilesInStagedArea() || haveFilesInRemovedArea();
     }
 
     /** Returns whether there are any files to be added or modified. */
-    public static boolean haveFilesToBeAddedOrModified() {
+    public static boolean haveFilesInStagedArea() {
         stagedAndRemovedArea = getStagedAndRemovedArea();
         return !stagedAndRemovedArea.filesToAddOrModify.isEmpty();
     }
 
     /** Returns whether there are any files to be removed. */
-    public static boolean haveFilesToBeRemoved() {
+    public static boolean haveFilesInRemovedArea() {
         stagedAndRemovedArea = getStagedAndRemovedArea();
         return !stagedAndRemovedArea.filesToRemove.isEmpty();
     }
 
     /** Returns true if the file is in staged area to be added or modified. */
-    public static boolean inAddedOrModifiedArea(String fileName) {
+    public static boolean inStagedArea(String fileName) {
         stagedAndRemovedArea = getStagedAndRemovedArea();
         return stagedAndRemovedArea.filesToAddOrModify.containsKey(fileName);
     }
 
     /** Returns true if the file is in staged area and content is identical */
-    public static boolean inAddedOrModifiedArea(String fileName, String content) {
+    public static boolean inStagedArea(String fileName, String content) {
         stagedAndRemovedArea = getStagedAndRemovedArea();
         String blobId = stagedAndRemovedArea.filesToAddOrModify.getOrDefault(fileName, null);
         return blobId != null && blobId.equals(Utils.sha1(content));
@@ -73,13 +111,6 @@ public class StagingArea {
     public static void removeFromStagedArea(String fileName) {
         stagedAndRemovedArea = getStagedAndRemovedArea();
         stagedAndRemovedArea.filesToAddOrModify.remove(fileName);
-        stagedAndRemovedArea.save();
-    }
-
-    /** Add the file to the removed area. */
-    public static void addToRemovedArea(String fileName) {
-        stagedAndRemovedArea = getStagedAndRemovedArea();
-        stagedAndRemovedArea.filesToRemove.add(fileName);
         stagedAndRemovedArea.save();
     }
 
@@ -123,7 +154,6 @@ public class StagingArea {
      * Example:
      * === Removed Files ===
      * goodbye.txt
-     *
      */
     public static String statusOfRemovedFiles() {
         stagedAndRemovedArea = getStagedAndRemovedArea();
@@ -131,6 +161,12 @@ public class StagingArea {
 
         Collections.sort(removedFiles);
         return Utils.FormatStrings(removedFiles, "=== Removed Files ===");
+    }
+
+    /** Returns all names of staged file. */
+    public static Set<String> getStagedFiles() {
+        stagedAndRemovedArea = getStagedAndRemovedArea();
+        return stagedAndRemovedArea.filesToAddOrModify.keySet();
     }
 
     /* ---------------------------- private class & methods ---------------------------- */
@@ -152,8 +188,13 @@ public class StagingArea {
         }
 
         /** Add the pointer from filename to blob. */
-        void add(String fileName, String blobId) {
+        void addToStagedArea(String fileName, String blobId) {
             filesToAddOrModify.put(fileName, blobId);
+        }
+
+        /** Add the file to removed area. */
+        void addToRemovedArea(String fileName) {
+            filesToRemove.add(fileName);
         }
     }
 

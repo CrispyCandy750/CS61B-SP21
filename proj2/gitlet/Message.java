@@ -4,6 +4,9 @@ public class Message {
     private Message() {
     }
 
+    /** The message when the inputted command doesn't exist. */
+    final static String COMMAND_DOES_NOT_EXIST_MESSAGE = "No command with that name exists.";
+
     /** When merge and there are staged additions or removals present. */
     static final String MERGE_HAVE_UNCOMMITTED_FILES_MESSAGE = "You have uncommitted changes.";
 
@@ -21,8 +24,10 @@ public class Message {
     static final String MERGE_ANCESTOR_MESSAGE = "Given branch is an ancestor of the current " +
             "branch.";
 
-    /** When an untracked file in the current commit would be overwritten or deleted by the merge
-     *  or checkout. */
+    /**
+     * When an untracked file in the current commit would be overwritten or deleted by the merge
+     * or checkout.
+     */
     static final String OVERWRITE_OR_DELETE_UNTRACKED_FILE_MESSAGE = "There is an untracked file " +
             "in the way; delete it, or add and commit it first.";
 
@@ -31,4 +36,12 @@ public class Message {
 
     /** The message when checkout commit does not exist. */
     final static String COMMIT_DOES_NOT_EXIST_MESSAGE = "No commit with that id exists.";
+
+    /** The message when fast-forwarded merged. */
+    final static String FAST_FORWARD_MESSAGE = "Current branch fast-forwarded.";
+
+    /** Returns the successful merge message. */
+    static String getMergeMessage(String givenBranchName, String currentBranchName) {
+        return "Merged " + givenBranchName + " into " + currentBranchName;
+    }
 }

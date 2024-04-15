@@ -34,11 +34,11 @@ public class Main {
         validateNoArgs(args, NO_ARGUMENT_MESSAGE);
 
         String firstArg = args[0];
-        validateCommandExists(firstArg, NO_COMMAND_MESSAGE);
+//        validateCommandExists(firstArg, NO_COMMAND_MESSAGE);
         validateGitRepoIsInitialized(firstArg, NO_GIT_REPO_MESSAGE);
 
         String message = null;
-        String commitMessage = null;
+        String commitMessage;
 
         switch (firstArg) {
             case "init":
@@ -96,8 +96,13 @@ public class Main {
                 String commitId = args[1];
                 message = Repository.reset(commitId);
                 break;
+            case "merge":
+                validateNumArgs("merge", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
+                branchName = args[1];
+                message = Repository.merge(branchName);
+                break;
             default:
-                System.out.println(NO_COMMAND_MESSAGE);
+                message = Message.COMMAND_DOES_NOT_EXIST_MESSAGE;
         }
         printMessage(message);
     }

@@ -213,11 +213,17 @@ public class Repository {
         return message;
     }
 
+    /** Merge the specific branch into the current branch. */
     public static String merge(String branchName) {
         List<MediatorFile> filesToWrite = new ArrayList<>();
         List<String> filesToDelete = new ArrayList<>();
 
-        return null;
+        String message = GitRepo.merge(branchName, getAllFiles(), filesToWrite, filesToDelete);
+
+        deleteFiles(filesToDelete);
+        writeFiles(filesToWrite);
+
+        return message;
     }
 
     /**

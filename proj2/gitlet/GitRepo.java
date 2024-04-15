@@ -30,8 +30,7 @@ public class GitRepo {
     private final static String CANNOT_REMOVE_CURRENT_BRANCH_MESSAGE = "Cannot remove the current" +
             " branch.";
 
-    /** The message when fast-forwarded merged. */
-    private final static String FAST_FORWARD_MESSAGE = "Current branch fast-forwarded.";
+
 
 
     /**
@@ -356,7 +355,8 @@ public class GitRepo {
             List<MediatorFile> filesToWrite, List<String> filesToDelete
     ) {
 
-        String message = checkoutCommit(commitId, filesInWorkingDir, filesToWrite, filesToDelete);
+        String message = checkoutCommit(
+                commitId, filesInWorkingDir, filesToWrite, filesToDelete);
 
         if (SuccessCheckingOutCommit(message)) { // success to check out commit
             Reference.moveBranch(HEADPointer.currentBranch(), commitId);
@@ -473,10 +473,6 @@ public class GitRepo {
             String givenBranchName, Map<String, MediatorFile> filesInWorkingDir,
             List<MediatorFile> filesToWrite, List<String> filesToDelete
     ) {
-        /* If there are staged additions or removals present. */
-        if (StagingArea.haveStagedOrRemovedFiles()) {
-            return Message.MERGE_HAVE_UNCOMMITTED_FILES_MESSAGE;
-        }
 
         /* If a branch with the given name does not exist. */
         if (!Reference.containsBranch(givenBranchName)) {
@@ -487,6 +483,13 @@ public class GitRepo {
         if (HEADPointer.currentBranch().equals(givenBranchName)) {
             return Message.MERGE_CURRENT_BRANCH_MESSAGE;
         }
+
+        /* If there are staged additions or removals present. */
+        if (StagingArea.haveStagedOrRemovedFiles()) {
+            return Message.MERGE_HAVE_UNCOMMITTED_FILES_MESSAGE;
+        }
+
+
 
         Commit givenCommit = Reference.furthestCommit(givenBranchName);
         Commit currentCommit = HEADPointer.currentCommit();
@@ -500,16 +503,14 @@ public class GitRepo {
         /* The current commit is the ancestor of given commit. */
         else if (splitPointCommit.equals(currentCommit)) {
             /* Transfer the commit to files to avoid the untracked file in working directory. */
-            String checkoutMessage =
+            String message =
                     checkoutBranch(givenBranchName, filesInWorkingDir, filesToWrite, filesToDelete);
 
             /* There are untracked files are overwritten or deleted, abort. */
-            if (checkoutMessage.equals(Message.OVERWRITE_OR_DELETE_UNTRACKED_FILE_MESSAGE)) {
-                filesToWrite.clear();
-                filesToDelete.clear();
-                return checkoutMessage;
+            if (SuccessCheckingOutCommit(message)) {
+                message = Message.FAST_FORWARD_MESSAGE;
             }
-            return FAST_FORWARD_MESSAGE;
+            return message;
         }
 
         List<String> filesHaveConflict = new ArrayList<>();
@@ -517,16 +518,17 @@ public class GitRepo {
                 filesToWrite, filesToDelete, filesHaveConflict);
 
         /* There are untracked files are overwritten or deleted, abort. */
-        if (haveUntrackedFile(filesToWrite, filesInWorkingDir.keySet())
-                || haveUntrackedFileName(filesToDelete, filesInWorkingDir.keySet())
-                || haveUntrackedFileName(filesHaveConflict, filesInWorkingDir.keySet())) {
+        Set<String> fileNamesInWorkingDir = filesInWorkingDir.keySet();
+        if (haveUntrackedFile(filesToWrite, fileNamesInWorkingDir)
+                || haveUntrackedFileName(filesToDelete, fileNamesInWorkingDir)
+                || haveUntrackedFileName(filesHaveConflict, fileNamesInWorkingDir)) {
             filesToWrite.clear();
             filesToDelete.clear();
             return Message.OVERWRITE_OR_DELETE_UNTRACKED_FILE_MESSAGE;
         }
 
         /* Default message to print. */
-        String message = "Merged " + givenBranchName + " into " + HEADPointer.currentBranch();
+        String message = null;
 
         /* The merge encountered a conflict */
         if (!filesHaveConflict.isEmpty()) {
@@ -541,6 +543,7 @@ public class GitRepo {
 
         // add all to staging area
         StagingArea.addAllToStagedAndRemovedArea(filesToWrite, filesToDelete);
+        commit(Message.getMergeMessage(givenBranchName, HEADPointer.currentBranch()));
 
         return message;
     }

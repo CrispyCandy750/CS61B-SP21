@@ -436,8 +436,8 @@ public class Commit implements Serializable {
             String fileHasConflict, Commit currentCommit, Commit givenCommit) {
         return new MediatorFile(fileHasConflict,
                 mergeConflictContent(
-                        currentCommit.getContentOrDefault(fileHasConflict, ""),
-                        givenCommit.getContentOrDefault(fileHasConflict, "")
+                        currentCommit.getContent(fileHasConflict),
+                        givenCommit.getContent(fileHasConflict)
                 )
         );
     }
@@ -453,12 +453,18 @@ public class Commit implements Serializable {
      * >>>>>>>
      */
     private static String mergeConflictContent(String currentContent, String givenContent) {
-        return String.join("\n",
-                "<<<<<<< HEAD",
-                currentContent,
-                "=======",
-                givenContent,
-                ">>>>>>>",
-                "");  // "" for append a \n
+        List<String> contentLines = new ArrayList<>();
+        contentLines.add("<<<<<<< HEAD");
+        if (currentContent != null) {
+            contentLines.add(currentContent);
+        }
+        contentLines.add("=======");
+        if (givenContent != null) {
+            contentLines.add(givenContent);
+        }
+        contentLines.add(">>>>>>>");
+        contentLines.add(""); // "" for append a \n
+
+        return String.join("\n", contentLines);
     }
 }

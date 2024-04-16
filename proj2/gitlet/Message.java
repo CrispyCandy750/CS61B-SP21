@@ -40,6 +40,22 @@ public class Message {
     /** The message when fast-forwarded merged. */
     final static String FAST_FORWARD_MESSAGE = "Current branch fast-forwarded.";
 
+    /** The message when `gitlet init` and the gitlet repo already exists. */
+    final static String GIT_REPO_ALREADY_EXISTS_MESSAGE = "A Gitlet version-control system " +
+            "already exists in the current directory.";
+
+    /** The message when gitlet directory is not initialized. */
+    final static String NOT_IN_GIT_REPO_MESSAGE = "Not in an initialized Gitlet directory.";
+
+    /** The message when the number of operands is wrong. */
+    final static String INCORRECT_OPERANDS_MESSAGE = "Incorrect operands.";
+
+    /** The message when no command. */
+    final static String PLEASE_ENTER_COMMAND_MESSAGE = "Please enter a command.";
+
+    /** The message when the file is absent. */
+    static final String FILE_NOT_FOUND_MESSAGE = "File does not exist.";
+
     /** Returns the successful merge message. */
     static String getMergeMessage(String givenBranchName, String currentBranchName) {
         return "Merged " + givenBranchName + " into " + currentBranchName + ".";

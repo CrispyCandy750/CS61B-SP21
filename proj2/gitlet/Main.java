@@ -1,108 +1,56 @@
 package gitlet;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
- * @author TODO
+ * @author Crispy Candy
  */
 public class Main {
 
     /** Usage: java gitlet.Main ARGS, where ARGS contains
-     *  <COMMAND> <OPERAND1> <OPERAND2> ... 
+     *  <COMMAND> <OPERAND1> <OPERAND2> ...
+     *  java gitlet.Main init
      */
 
-    /** The message when no argument. */
-    private final static String NO_ARGUMENT_MESSAGE = "Please enter a command.";
-
-    /** The message when forget inputting the commit message. */
-    private final static String NO_COMMIT_MESSAGE_MESSAGE = "Please enter a commit message.";
-
-    /** The message when the inputted command doesn't exist. */
-    private final static String NO_COMMAND_MESSAGE = "No command with that name exists.";
-
-    /** The message when the number of operands is wrong. */
-    private final static String WRONG_NUMBER_OPERANDS_MESSAGE = "Incorrect operands.";
-
-    /** The message when there is no initialized .gitlet directory. */
-    private final static String NO_GIT_REPO_MESSAGE = "Not in an initialized Gitlet directory.";
-
     public static void main(String[] args) {
+        String cmd = "";
 
-        validateNoArgs(args, NO_ARGUMENT_MESSAGE);
+        if (args.length > 0) {
+            cmd = args[0];
+        }
 
-        String firstArg = args[0];
-//        validateCommandExists(firstArg, NO_COMMAND_MESSAGE);
-        validateGitRepoIsInitialized(firstArg, NO_GIT_REPO_MESSAGE);
+        String message;
 
-        String message = null;
-        String commitMessage;
-
-        switch (firstArg) {
-            case "init":
-                Repository.init();
+        switch (cmd) {
+            case "init": message = init();
                 break;
-            case "add":
-                validateNumArgs("add", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
-                String fileName = args[1];
-                message = Repository.add(fileName);
+            case "add": message = add(args);
                 break;
-            // TODO: FILL THE REST IN
-            case "commit":
-                validateNumArgs("commit", args, 2, NO_COMMIT_MESSAGE_MESSAGE);
-                commitMessage = args[1];
-                message = Repository.commit(commitMessage);
+            case "commit": message = commit(args);
                 break;
-            case "rm":  // java gitlet.Main rm <file name>
-                validateNumArgs("rm", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
-                String removedFileName = args[1];
-                message = Repository.rm(removedFileName);
+            case "rm": message = rm(args);
                 break;
-            case "log":
-                validateNumArgs("log", args, 1, WRONG_NUMBER_OPERANDS_MESSAGE);
-                message = Repository.log();
+            case "log": message = log(args);
                 break;
-            case "global-log":
-                validateNumArgs("global-log", args, 1, WRONG_NUMBER_OPERANDS_MESSAGE);
-                message = Repository.globalLog();
+            case "global-log": message = globalLog(args);
                 break;
-            case "find":
-                validateNumArgs("find", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
-                commitMessage = args[1];
-                message = Repository.find(commitMessage);
+            case "find": message = find(args);
                 break;
-            case "status":
-                validateNumArgs("status", args, 1, WRONG_NUMBER_OPERANDS_MESSAGE);
-                message = Repository.status();
+            case "status": message = status(args);
                 break;
-            case "checkout":
-                validateCheckoutArgs(args, WRONG_NUMBER_OPERANDS_MESSAGE);
-                message = checkout(args);
+            case "checkout": message = checkout(args);
                 break;
-            case "branch":
-                validateNumArgs("branch", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
-                String branchName = args[1];
-                message = Repository.createBranch(branchName);
+            case "branch": message = branch(args);
                 break;
-            case "rm-branch":
-                validateNumArgs("rm-branch", args,2 , WRONG_NUMBER_OPERANDS_MESSAGE);
-                branchName = args[1];
-                message = Repository.removeBranch(branchName);
+            case "rm-branch": message = rmBranch(args);
                 break;
-            case "reset":
-                validateNumArgs("reset", args,2 , WRONG_NUMBER_OPERANDS_MESSAGE);
-                String commitId = args[1];
-                message = Repository.reset(commitId);
+            case "reset": message = reset(args);
                 break;
-            case "merge":
-                validateNumArgs("merge", args, 2, WRONG_NUMBER_OPERANDS_MESSAGE);
-                branchName = args[1];
-                message = Repository.merge(branchName);
+            case "merge": message = merge(args);
                 break;
-            default:
-                message = Message.COMMAND_DOES_NOT_EXIST_MESSAGE;
+            case "": message = Message.PLEASE_ENTER_COMMAND_MESSAGE;
+                break;
+            default: message = Message.COMMAND_DOES_NOT_EXIST_MESSAGE;
         }
         printMessage(message);
     }
@@ -118,30 +66,104 @@ public class Main {
      * Checks the number of arguments versus the expected number,
      * print the message if they do not match.
      *
-     * @param cmd  Name of command you are validating
      * @param args Argument array from command line
      * @param n    Number of expected arguments
      */
-    private static void validateNumArgs(String cmd, String[] args, int n, String message) {
+    private static String validateOperandsNum(String[] args, int n) {
         if (args.length != n) {
-            System.out.println(message);
-            System.exit(0);
+            return Message.INCORRECT_OPERANDS_MESSAGE;
         }
+        return null;
     }
 
     /** Validate the number of arguments of checkout command. */
-    private static void validateCheckoutArgs(String[] args, String message) {
+    private static String validateCheckoutArgs(String[] args) {
         if (args.length == 3 && "--".equals(args[1])
                 || args.length == 4 && "--".equals(args[2])
                 || args.length == 2) {
-            return;
+            return null;
         }
-        System.out.println(message);
-        System.exit(0);
+        return Message.INCORRECT_OPERANDS_MESSAGE;
     }
 
-    /** Judge call which checkout command. */
+
+    /** Returns true if the validation is wrong. */
+    private static boolean validateWrong(String validateMessage) {
+        return validateMessage != null;
+    }
+
+    /** Execute the gitlet command. */
+    private static String init() {
+        return Repository.init();
+    }
+
+    private static String add(String[] args) {
+        String message = validateOperandsNum(args, 2);
+        if (validateWrong(message)) {
+            return message;
+        }
+        String fileName = args[1];
+        return Repository.add(fileName);
+    }
+
+    private static String commit(String[] args) {
+        String message = validateOperandsNum(args, 2);
+        if (validateWrong(message)) {
+            return message;
+        }
+        String commitMessage = args[1];
+        return Repository.commit(commitMessage);
+    }
+
+    private static String rm(String[] args) {
+        String message = validateOperandsNum(args, 2);
+        if (validateWrong(message)) {
+            return message;
+        }
+        String removedFileName = args[1];
+        return Repository.rm(removedFileName);
+    }
+
+    private static String log(String[] args) {
+        String message = validateOperandsNum(args, 1);
+        if (validateWrong(message)) {
+            return message;
+        }
+        return Repository.log();
+    }
+
+    private static String globalLog(String[] args) {
+        String message = validateOperandsNum(args, 1);
+        if (validateWrong(message)) {
+            return message;
+        }
+        return Repository.globalLog();
+    }
+
+    private static String find(String[] args) {
+        String message = validateOperandsNum(args, 2);
+        if (validateWrong(message)) {
+            return message;
+        }
+        String commitMessage = args[1];
+        return Repository.find(commitMessage);
+    }
+
+    private static String status(String[] args) {
+        String message = validateOperandsNum(args, 1);
+        if (validateWrong(message)) {
+            return message;
+        }
+        return Repository.status();
+    }
+
     private static String checkout(String[] args) {
+        String message = validateCheckoutArgs(args);
+
+        if (validateWrong(message)) {
+            return message;
+        }
+
         if (args.length == 3) {
             String fileName = args[2];
             return Repository.checkoutFileFromCurrentCommit(fileName);
@@ -155,22 +177,40 @@ public class Main {
         }
     }
 
-    /**
-     * Checks if there is no arguments.
-     * print the message if no arguments.
-     */
-    private static void validateNoArgs(String[] args, String message) {
-        if (args.length == 0) {
-            System.out.println(message);
-            System.exit(0);
+    private static String branch(String[] args) {
+        String message = validateOperandsNum(args, 2);
+        if (validateWrong(message)) {
+            return message;
         }
+        String branchName = args[1];
+        return Repository.createBranch(branchName);
     }
 
-    /** Validate if the git repository is initialized. */
-    private static void validateGitRepoIsInitialized(String cmd, String message) {
-        if (!cmd.equals("init") && !Repository.isInitialized()) {
-            System.out.println(message);
-            System.exit(0);
+    private static String rmBranch(String[] args) {
+        String message = validateOperandsNum(args, 2);
+        if (validateWrong(message)) {
+            return message;
         }
+        String branchName = args[1];
+        return Repository.removeBranch(branchName);
+    }
+
+    private static String reset(String[] args) {
+        String message = validateOperandsNum(args, 2);
+        if (validateWrong(message)) {
+            return message;
+        }
+        String commitId = args[1];
+        return Repository.reset(commitId);
+    }
+
+    private static String merge(String[] args) {
+        String message = validateOperandsNum(args, 2);
+        if (validateWrong(message)) {
+            return message;
+        }
+
+        String branchName = args[1];
+        return Repository.merge(branchName);
     }
 }

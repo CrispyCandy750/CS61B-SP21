@@ -25,9 +25,6 @@ public class Repository {
     /** The current working directory. */
     public static final File CWD = new File(System.getProperty("user.dir"));
 
-    /** The message when added file not found. */
-    private static final String FILE_NOT_FOUND_MESSAGE = "File does not exist.";
-
     /**
      * Creates a new Gitlet version-control system in the current directory.
      * This system will automatically start with one commit: a commit that contains no files and
@@ -44,8 +41,12 @@ public class Repository {
      * the same UID)
      * and all commits in all repositories will trace back to it.
      */
-    public static void init() {
+    public static String init() {
+        if (GitRepo.isInitialized()) {
+            return Message.GIT_REPO_ALREADY_EXISTS_MESSAGE;
+        }
         GitRepo.init();
+        return null;
     }
 
 
@@ -61,9 +62,14 @@ public class Repository {
      * version).
      */
     public static String add(String fileName) {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         File addedFile = Utils.join(CWD, fileName);
         if (!addedFile.exists()) {
-            return FILE_NOT_FOUND_MESSAGE;
+            return Message.FILE_NOT_FOUND_MESSAGE;
         }
         return GitRepo.add(new MediatorFile(addedFile, fileName));
     }
@@ -86,6 +92,9 @@ public class Repository {
      * being staged for removal by the rm command (below).
      */
     public static String commit(String message) {
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
         return GitRepo.commit(message);
     }
 
@@ -105,7 +114,7 @@ public class Repository {
         File file = Utils.join(CWD, fileName);
         /* If the file does not exist. */
         if (!file.exists()) {
-            return FILE_NOT_FOUND_MESSAGE;
+            return Message.FILE_NOT_FOUND_MESSAGE;
         }
         List<String> filesToRemove = new ArrayList<>();
 

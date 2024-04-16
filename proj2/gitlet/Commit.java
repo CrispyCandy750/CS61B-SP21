@@ -504,18 +504,18 @@ public class Commit implements Serializable {
      */
     private static String mergeConflictContent(String currentContent, String givenContent) {
         List<String> contentLines = new ArrayList<>();
-        contentLines.add("<<<<<<< HEAD");
+        contentLines.add("<<<<<<< HEAD ");
         if (currentContent != null) {
             contentLines.add(currentContent);
         }
 
-        contentLines.add("=======");
+        contentLines.add("======= ");
 
         if (givenContent != null) {
             contentLines.add(givenContent);
         }
 
-        contentLines.add(">>>>>>>");
+        contentLines.add(">>>>>>> ");
 //        contentLines.add(""); // "" for append a \n
 
         return String.join("\r\n", contentLines);

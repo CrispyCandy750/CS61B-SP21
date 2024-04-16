@@ -503,22 +503,17 @@ public class Commit implements Serializable {
      * >>>>>>>
      */
     private static String mergeConflictContent(String currentContent, String givenContent) {
-        List<String> contentLines = new ArrayList<>();
-        contentLines.add("<<<<<<< HEAD ");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("<<<<<<< HEAD\n");
         if (currentContent != null) {
-            contentLines.add(currentContent);
+            stringBuilder.append(currentContent);
         }
-
-        contentLines.add("======= ");
-
+        stringBuilder.append("=======");
         if (givenContent != null) {
-            contentLines.add(givenContent);
+            stringBuilder.append(givenContent);
         }
-
-        contentLines.add(">>>>>>> ");
-//        contentLines.add(""); // "" for append a \n
-
-        return String.join("\r\n", contentLines);
+        stringBuilder.append(">>>>>>>");
+        return stringBuilder.toString();
     }
 
     /** Returns the abbreviated commit id. */

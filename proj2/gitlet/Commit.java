@@ -506,17 +506,17 @@ public class Commit implements Serializable {
         List<String> contentLines = new ArrayList<>();
         contentLines.add("<<<<<<< HEAD");
         if (currentContent != null) {
-            contentLines.add(currentContent.replaceAll("\\r\\n$", ""));
+            contentLines.add(currentContent);
         }
 
         contentLines.add("=======");
 
         if (givenContent != null) {
-            contentLines.add(givenContent.replaceAll("\\r\\n$", ""));
+            contentLines.add(givenContent);
         }
 
         contentLines.add(">>>>>>>");
-//        contentLines.add(""); // "" for append a \n
+        contentLines.add(""); // "" for append a \n
 
         return String.join("\n", contentLines);
     }

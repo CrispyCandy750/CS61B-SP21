@@ -466,7 +466,7 @@ public class Commit implements Serializable {
     }
 
     /**
-     * Returns iff commit1 and commit2 both contains file and the content is equivalent or the
+     * Returns true iff commit1 and commit2 both contains file and the content is equivalent or the
      * both do not contains the file, false otherwise.
      */
     private static boolean isContentEquals(String fileName, Commit commit1, Commit commit2) {
@@ -516,9 +516,9 @@ public class Commit implements Serializable {
         }
 
         contentLines.add(">>>>>>>");
-        contentLines.add(""); // "" for append a \n
+//        contentLines.add(""); // "" for append a \n
 
-        return String.join("\n", contentLines);
+        return String.join("\r\n", contentLines);
     }
 
     /** Returns the abbreviated commit id. */

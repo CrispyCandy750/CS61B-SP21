@@ -66,8 +66,15 @@ public class Commit implements Serializable {
         this(message, parent, null, time, fileBlobMap);
     }
 
-    private Commit(String message, String parent, String secondParent, long time, Map<String,
-            String> fileBlobMap) {
+    private Commit(String message, String parent, String secondParent,
+            Map<String, String> fileBlobMap
+    ) {
+        this(message, parent, secondParent, System.currentTimeMillis(), fileBlobMap);
+    }
+
+    private Commit(String message, String parent, String secondParent, long time,
+            Map<String, String> fileBlobMap
+    ) {
         this.message = message;
         this.parent = parent;
         this.secondParent = secondParent;
@@ -101,7 +108,8 @@ public class Commit implements Serializable {
 
     /** Clone the commit with new commit message. */
     public static Commit clone(String newMessage, Commit commit, String secondParent) {
-        return new Commit(newMessage, commit.sha1(), new HashMap<>(commit.fileBlobMap));
+        return new Commit(newMessage, commit.sha1(), secondParent,
+                new HashMap<>(commit.fileBlobMap));
     }
 
     /** Generate the log of the commit iterator. */
@@ -195,22 +203,25 @@ public class Commit implements Serializable {
         Set<String> filesInGivenCommit = givenCommit.getFiles();
         for (String fileName : filesInSplitCommit) {
 
+            // the file is ignored in the rest difference process.
+            filesInGivenCommit.remove(fileName);
+
             if (isContentEquals(fileName, splitPointCommit, currentCommit)
                     && !givenCommit.contains(fileName)) {
-                /* Any files present at the split point, unmodified in the current branch, and absent
-             in the given branch should be removed (and untracked).*/
+                /* Any files present at the split point, unmodified in the current branch,
+                and absent in the given branch should be removed (and untracked).*/
 
                 filesToDelete.add(fileName);
             } else if (isContentEquals(fileName, splitPointCommit, givenCommit)
                     && !currentCommit.contains(fileName)) {
-                /* Any files present at the split point, unmodified in the given branch, and absent
-            in the current branch should remain absent. */
+                /* Any files present at the split point, unmodified in the given branch,
+                and absent in the current branch should remain absent. */
                 continue; // do nothing
             } else if (isContentEquals(fileName, splitPointCommit, currentCommit)
                     && !isContentEquals(fileName, splitPointCommit, givenCommit)) {
-                /* Any files that have been modified in the given branch since the split point, but
-            not modified in the current branch since the split point should be changed to their
-            versions in the given branch */
+                /* Any files that have been modified in the given branch since the split point,
+                but not modified in the current branch since the split point should be changed
+                to their versions in the given branch */
                 filesToWrite.add(new MediatorFile(fileName, givenCommit.getContent(fileName)));
             } else if (!isContentEquals(fileName, splitPointCommit, currentCommit)
                     && isContentEquals(fileName, splitPointCommit, givenCommit)) {
@@ -218,7 +229,8 @@ public class Commit implements Serializable {
             branch since the split point should stay as they are. */
                 continue; // do nothing
             } else if (isContentEquals(fileName, currentCommit, givenCommit)) {
-                /* Any files that have been modified in both the current and given branch in the same
+                /* Any files that have been modified in both the current and given branch in the
+                same
              way unchanged by the merge. */
                 continue; // do nothing
             } else {
@@ -226,9 +238,6 @@ public class Commit implements Serializable {
             present at one commit and modified in the other commit are in conflict. */
                 filesHaveConflicts.add(fileName);
             }
-
-            // the file is ignored in the rest difference process.
-            filesInGivenCommit.remove(fileName);
         }
 
         /* The files in 'filesInGivenCommit' is only in given commit (likely in current commit)
@@ -238,10 +247,9 @@ public class Commit implements Serializable {
             given branch should be checked out and staged. */
             if (!currentCommit.contains(fileName)) {
                 filesToWrite.add(new MediatorFile(fileName, givenCommit.getContent(fileName)));
-            }
-            /* The files are present at the given commit and current commit but not split point
+            } else if (!isContentEquals(fileName, currentCommit, givenCommit)) {
+                /* The files are present at the given commit and current commit but not split point
             commit has different content, which means have conflict. */
-            else if (!isContentEquals(fileName, currentCommit, givenCommit)) {
                 filesHaveConflicts.add(fileName);
             }
         }
@@ -252,7 +260,8 @@ public class Commit implements Serializable {
 
     /** Merge each file having conflict. */
     public static List<MediatorFile> mergeConflictFiles(
-            List<String> filesHaveConflict, Commit currentCommit, Commit givenCommit) {
+            List<String> filesHaveConflict, Commit currentCommit, Commit givenCommit
+    ) {
         ArrayList<MediatorFile> conflictFiles = new ArrayList<>(filesHaveConflict.size());
         for (String fileName : filesHaveConflict) {
             conflictFiles.add(mergeConflictFile(fileName, currentCommit, givenCommit));
@@ -335,6 +344,11 @@ public class Commit implements Serializable {
         return Integer.parseInt(this.sha1);
     }
 
+    @Override
+    public String toString() {
+        return this.message;
+    }
+
     /**
      * Returns the content of the file in the commit, returns null if the commit do not contain
      * the file.
@@ -394,22 +408,36 @@ public class Commit implements Serializable {
 
     /** The Commit Iterator with the reverse commit order starting at specific commit id. */
     private static class CommitIteratorStartingAtSpecificCommit implements Iterator<Commit> {
-        String curCommitId;
+        Queue<String> commitIds;
+        Set<String> visitedCommitId;
 
         CommitIteratorStartingAtSpecificCommit(String startCommitId) {
-            this.curCommitId = startCommitId;
+            commitIds = new LinkedList<>();
+            visitedCommitId = new HashSet<>();
+            commitIds.add(startCommitId);
         }
 
         @Override
         public boolean hasNext() {
-            return curCommitId != null;
+            return !commitIds.isEmpty();
         }
 
         @Override
         public Commit next() {
-            Commit commit = Commit.fromCommitId(curCommitId);
-            curCommitId = commit.parent;
+            String commitId = commitIds.poll();
+            Commit commit = Commit.fromCommitId(commitId);
+            visitedCommitId.add(commitId);
+
+            addToCommitIds(commit.parent);
+            addToCommitIds(commit.secondParent);
+
             return commit;
+        }
+
+        void addToCommitIds(String commitId) {
+            if (commitId != null && !visitedCommitId.contains(commitId)) {
+                commitIds.add(commitId);
+            }
         }
     }
 
@@ -454,7 +482,8 @@ public class Commit implements Serializable {
 
     /** Merge all files having conflict. */
     private static MediatorFile mergeConflictFile(
-            String fileHasConflict, Commit currentCommit, Commit givenCommit) {
+            String fileHasConflict, Commit currentCommit, Commit givenCommit
+    ) {
         return new MediatorFile(fileHasConflict,
                 mergeConflictContent(
                         currentCommit.getContent(fileHasConflict),

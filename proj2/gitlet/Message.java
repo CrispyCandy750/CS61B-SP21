@@ -70,8 +70,8 @@ public class Message {
     static final String NO_SUCH_BRANCH_MESSAGE = "No such branch exists.";
 
     /** The message when no need to check out branch. */
-    static final String NO_NEED_TO_CHECKOUT_BRANCH_MESSAGE = "No need to checkout the " +
-            "current branch.";
+    static final String NO_NEED_TO_CHECKOUT_BRANCH_MESSAGE = "No need to checkout the "
+            + "current branch.";
 
     /** The message when removed branch is current branch. */
     static final String CANNOT_REMOVE_CURRENT_BRANCH_MESSAGE = "Cannot remove the current"

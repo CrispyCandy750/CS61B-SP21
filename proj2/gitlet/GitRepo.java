@@ -64,7 +64,7 @@ public class GitRepo {
      * 4. clean the staging area
      * 5. Move the branch
      */
-    public static String commit(String message, String secondParent) {
+    private static String commit(String message, String secondParent) {
         if (!StagingArea.haveStagedOrRemovedFiles()) {
             return Message.COMMIT_BUT_NO_STAGED_FILE_MESSAGE;
         }
@@ -202,7 +202,7 @@ public class GitRepo {
 
         Collections.sort(branches);
 
-        return Utils.FormatStrings(branches, "=== Branches ===");
+        return Utils.formatStrings(branches, "=== Branches ===");
     }
 
 
@@ -251,7 +251,7 @@ public class GitRepo {
         }
 
         Collections.sort(filesModifiedButNotStaged);
-        return Utils.FormatStrings(filesModifiedButNotStaged, "=== Modifications Not Staged For "
+        return Utils.formatStrings(filesModifiedButNotStaged, "=== Modifications Not Staged For "
                 + "Commit ===");
     }
 
@@ -277,7 +277,7 @@ public class GitRepo {
         }
 
         Collections.sort(untrackedFiles);
-        return Utils.FormatStrings(untrackedFiles, "=== Untracked Files ===");
+        return Utils.formatStrings(untrackedFiles, "=== Untracked Files ===");
     }
 
     /**
@@ -320,7 +320,7 @@ public class GitRepo {
                 checkoutCommit(Reference.furthestCommitId(branchName), filesInWorkingDir,
                         filesToWrite, filesToDelete);
 
-        if (SuccessCheckingOutCommit(message)) {  // success to check out
+        if (successCheckingOutCommit(message)) {  // success to check out
             HEADPointer.moveToRefs(branchName);
             StagingArea.clear();  // only in gitlet but git
         }
@@ -345,7 +345,7 @@ public class GitRepo {
         String message = checkoutCommit(
                 commitId, filesInWorkingDir, filesToWrite, filesToDelete);
 
-        if (SuccessCheckingOutCommit(message)) { // success to check out commit
+        if (successCheckingOutCommit(message)) { // success to check out commit
             Reference.moveBranch(HEADPointer.currentBranch(), commitId);
             StagingArea.clear();  // only in gitlet but git
         }
@@ -372,7 +372,7 @@ public class GitRepo {
                 populateFilesToWriteOrDelete(givenCommit, filesInWorkingDir,
                         filesToWrite, filesToDelete);
 
-        if (!SuccessCheckingOutCommit(message)) {
+        if (!successCheckingOutCommit(message)) {
             filesToWrite.clear();
             filesToDelete.clear();
         }
@@ -484,16 +484,14 @@ public class GitRepo {
         /* The given commit is the ancestor of current commit */
         if (splitPointCommit.equals(givenCommit)) {
             return Message.MERGE_ANCESTOR_MESSAGE;
-        }
-
-        /* The current commit is the ancestor of given commit. */
-        else if (splitPointCommit.equals(currentCommit)) {
+        } else if (splitPointCommit.equals(currentCommit)) {
+            // The current commit is the ancestor of given commit.
             /* Transfer the commit to files to avoid the untracked file in working directory. */
             String message =
                     checkoutBranch(givenBranchName, filesInWorkingDir, filesToWrite, filesToDelete);
 
             /* There are untracked files are overwritten or deleted, abort. */
-            if (SuccessCheckingOutCommit(message)) {
+            if (successCheckingOutCommit(message)) {
                 message = Message.FAST_FORWARD_MESSAGE;
             }
             return message;
@@ -530,7 +528,7 @@ public class GitRepo {
         // add all to staging area
         StagingArea.addAllToStagedAndRemovedArea(filesToWrite, filesToDelete);
         String commitMessage = commit(Message.getMergeMessage(givenBranchName,
-                HEADPointer.currentBranch()));
+                HEADPointer.currentBranch()), Reference.furthestCommitId(givenBranchName));
 
         if (commitMessage != null) { // No changes added to the commit.
             message = commitMessage;
@@ -583,7 +581,7 @@ public class GitRepo {
     }
 
     /** Returns true if the checkout successfully, false otherwise. */
-    private static boolean SuccessCheckingOutCommit(String checkoutMessage) {
+    private static boolean successCheckingOutCommit(String checkoutMessage) {
         return checkoutMessage == null
                 || (!checkoutMessage.equals(Message.OVERWRITE_OR_DELETE_UNTRACKED_FILE_MESSAGE)
                 && !checkoutMessage.equals(Message.COMMIT_DOES_NOT_EXIST_MESSAGE));

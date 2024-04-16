@@ -146,7 +146,7 @@ public class StagingArea {
 
         Collections.sort(stagedFiles);
 
-        return Utils.FormatStrings(stagedFiles, "=== Staged Files ===");
+        return Utils.formatStrings(stagedFiles, "=== Staged Files ===");
     }
 
     /**
@@ -160,7 +160,7 @@ public class StagingArea {
         ArrayList<String> removedFiles = new ArrayList<>(stagedAndRemovedArea.filesToRemove);
 
         Collections.sort(removedFiles);
-        return Utils.FormatStrings(removedFiles, "=== Removed Files ===");
+        return Utils.formatStrings(removedFiles, "=== Removed Files ===");
     }
 
     /* ---------------------------- private class & methods ---------------------------- */

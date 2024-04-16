@@ -154,7 +154,8 @@ class Utils {
      * Throws IllegalArgumentException in case of problems.
      */
     static <T extends Serializable> T readObject(File file,
-                                                 Class<T> expectedClass) {
+            Class<T> expectedClass
+    ) {
         try {
             ObjectInputStream in =
                     new ObjectInputStream(new FileInputStream(file));
@@ -175,13 +176,12 @@ class Utils {
     /* DIRECTORIES */
 
     /** Filter out all but plain files. */
-    private static final FilenameFilter PLAIN_FILES =
-            new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return new File(dir, name).isFile();
-                }
-            };
+    private static final FilenameFilter PLAIN_FILES = new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+            return new File(dir, name).isFile();
+        }
+    };
 
     /**
      * Returns a list of the names of all plain files in the directory DIR, in
@@ -258,7 +258,7 @@ class Utils {
      * Format the list of strings into lines, one line per item.
      * Add the header above the lines.
      */
-    static String FormatStrings(List<String> strings, String header) {
+    static String formatStrings(List<String> strings, String header) {
         StringBuilder stringBuilder = new StringBuilder(header);
         stringBuilder.append("\n");
         for (String str : strings) {

@@ -58,4 +58,9 @@ class MediatorFile {
         return this.fileName.equals(o.fileName)
                 && this.getContent().equals(o.getContent());
     }
+
+    @Override
+    public int hashCode() {
+        return Integer.parseInt(sha1());
+    }
 }

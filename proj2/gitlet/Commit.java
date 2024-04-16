@@ -33,12 +33,19 @@ public class Commit implements Serializable {
     private final static SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z",
             Locale.ENGLISH);
 
-    /** The message when not find the commit with specific commit. */
-    private static final String NO_COMMIT_WITH_SPECIFIC_MESSAGE = "Found no commit with that " +
-            "message.";
-
     /** The message of the first commit when initialization. */
     private final static String INITIAL_COMMIT_MESSAGE = "initial commit";
+
+    /** The length of the abbreviated commit id. */
+    private final static int ABBREVIATE_COMMIT_LENGTH = 6;
+
+    /** The length of the normal commit. */
+    private final static int NORMAL_COMMIT_ID_LENGTH = 40;
+
+    /** The delimiter between two log. */
+    private final static String LOGS_DELIMITER = "===";
+
+    /* -------------------------------- instance variables -------------------------------- */
 
     /** The message of this Commit. */
     private String message;
@@ -55,15 +62,6 @@ public class Commit implements Serializable {
 
     /** The sha1 hashcode of this commit. */
     private transient String sha1;
-
-    /** The delimiter between two log. */
-    private final static String LOGS_DELIMITER = "===";
-
-    /** The length of the abbreviated commit id. */
-    private final static int ABBREVIATE_COMMIT_LENGTH = 6;
-
-    /** The length of the normal commit. */
-    private final static int NORMAL_COMMIT_ID_LENGTH = 40;
 
     public Commit(String message, String parent, Map<String, String> fileBlobMap) {
         this(message, parent, System.currentTimeMillis(), fileBlobMap);
@@ -160,7 +158,7 @@ public class Commit implements Serializable {
         }
 
         if (commitIds.size() == 0) {
-            return NO_COMMIT_WITH_SPECIFIC_MESSAGE;
+            return Message.NO_COMMIT_WITH_SPECIFIC_MESSAGE;
         }
 
         return String.join("\n", commitIds);

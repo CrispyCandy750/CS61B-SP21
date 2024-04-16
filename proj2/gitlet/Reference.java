@@ -9,9 +9,6 @@ public class Reference {
     /** Represents .gitlet/refs directory */
     public final static File REF_DIR = Utils.join(Utils.join(GitRepo.GIT_REPO, "refs"), "head");
 
-    /** The message when create branch and the branch has existed. */
-    private final static String BRANCH_EXISTS_MESSAGE = "A branch with that name already exists.";
-
     /** Creates the refs/head directory and the master branch. */
     public static void init(String initialBranch, String initialCommitId) {
         REF_DIR.mkdirs();
@@ -21,7 +18,7 @@ public class Reference {
     /** Create new branch pointing the commit. */
     public static String createNewBranch(String branchName, String commitId) {
         if (containsBranch(branchName)) {
-            return BRANCH_EXISTS_MESSAGE;
+            return Message.BRANCH_HAS_EXISTED_MESSAGE;
         }
         moveBranch(branchName, commitId);
         return null;

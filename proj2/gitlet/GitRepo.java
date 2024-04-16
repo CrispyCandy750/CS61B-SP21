@@ -11,26 +11,6 @@ public class GitRepo {
     public final static File GIT_REPO = Utils.join(Repository.CWD, ".gitlet");
     public final static String DEFAULT_INITIAL_BRANCH = "master";
 
-    /** The message when no reason to remove the file. */
-    private final static String NO_REASON_TO_REMOVE_MESSAGE = "No reason to remove the file.";
-
-
-    /** The message when file does not exist in the commit. */
-    private final static String FILE_DOES_NOT_EXISTS_MESSAGE = "File does not exist in that " +
-            "commit.";
-
-    /** The message when checkout branch and no such branch exists. */
-    private final static String NO_SUCH_BRANCH_MESSAGE = "No such branch exists.";
-
-    /** The message when no need to check out branch. */
-    private final static String NO_NEED_TO_CHECKOUT_BRANCH_MESSAGE = "No need to checkout the " +
-            "current branch.";
-
-    /** The message when removed branch is current branch. */
-    private final static String CANNOT_REMOVE_CURRENT_BRANCH_MESSAGE = "Cannot remove the current" +
-            " branch.";
-
-
     /**
      * 1. creates the .git/object/ directory (Commit to do).
      * 2. creates the initial commit (Commit to do).
@@ -133,7 +113,7 @@ public class GitRepo {
             return null;
         }
 
-        return NO_REASON_TO_REMOVE_MESSAGE;
+        return Message.NO_REASON_TO_REMOVE_MESSAGE;
     }
 
     /** Returns the logs starting at the commit head points to. */
@@ -311,7 +291,7 @@ public class GitRepo {
             return Message.COMMIT_DOES_NOT_EXIST_MESSAGE;
         }
         if (!commit.contains(fileName)) {
-            return FILE_DOES_NOT_EXISTS_MESSAGE;
+            return Message.FILE_DOES_NOT_EXISTS_IN_COMMIT_MESSAGE;
         }
         String content = commit.getContent(fileName);
         mediatorFile.setContent(content);
@@ -324,11 +304,11 @@ public class GitRepo {
             List<MediatorFile> filesToWrite, List<String> filesToDelete) {
 
         if (!Reference.containsBranch(branchName)) {
-            return NO_SUCH_BRANCH_MESSAGE;
+            return Message.NO_SUCH_BRANCH_MESSAGE;
         }
 
         if (HEADPointer.currentBranch().equals(branchName)) {
-            return NO_NEED_TO_CHECKOUT_BRANCH_MESSAGE;
+            return Message.NO_NEED_TO_CHECKOUT_BRANCH_MESSAGE;
         }
 
         String message =
@@ -464,7 +444,7 @@ public class GitRepo {
         if (!Reference.containsBranch(branchName)) {
             return Message.BRANCH_NAME_DO_NOT_EXIST_MESSAGE;
         } else if (HEADPointer.currentBranch().equals(branchName)) {
-            return CANNOT_REMOVE_CURRENT_BRANCH_MESSAGE;
+            return Message.CANNOT_REMOVE_CURRENT_BRANCH_MESSAGE;
         }
         Reference.removeBranch(branchName);
         return null;

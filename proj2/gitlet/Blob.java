@@ -8,6 +8,8 @@ public class Blob {
     public final static File BLOB_DIR = Utils.join(Utils.join(GitRepo.GIT_REPO, "objects"),
             "blobs");
 
+    /* -------------------------------- instance variables -------------------------------- */
+
     /** The hash code of content of the blob. */
     private String blobId;
 

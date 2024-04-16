@@ -163,12 +163,6 @@ public class StagingArea {
         return Utils.FormatStrings(removedFiles, "=== Removed Files ===");
     }
 
-    /** Returns all names of staged file. */
-    public static Set<String> getStagedFiles() {
-        stagedAndRemovedArea = getStagedAndRemovedArea();
-        return stagedAndRemovedArea.filesToAddOrModify.keySet();
-    }
-
     /* ---------------------------- private class & methods ---------------------------- */
     private static class StagedAndRemovedArea implements Serializable {
         /** Represents the `staged area` and mapping from fileNames to blobId */

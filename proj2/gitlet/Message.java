@@ -56,6 +56,31 @@ public class Message {
     /** The message when the file is absent. */
     static final String FILE_NOT_FOUND_MESSAGE = "File does not exist.";
 
+    /** The message when create branch and the branch has existed. */
+    final static String BRANCH_HAS_EXISTED_MESSAGE = "A branch with that name already exists.";
+
+    /** The message when no reason to remove the file. */
+    final static String NO_REASON_TO_REMOVE_MESSAGE = "No reason to remove the file.";
+
+    /** The message when file does not exist in the commit. */
+    final static String FILE_DOES_NOT_EXISTS_IN_COMMIT_MESSAGE = "File does not exist in that " +
+            "commit.";
+
+    /** The message when checkout branch and no such branch exists. */
+    final static String NO_SUCH_BRANCH_MESSAGE = "No such branch exists.";
+
+    /** The message when no need to check out branch. */
+    final static String NO_NEED_TO_CHECKOUT_BRANCH_MESSAGE = "No need to checkout the " +
+            "current branch.";
+
+    /** The message when removed branch is current branch. */
+    final static String CANNOT_REMOVE_CURRENT_BRANCH_MESSAGE = "Cannot remove the current" +
+            " branch.";
+
+    /** The message when not find the commit with specific commit. */
+    static final String NO_COMMIT_WITH_SPECIFIC_MESSAGE = "Found no commit with that " +
+            "message.";
+
     /** Returns the successful merge message. */
     static String getMergeMessage(String givenBranchName, String currentBranchName) {
         return "Merged " + givenBranchName + " into " + currentBranchName + ".";

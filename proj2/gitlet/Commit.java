@@ -512,7 +512,7 @@ public class Commit implements Serializable {
         if (givenContent != null) {
             stringBuilder.append(givenContent);
         }
-        stringBuilder.append(">>>>>>>");
+        stringBuilder.append(">>>>>>>\n");
         return stringBuilder.toString();
     }
 

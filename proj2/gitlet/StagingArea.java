@@ -8,7 +8,7 @@ import java.util.*;
 public class StagingArea {
 
     /** Represents the .gitlet/index file. */
-    public final static File INDEX_FILE = Utils.join(GitRepo.GIT_REPO, "index");
+    public static final File INDEX_FILE = Utils.join(GitRepo.GIT_REPO, "index");
     private static StagedAndRemovedArea stagedAndRemovedArea = null;
 
     /** Initialization: Create the .gitlet/index file. */

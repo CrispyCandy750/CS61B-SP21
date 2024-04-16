@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 public class GitRepo {
 
     /** The .getlet directory */
-    public final static File GIT_REPO = Utils.join(Repository.CWD, ".gitlet");
-    public final static String DEFAULT_INITIAL_BRANCH = "master";
+    public static final File GIT_REPO = Utils.join(Repository.CWD, ".gitlet");
+    public static final String DEFAULT_INITIAL_BRANCH = "master";
 
     /**
      * 1. creates the .git/object/ directory (Commit to do).
@@ -213,7 +213,9 @@ public class GitRepo {
      * junk.txt (deleted)
      * wug3.txt (modified)
      */
-    private static String getModifiedButNotStagedFilesStatus(Collection<MediatorFile> filesInWorkingDir) {
+    private static String getModifiedButNotStagedFilesStatus(
+            Collection<MediatorFile> filesInWorkingDir
+    ) {
 
         Commit currentCommit = HEADPointer.currentCommit();
         List<String> filesModifiedButNotStaged = new ArrayList<>();
@@ -236,7 +238,8 @@ public class GitRepo {
 
         Set<String> filesTrackedInCommit = currentCommit.getFiles();
         Set<String> fileNamesInWorkingDir =
-                filesInWorkingDir.stream().map(file -> file.getFileName()).collect(Collectors.toSet());
+                filesInWorkingDir.stream().map(file -> file.getFileName())
+                        .collect(Collectors.toSet());
         /* Get the files removed from working directory. */
         filesTrackedInCommit.removeAll(fileNamesInWorkingDir);
         Set<String> deletedFileNames = filesTrackedInCommit; // rename for understanding.
@@ -248,8 +251,8 @@ public class GitRepo {
         }
 
         Collections.sort(filesModifiedButNotStaged);
-        return Utils.FormatStrings(filesModifiedButNotStaged, "=== Modifications Not Staged For " +
-                "Commit ===");
+        return Utils.FormatStrings(filesModifiedButNotStaged, "=== Modifications Not Staged For "
+                + "Commit ===");
     }
 
     /**
@@ -282,7 +285,8 @@ public class GitRepo {
      * If commitId == null, means checkout from current commit.
      */
     public static String checkoutCommitAndFile(String commitId, String fileName,
-                                               MediatorFile mediatorFile) {
+            MediatorFile mediatorFile
+    ) {
         if (commitId == null) {
             commitId = HEADPointer.currentCommitId();
         }
@@ -301,7 +305,8 @@ public class GitRepo {
     /** Checkout the branch. */
     public static String checkoutBranch(
             String branchName, Map<String, MediatorFile> filesInWorkingDir,
-            List<MediatorFile> filesToWrite, List<String> filesToDelete) {
+            List<MediatorFile> filesToWrite, List<String> filesToDelete
+    ) {
 
         if (!Reference.containsBranch(branchName)) {
             return Message.NO_SUCH_BRANCH_MESSAGE;
@@ -397,7 +402,8 @@ public class GitRepo {
      */
     private static String populateFilesToWriteOrDelete(
             Commit givenCommit, Map<String, MediatorFile> filesInWorkingDir,
-            List<MediatorFile> filesToWrite, List<String> filesToDelete) {
+            List<MediatorFile> filesToWrite, List<String> filesToDelete
+    ) {
 
         /* Populate files to write: the file and content existing in given commit but not in working
         directory. */
@@ -554,7 +560,8 @@ public class GitRepo {
 
     /** Returns true if the files to change contains untracked file. */
     private static boolean haveUntrackedFileName(
-            Collection<String> filesToChange, Collection<String> filesInWorkingDir) {
+            Collection<String> filesToChange, Collection<String> filesInWorkingDir
+    ) {
         for (String fileName : filesToChange) {
             if (isUntracked(fileName, filesInWorkingDir)) {
                 return true;
@@ -565,7 +572,8 @@ public class GitRepo {
 
     /** Returns true if the files to change contains untracked file. */
     private static boolean haveUntrackedFile(
-            Collection<MediatorFile> filesToChange, Collection<String> filesInWorkingDir) {
+            Collection<MediatorFile> filesToChange, Collection<String> filesInWorkingDir
+    ) {
         for (MediatorFile file : filesToChange) {
             if (isUntracked(file.getFileName(), filesInWorkingDir)) {
                 return true;
@@ -576,7 +584,9 @@ public class GitRepo {
 
     /** Returns true if the checkout successfully, false otherwise. */
     private static boolean SuccessCheckingOutCommit(String checkoutMessage) {
-        return checkoutMessage == null || !checkoutMessage.equals(Message.OVERWRITE_OR_DELETE_UNTRACKED_FILE_MESSAGE);
+        return checkoutMessage == null
+                || (!checkoutMessage.equals(Message.OVERWRITE_OR_DELETE_UNTRACKED_FILE_MESSAGE)
+                && !checkoutMessage.equals(Message.COMMIT_DOES_NOT_EXIST_MESSAGE));
     }
 
 }

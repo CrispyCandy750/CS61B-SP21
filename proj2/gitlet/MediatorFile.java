@@ -10,16 +10,16 @@ class MediatorFile {
     private File file;
     private String content;
 
-    public MediatorFile(String fileName) {
+    MediatorFile(String fileName) {
         this.fileName = fileName;
     }
 
-    public MediatorFile(File file, String fileName) {
+    MediatorFile(File file, String fileName) {
         this.fileName = fileName;
         this.file = file;
     }
 
-    public MediatorFile(String fileName, String content) {
+    MediatorFile(String fileName, String content) {
         this.fileName = fileName;
         this.content = content;
     }

@@ -5,10 +5,10 @@ import java.io.IOException;
 
 /** Represents the HEAD pointer and .gitlet/HEAD file */
 public class HEADPointer {
-    public final static File HEAD_FILE = Utils.join(GitRepo.GIT_REPO, "HEAD");
+    public static final File HEAD_FILE = Utils.join(GitRepo.GIT_REPO, "HEAD");
 
     /** The prefix of head file content if the head points a reference. */
-    public final static String PREFIX_REFS = "refs: ";
+    public static final String PREFIX_REFS = "refs: ";
 
     public static void init(String branchName) {
         try {

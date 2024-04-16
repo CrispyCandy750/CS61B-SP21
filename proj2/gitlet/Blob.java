@@ -5,7 +5,7 @@ import java.io.File;
 /** Represents the gitlet blob object and manipulate all blob objects. */
 public class Blob {
 
-    public final static File BLOB_DIR = Utils.join(Utils.join(GitRepo.GIT_REPO, "objects"),
+    public static final File BLOB_DIR = Utils.join(Utils.join(GitRepo.GIT_REPO, "objects"),
             "blobs");
 
     /* -------------------------------- instance variables -------------------------------- */

@@ -98,13 +98,13 @@ public class Main {
 
     /** Validate the number of arguments of commit command. */
     private static String validateCommitArgs(String[] args) {
-        String validateMessage = null;
-        if (args.length == 1) {
-            validateMessage = Message.PLEASE_ENTER_COMMIT_MESSAGE;
-        } else if (args.length > 2) {
-            validateMessage = Message.INCORRECT_OPERANDS_MESSAGE;
+        String message = validateOperandsNum(args, 2);
+        if (validateWrong(message)) {
+            return message;
+        } else if (args[1].length() == 0) {
+            return Message.PLEASE_ENTER_COMMIT_MESSAGE;
         }
-        return validateMessage;
+        return null;
     }
 
 

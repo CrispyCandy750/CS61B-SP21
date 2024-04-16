@@ -1,7 +1,5 @@
 package gitlet;
 
-// TODO: any imports you need here
-
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -10,8 +8,6 @@ import java.util.*;
 
 /**
  * Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
  *
  * @author Crispy Candy
  */
@@ -19,31 +15,30 @@ import java.util.*;
 /** Represents a gitlet commit object and manipulate all commits objects. */
 public class Commit implements Serializable {
     /**
-     * TODO: add instance variables here.
      * <p>
      * List all instance variables of the Commit class here with a useful
      * comment above them describing what that variable represents and how that
      * variable is used. We've provided one example for `message`.
      */
 
-    private final static File COMMITS_DIR = Utils.join(Utils.join(GitRepo.GIT_REPO, "objects"),
+    private static final File COMMITS_DIR = Utils.join(Utils.join(GitRepo.GIT_REPO, "objects"),
             "commits");
 
     /** The format of the time in log command, eg. Thu Nov 9 20:00:05 2017 -0800 */
-    private final static SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z",
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z",
             Locale.ENGLISH);
 
     /** The message of the first commit when initialization. */
-    private final static String INITIAL_COMMIT_MESSAGE = "initial commit";
+    private static final String INITIAL_COMMIT_MESSAGE = "initial commit";
 
     /** The length of the abbreviated commit id. */
-    private final static int ABBREVIATE_COMMIT_LENGTH = 6;
+    private static final int ABBREVIATE_COMMIT_LENGTH = 8;
 
     /** The length of the normal commit. */
-    private final static int NORMAL_COMMIT_ID_LENGTH = 40;
+    private static final int NORMAL_COMMIT_ID_LENGTH = Utils.UID_LENGTH;
 
     /** The delimiter between two log. */
-    private final static String LOGS_DELIMITER = "===";
+    private static final String LOGS_DELIMITER = "===";
 
     /* -------------------------------- instance variables -------------------------------- */
 
@@ -79,8 +74,6 @@ public class Commit implements Serializable {
         this.timestamp = new Timestamp(time);
         this.fileBlobMap = fileBlobMap;
     }
-
-    /* TODO: fill in the rest of this class. */
 
     /** Create the .gitlet/objects/ directory and initial commit. */
     public static String init() {
@@ -202,42 +195,35 @@ public class Commit implements Serializable {
         Set<String> filesInGivenCommit = givenCommit.getFiles();
         for (String fileName : filesInSplitCommit) {
 
-            /* Any files present at the split point, unmodified in the current branch, and absent
-             in the given branch should be removed (and untracked).
-             */
             if (isContentEquals(fileName, splitPointCommit, currentCommit)
                     && !givenCommit.contains(fileName)) {
+                /* Any files present at the split point, unmodified in the current branch, and absent
+             in the given branch should be removed (and untracked).*/
+
                 filesToDelete.add(fileName);
-            }
-
-            /* Any files present at the split point, unmodified in the given branch, and absent
-            in the current branch should remain absent. */
-            else if (isContentEquals(fileName, splitPointCommit, givenCommit)
+            } else if (isContentEquals(fileName, splitPointCommit, givenCommit)
                     && !currentCommit.contains(fileName)) {
-                // do nothing
-            }
-
-            /* Any files that have been modified in the given branch since the split point, but
+                /* Any files present at the split point, unmodified in the given branch, and absent
+            in the current branch should remain absent. */
+                continue; // do nothing
+            } else if (isContentEquals(fileName, splitPointCommit, currentCommit)
+                    && !isContentEquals(fileName, splitPointCommit, givenCommit)) {
+                /* Any files that have been modified in the given branch since the split point, but
             not modified in the current branch since the split point should be changed to their
             versions in the given branch */
-            else if (isContentEquals(fileName, splitPointCommit, currentCommit)
-                    && !isContentEquals(fileName, splitPointCommit, givenCommit)) {
                 filesToWrite.add(new MediatorFile(fileName, givenCommit.getContent(fileName)));
-            }
-            /* Any files that have been modified in the current branch but not in the given
-            branch since the split point should stay as they are. */
-            else if (!isContentEquals(fileName, splitPointCommit, currentCommit)
+            } else if (!isContentEquals(fileName, splitPointCommit, currentCommit)
                     && isContentEquals(fileName, splitPointCommit, givenCommit)) {
-                // do nothing
-            }
-            /* Any files that have been modified in both the current and given branch in the same
+                /* Any files that have been modified in the current branch but not in the given
+            branch since the split point should stay as they are. */
+                continue; // do nothing
+            } else if (isContentEquals(fileName, currentCommit, givenCommit)) {
+                /* Any files that have been modified in both the current and given branch in the same
              way unchanged by the merge. */
-            else if (isContentEquals(fileName, currentCommit, givenCommit)) {
-                // do nothing
-            }
-            /* Files modified in different ways in the current and given branches or are only
+                continue; // do nothing
+            } else {
+                /* Files modified in different ways in the current and given branches or are only
             present at one commit and modified in the other commit are in conflict. */
-            else {
                 filesHaveConflicts.add(fileName);
             }
 
@@ -383,7 +369,7 @@ public class Commit implements Serializable {
             logLines.add(getMergeInfoLine());
         }
 
-        logLines.add("Date: " + sdf.format(new Date(timestamp.getTime())));
+        logLines.add("Date: " + SDF.format(new Date(timestamp.getTime())));
         logLines.add(message);
         logLines.add("");  // "" for appending a \n
 
@@ -491,14 +477,14 @@ public class Commit implements Serializable {
         List<String> contentLines = new ArrayList<>();
         contentLines.add("<<<<<<< HEAD");
         if (currentContent != null) {
-            contentLines.add(currentContent);
+            contentLines.add(currentContent.replaceAll("\\r\\n$", ""));
         }
         contentLines.add("=======");
         if (givenContent != null) {
-            contentLines.add(givenContent);
+            contentLines.add(givenContent.replaceAll("\\r\\n$", ""));
         }
         contentLines.add(">>>>>>>");
-        contentLines.add(""); // "" for append a \n
+        // contentLines.add(""); // "" for append a \n
 
         return String.join("\n", contentLines);
     }
@@ -518,7 +504,7 @@ public class Commit implements Serializable {
 
             for (String fileName : fileNames) {
                 if (fileName.startsWith(commitId)) {
-                    return Utils.join(COMMITS_DIR, commitId);
+                    return Utils.join(COMMITS_DIR, fileName);
                 }
             }
         }

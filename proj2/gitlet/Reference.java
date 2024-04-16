@@ -7,7 +7,7 @@ import java.util.List;
 public class Reference {
 
     /** Represents .gitlet/refs directory */
-    public final static File REF_DIR = Utils.join(Utils.join(GitRepo.GIT_REPO, "refs"), "head");
+    public static final File REF_DIR = Utils.join(Utils.join(GitRepo.GIT_REPO, "refs"), "head");
 
     /** Creates the refs/head directory and the master branch. */
     public static void init(String initialBranch, String initialCommitId) {

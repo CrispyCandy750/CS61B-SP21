@@ -111,6 +111,11 @@ public class Repository {
      * (do not remove it unless it is tracked in the current commit)
      */
     public static String rm(String fileName) {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         File file = Utils.join(CWD, fileName);
         /* If the file does not exist. */
         if (!file.exists()) {
@@ -126,16 +131,31 @@ public class Repository {
 
     /** Returns the log starting at current commit. */
     public static String log() {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         return GitRepo.log();
     }
 
     /** Returns all commit logs with arbitrary order */
     public static String globalLog() {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         return GitRepo.globalLog();
     }
 
     /** Returns the one-line ids of commits with specific commit message. */
     public static String find(String commitMessage) {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         return GitRepo.find(commitMessage);
     }
 
@@ -162,11 +182,21 @@ public class Repository {
      * random.stuff
      */
     public static String status() {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         return GitRepo.status(getAllFiles());
     }
 
     /** Check out file from current commit. */
     public static String checkoutFileFromCurrentCommit(String fileName) {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         return checkoutFileFromSpecificCommit(null, fileName);
     }
 
@@ -175,6 +205,11 @@ public class Repository {
      * checkout from current commit if commitId == null.
      */
     public static String checkoutFileFromSpecificCommit(String commitId, String fileName) {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         MediatorFile mediatorFile = new MediatorFile(fileName);
         String message = GitRepo.checkoutCommitAndFile(commitId, fileName, mediatorFile);
 
@@ -191,6 +226,11 @@ public class Repository {
 
     /** Checkout branch. */
     public static String checkoutBranch(String branch) {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         Map<String, MediatorFile> filesInWorkingDir = getAllFiles();
 
         List<MediatorFile> filesToWrite = new ArrayList<>();
@@ -207,6 +247,11 @@ public class Repository {
 
     /** Reset from the specific commit. */
     public static String reset(String commitId) {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         Map<String, MediatorFile> filesInWorkingDir = getAllFiles();
         List<MediatorFile> filesToWrite = new ArrayList<>();
         List<String> filesToDelete = new ArrayList<>();
@@ -224,6 +269,11 @@ public class Repository {
 
     /** Merge the specific branch into the current branch. */
     public static String merge(String branchName) {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         List<MediatorFile> filesToWrite = new ArrayList<>();
         List<String> filesToDelete = new ArrayList<>();
 
@@ -240,11 +290,21 @@ public class Repository {
      * If the branch has already existed, returns the fail message.
      */
     public static String createBranch(String branchName) {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         return GitRepo.createBranch(branchName);
     }
 
     /** Remove the branch. */
     public static String removeBranch(String branchName) {
+
+        if (!GitRepo.isInitialized()) {
+            return Message.NOT_IN_GIT_REPO_MESSAGE;
+        }
+
         return GitRepo.removeBranch(branchName);
     }
 

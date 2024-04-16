@@ -7,9 +7,10 @@ package gitlet;
  */
 public class Main {
 
-    /** Usage: java gitlet.Main ARGS, where ARGS contains
-     *  <COMMAND> <OPERAND1> <OPERAND2> ...
-     *  java gitlet.Main init
+    /**
+     * Usage: java gitlet.Main ARGS, where ARGS contains
+     * <COMMAND> <OPERAND1> <OPERAND2> ...
+     * java gitlet.Main init
      */
 
     public static void main(String[] args) {
@@ -70,10 +71,19 @@ public class Main {
      * @param n    Number of expected arguments
      */
     private static String validateOperandsNum(String[] args, int n) {
+        return validateOperandsNum(args, n, null);
+    }
+
+    private static String validateOperandsNum(String[] args, int n, String message) {
+        String validationMessage = null;
         if (args.length != n) {
-            return Message.INCORRECT_OPERANDS_MESSAGE;
+            if (message == null) {
+                validationMessage = Message.INCORRECT_OPERANDS_MESSAGE;
+            } else {
+                validationMessage = message;
+            }
         }
-        return null;
+        return validationMessage;
     }
 
     /** Validate the number of arguments of checkout command. */
@@ -84,6 +94,17 @@ public class Main {
             return null;
         }
         return Message.INCORRECT_OPERANDS_MESSAGE;
+    }
+
+    /** Validate the number of arguments of commit command. */
+    private static String validateCommitArgs(String[] args) {
+        String validateMessage = null;
+        if (args.length == 1) {
+            validateMessage = Message.PLEASE_ENTER_COMMIT_MESSAGE;
+        } else if (args.length > 2) {
+            validateMessage = Message.INCORRECT_OPERANDS_MESSAGE;
+        }
+        return validateMessage;
     }
 
 
@@ -107,7 +128,7 @@ public class Main {
     }
 
     private static String commit(String[] args) {
-        String message = validateOperandsNum(args, 2);
+        String message = validateCommitArgs(args);
         if (validateWrong(message)) {
             return message;
         }

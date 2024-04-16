@@ -81,6 +81,9 @@ public class Message {
     static final String NO_COMMIT_WITH_SPECIFIC_MESSAGE = "Found no commit with that " +
             "message.";
 
+    /** The message when commit but no commit message. */
+    static final String PLEASE_ENTER_COMMIT_MESSAGE = "Please enter a commit message.";
+
     /** Returns the successful merge message. */
     static String getMergeMessage(String givenBranchName, String currentBranchName) {
         return "Merged " + givenBranchName + " into " + currentBranchName + ".";

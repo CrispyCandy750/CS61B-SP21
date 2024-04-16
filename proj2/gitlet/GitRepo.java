@@ -31,8 +31,6 @@ public class GitRepo {
             " branch.";
 
 
-
-
     /**
      * 1. creates the .git/object/ directory (Commit to do).
      * 2. creates the initial commit (Commit to do).
@@ -74,6 +72,10 @@ public class GitRepo {
         return null;  // no message to print
     }
 
+    /** Create a normal commit which has only one parent. */
+    public static String commit(String message) {
+        return commit(message, null);
+    }
 
     /**
      * 1. get all files in staging area
@@ -82,14 +84,14 @@ public class GitRepo {
      * 4. clean the staging area
      * 5. Move the branch
      */
-    public static String commit(String message) {
+    public static String commit(String message, String secondParent) {
         if (!StagingArea.haveStagedOrRemovedFiles()) {
             return Message.COMMIT_BUT_NO_STAGED_FILE_MESSAGE;
         }
 
         Commit currentCommit = HEADPointer.currentCommit();
         /* Clone the file-blob map from the  */
-        Commit newCommit = Commit.clone(message, currentCommit);
+        Commit newCommit = Commit.clone(message, currentCommit, secondParent);
 
         /* Add or modify the mapping from file name to blob file. */
         StagingArea.addOrModifyFilesToCommit(newCommit);
@@ -489,8 +491,6 @@ public class GitRepo {
             return Message.MERGE_HAVE_UNCOMMITTED_FILES_MESSAGE;
         }
 
-
-
         Commit givenCommit = Reference.furthestCommit(givenBranchName);
         Commit currentCommit = HEADPointer.currentCommit();
         Commit splitPointCommit = Commit.getLatestCommonAncestor(currentCommit, givenCommit);
@@ -543,7 +543,12 @@ public class GitRepo {
 
         // add all to staging area
         StagingArea.addAllToStagedAndRemovedArea(filesToWrite, filesToDelete);
-        commit(Message.getMergeMessage(givenBranchName, HEADPointer.currentBranch()));
+        String commitMessage = commit(Message.getMergeMessage(givenBranchName,
+                HEADPointer.currentBranch()));
+
+        if (commitMessage != null) { // No changes added to the commit.
+            message = commitMessage;
+        }
 
         return message;
     }

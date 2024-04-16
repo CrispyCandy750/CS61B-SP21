@@ -173,15 +173,4 @@ public class Main {
             System.exit(0);
         }
     }
-
-    /** Check if the command exists. */
-    private static void validateCommandExists(String cmd, String message) {
-        HashSet<String> set = new HashSet<>();
-        set.addAll(Arrays.asList("init", "add", "commit", "rm", "log", "global-log", "find",
-                "status", "checkout", "branch", "rm-branch", "reset"));
-        if (!set.contains(cmd)) {
-            System.out.println(message);
-            System.exit(0);
-        }
-    }
 }

@@ -47,6 +47,9 @@ public class Commit implements Serializable {
     /** The hash code of last parent. */
     private String parent;
 
+    /** The second parent which is the given branch commit when merging. */
+    private String secondParent;
+
     /** The mapping from file name to blob file. */
     private Map<String, String> fileBlobMap;
 
@@ -56,13 +59,22 @@ public class Commit implements Serializable {
     /** The delimiter between two log. */
     private final static String LOGS_DELIMITER = "===";
 
+    /** The length of the abbreviated commit id. */
+    private final static int ABBREVIATE_COMMIT_LENGTH = 6;
+
     public Commit(String message, String parent, Map<String, String> fileBlobMap) {
         this(message, parent, System.currentTimeMillis(), fileBlobMap);
     }
 
     private Commit(String message, String parent, long time, Map<String, String> fileBlobMap) {
+        this(message, parent, null, time, fileBlobMap);
+    }
+
+    private Commit(String message, String parent, String secondParent, long time, Map<String,
+            String> fileBlobMap) {
         this.message = message;
         this.parent = parent;
+        this.secondParent = secondParent;
         this.timestamp = new Timestamp(time);
         this.fileBlobMap = fileBlobMap;
     }
@@ -92,8 +104,8 @@ public class Commit implements Serializable {
     }
 
     /** Clone the commit with new commit message. */
-    public static Commit clone(String newMessage, Commit commit) {
-        return new Commit(newMessage, commit.sha1(), commit.fileBlobMap);
+    public static Commit clone(String newMessage, Commit commit, String secondParent) {
+        return new Commit(newMessage, commit.sha1(), new HashMap<>(commit.fileBlobMap));
     }
 
     /** Generate the log of the commit iterator. */
@@ -249,6 +261,7 @@ public class Commit implements Serializable {
         the given branch which should be checked out and staged. Do nothing. */
     }
 
+    /** Merge each file having conflict. */
     public static List<MediatorFile> mergeConflictFiles(
             List<String> filesHaveConflict, Commit currentCommit, Commit givenCommit) {
         ArrayList<MediatorFile> conflictFiles = new ArrayList<>(filesHaveConflict.size());
@@ -358,13 +371,36 @@ public class Commit implements Serializable {
      * <<<
      */
     private String logInfo() {
-        return String.join("\n",
-                LOGS_DELIMITER,
-                "commit " + this.sha1,
-                "Date: " + sdf.format(new Date(timestamp.getTime())),
-                message,
-                "");  // add "" for append a \n.
+        List<String> logLines = new ArrayList<>();
+
+        logLines.add(LOGS_DELIMITER);
+        logLines.add("commit " + this.sha1);
+
+        if (isMergedCommit()) {
+            logLines.add(getMergeInfoLine());
+        }
+
+        logLines.add("Date: " + sdf.format(new Date(timestamp.getTime())));
+        logLines.add(message);
+        logLines.add("");  // "" for appending a \n
+
+        return String.join("\n", logLines);
     }
+
+    /**
+     * Returns the merge info line.
+     * Example: Merge: 4975af1 2c1ead1
+     */
+    private String getMergeInfoLine() {
+        return String.join(" ", "Merge:",
+                abbreviateCommitId(parent), abbreviateCommitId(secondParent));
+    }
+
+    /** Returns true if the commit is from merging, i.e. the commit has two parent */
+    private boolean isMergedCommit() {
+        return this.secondParent != null;
+    }
+
     /* -------------------------- private class & methods -------------------------- */
 
     /** The Commit Iterator with the reverse commit order starting at specific commit id. */
@@ -424,11 +460,7 @@ public class Commit implements Serializable {
             return true;
         }
 
-        if (blobId1 == null || blobId2 == null || !blobId1.equals(blobId2)) {
-            return false;
-        }
-
-        return true;
+        return blobId1 != null && blobId1.equals(blobId2);
     }
 
     /** Merge all files having conflict. */
@@ -466,5 +498,10 @@ public class Commit implements Serializable {
         contentLines.add(""); // "" for append a \n
 
         return String.join("\n", contentLines);
+    }
+
+    /** Returns teh abbreviated commit id. */
+    private static String abbreviateCommitId(String commitId) {
+        return commitId.substring(0, ABBREVIATE_COMMIT_LENGTH);
     }
 }

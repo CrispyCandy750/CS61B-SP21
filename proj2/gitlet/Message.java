@@ -42,6 +42,6 @@ public class Message {
 
     /** Returns the successful merge message. */
     static String getMergeMessage(String givenBranchName, String currentBranchName) {
-        return "Merged " + givenBranchName + " into " + currentBranchName;
+        return "Merged " + givenBranchName + " into " + currentBranchName + ".";
     }
 }

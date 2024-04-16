@@ -48,8 +48,6 @@ public class Blob {
 
     /** Save the blob in the objects directory with the name as its hashcode. */
     public void saveBlob() {
-        String blobId = this.getBlobId();
-
         File blobDir = Utils.join(BLOB_DIR, blobId.substring(0, 2));
         if (!blobDir.exists()) {
             blobDir.mkdir();

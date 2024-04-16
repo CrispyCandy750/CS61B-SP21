@@ -32,7 +32,7 @@ public class Commit implements Serializable {
     private static final String INITIAL_COMMIT_MESSAGE = "initial commit";
 
     /** The length of the abbreviated commit id. */
-    private static final int ABBREVIATE_COMMIT_LENGTH = 8;
+    private static final int ABBREVIATE_COMMIT_LENGTH = 7;
 
     /** The length of the normal commit. */
     private static final int NORMAL_COMMIT_ID_LENGTH = Utils.UID_LENGTH;
@@ -200,11 +200,7 @@ public class Commit implements Serializable {
             List<String> filesToDelete, List<String> filesHaveConflicts
     ) {
         Set<String> filesInSplitCommit = splitPointCommit.getFiles();
-        Set<String> filesInGivenCommit = givenCommit.getFiles();
         for (String fileName : filesInSplitCommit) {
-
-            // the file is ignored in the rest difference process.
-            filesInGivenCommit.remove(fileName);
 
             if (isContentEquals(fileName, splitPointCommit, currentCommit)
                     && !givenCommit.contains(fileName)) {
@@ -240,9 +236,13 @@ public class Commit implements Serializable {
             }
         }
 
+        /* Get the files only present at given commit but not split point commit. */
+        Set<String> filesOnlyInGivenCommitButNotSplitPoint = givenCommit.getFiles();
+        filesOnlyInGivenCommitButNotSplitPoint.removeAll(filesInSplitCommit);
+
         /* The files in 'filesInGivenCommit' is only in given commit (likely in current commit)
         but not in split point commit. */
-        for (String fileName : filesInGivenCommit) {
+        for (String fileName : filesOnlyInGivenCommitButNotSplitPoint) {
             /* Any files that were not present at the split point and are present only in the
             given branch should be checked out and staged. */
             if (!currentCommit.contains(fileName)) {
@@ -527,7 +527,7 @@ public class Commit implements Serializable {
     private static File getCommitFile(String commitId) {
         if (commitId.length() == NORMAL_COMMIT_ID_LENGTH) {
             return Utils.join(COMMITS_DIR, commitId);
-        } else if (commitId.length() == ABBREVIATE_COMMIT_LENGTH) {
+        } else if (commitId.length() < NORMAL_COMMIT_ID_LENGTH) {
 
             List<String> fileNames = Utils.plainFilenamesIn(COMMITS_DIR);
 

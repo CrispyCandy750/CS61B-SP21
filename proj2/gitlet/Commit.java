@@ -62,6 +62,9 @@ public class Commit implements Serializable {
     /** The length of the abbreviated commit id. */
     private final static int ABBREVIATE_COMMIT_LENGTH = 6;
 
+    /** The length of the normal commit. */
+    private final static int NORMAL_COMMIT_ID_LENGTH = 40;
+
     public Commit(String message, String parent, Map<String, String> fileBlobMap) {
         this(message, parent, System.currentTimeMillis(), fileBlobMap);
     }
@@ -94,12 +97,14 @@ public class Commit implements Serializable {
         if (commitId == null) {
             return null;
         }
-        File commitFile = Utils.join(COMMITS_DIR, commitId);
-        if (!commitFile.exists()) {
+        File commitFile = getCommitFile(commitId);
+
+        if (commitFile == null || !commitFile.exists()) {
             return null;
         }
+
         Commit commit = Utils.readObject(commitFile, Commit.class);
-        commit.sha1 = commitId;
+        commit.sha1 = commitFile.getName();
         return commit;
     }
 
@@ -500,8 +505,25 @@ public class Commit implements Serializable {
         return String.join("\n", contentLines);
     }
 
-    /** Returns teh abbreviated commit id. */
+    /** Returns the abbreviated commit id. */
     private static String abbreviateCommitId(String commitId) {
         return commitId.substring(0, ABBREVIATE_COMMIT_LENGTH);
+    }
+
+    /** Returns the commit file according the commitId. */
+    private static File getCommitFile(String commitId) {
+        if (commitId.length() == NORMAL_COMMIT_ID_LENGTH) {
+            return Utils.join(COMMITS_DIR, commitId);
+        } else if (commitId.length() == ABBREVIATE_COMMIT_LENGTH) {
+
+            List<String> fileNames = Utils.plainFilenamesIn(COMMITS_DIR);
+
+            for (String fileName : fileNames) {
+                if (fileName.startsWith(commitId)) {
+                    return Utils.join(COMMITS_DIR, commitId);
+                }
+            }
+        }
+        return null;
     }
 }

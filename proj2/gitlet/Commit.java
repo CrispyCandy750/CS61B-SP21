@@ -508,12 +508,15 @@ public class Commit implements Serializable {
         if (currentContent != null) {
             contentLines.add(currentContent.replaceAll("\\r\\n$", ""));
         }
+
         contentLines.add("=======");
+
         if (givenContent != null) {
             contentLines.add(givenContent.replaceAll("\\r\\n$", ""));
         }
+
         contentLines.add(">>>>>>>");
-        contentLines.add(""); // "" for append a \n
+//        contentLines.add(""); // "" for append a \n
 
         return String.join("\n", contentLines);
     }

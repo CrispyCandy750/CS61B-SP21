@@ -513,7 +513,7 @@ public class Commit implements Serializable {
             contentLines.add(givenContent.replaceAll("\\r\\n$", ""));
         }
         contentLines.add(">>>>>>>");
-        // contentLines.add(""); // "" for append a \n
+        contentLines.add(""); // "" for append a \n
 
         return String.join("\n", contentLines);
     }

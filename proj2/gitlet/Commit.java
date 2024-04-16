@@ -128,12 +128,25 @@ public class Commit implements Serializable {
         return logs;
     }
 
-    /** Returns the commits from specific to the initial commit. */
     public static Iterable<Commit> getCommitsStartingAt(String commitId) {
+        return getCommitsStartingAt(commitId, false);
+    }
+
+    /**
+     * Returns the commits from specific to the initial commit.
+     *
+     * @param includeSecondParent iterate the second parent if true.
+     */
+    public static Iterable<Commit> getCommitsStartingAt(String commitId, boolean includeSecondParent
+    ) {
         return new Iterable<Commit>() {
             @Override
             public Iterator<Commit> iterator() {
-                return new CommitIteratorStartingAtSpecificCommit(commitId);
+                if (includeSecondParent) {
+                    return new CommitIteratorStartingAtSpecificCommitIncludeSecondParent(commitId);
+                } else {
+                    return new CommitIteratorStartingAtSpecificCommitIgnoreSecondParent(commitId);
+                }
             }
         };
     }
@@ -167,8 +180,8 @@ public class Commit implements Serializable {
 
     /** Returns the latest common ancestor of two commits. */
     public static Commit getLatestCommonAncestor(Commit commit1, Commit commit2) {
-        Iterator<Commit> commitIt1 = getCommitsStartingAt(commit1.sha1).iterator();
-        Iterator<Commit> commitIt2 = getCommitsStartingAt(commit2.sha1).iterator();
+        Iterator<Commit> commitIt1 = getCommitsStartingAt(commit1.sha1, true).iterator();
+        Iterator<Commit> commitIt2 = getCommitsStartingAt(commit2.sha1, true).iterator();
         HashSet<String> visitedCommit = new HashSet<>();
         while (commitIt1.hasNext() || commitIt2.hasNext()) {
             if (commitIt1.hasNext()) {
@@ -406,12 +419,13 @@ public class Commit implements Serializable {
 
     /* -------------------------- private class & methods -------------------------- */
 
-    /** The Commit Iterator with the reverse commit order starting at specific commit id. */
-    private static class CommitIteratorStartingAtSpecificCommit implements Iterator<Commit> {
+    /** The Commit Iterator with the reverse commit order starting at specific commit id,
+     * including the second parent. */
+    private static class CommitIteratorStartingAtSpecificCommitIncludeSecondParent implements Iterator<Commit> {
         Queue<String> commitIds;
         Set<String> visitedCommitId;
 
-        CommitIteratorStartingAtSpecificCommit(String startCommitId) {
+        CommitIteratorStartingAtSpecificCommitIncludeSecondParent(String startCommitId) {
             commitIds = new LinkedList<>();
             visitedCommitId = new HashSet<>();
             commitIds.add(startCommitId);
@@ -438,6 +452,29 @@ public class Commit implements Serializable {
             if (commitId != null && !visitedCommitId.contains(commitId)) {
                 commitIds.add(commitId);
             }
+        }
+    }
+
+
+    /** The Commit Iterator with the reverse commit order starting at specific commit id,
+     * ignore the second parent. */
+    private static class CommitIteratorStartingAtSpecificCommitIgnoreSecondParent implements Iterator<Commit> {
+        String curCommitId;
+
+        CommitIteratorStartingAtSpecificCommitIgnoreSecondParent(String startCommitId) {
+            curCommitId = startCommitId;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return curCommitId != null;
+        }
+
+        @Override
+        public Commit next() {
+            Commit commit = Commit.fromCommitId(curCommitId);
+            curCommitId = commit.parent;
+            return commit;
         }
     }
 

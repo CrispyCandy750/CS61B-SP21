@@ -508,7 +508,7 @@ public class Commit implements Serializable {
         if (currentContent != null) {
             stringBuilder.append(currentContent);
         }
-        stringBuilder.append("=======");
+        stringBuilder.append("=======\n");
         if (givenContent != null) {
             stringBuilder.append(givenContent);
         }

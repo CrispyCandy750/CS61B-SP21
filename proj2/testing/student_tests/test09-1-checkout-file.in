@@ -1,0 +1,42 @@
+# test checkout -- fileName command.
+> init
+<<<
+
+I commit-five-files.inc
+
+= hello.txt hello.txt
++ hello.txt notwug.txt
+
+> checkout -- hello.txt
+<<<
+= hello.txt hello.txt
+
++ hello.txt notwug.txt
+
+> add hello.txt
+<<<
+
+> commit "change the content of hello.txt"
+<<<
+
+> checkout -- hello.txt
+<<<
+
+= hello.txt notwug.txt
+
+> checkout -- house.txt
+File does not exist in that commit.
+<<<
+
++ phone.txt hello.txt
+
+> add phone.txt
+<<<
+
++ phone.txt book.txt
+
+> checkout -- phone.txt
+File does not exist in that commit.
+<<<
+
+= phone.txt book.txt

@@ -1,0 +1,72 @@
+# test merge conflict
+
+> init
+<<<
+
++ a merge_test/a
++ b merge_test/b
+
+> add a
+<<<
+
+> add b
+<<<
+
+> commit "create a b"
+<<<
+
+> branch branch2
+<<<
+
+> checkout branch2
+<<<
+
++ a merge_test/a1
+
++ c merge_test/c1
+
+> add a
+<<<
+
+> add c
+<<<
+
+> rm b
+<<<
+
+> commit "remove b, change a, create c(c1)"
+<<<
+
+> checkout master
+<<<
+
+> branch branch1
+<<<
+
+> checkout branch1
+<<<
+
+> rm a
+<<<
+
++ b merge_test/b1
+
++ c merge_test/c
+
+> add b
+<<<
+
+> add c
+<<<
+
+> commit "remove a, change b, create c(c)"
+<<<
+
+> merge branch2
+Encountered a merge conflict.
+<<<
+
+= a merge_test/a_conflict
+= b merge_test/b_conflict
+= c merge_test/c_conflict
+

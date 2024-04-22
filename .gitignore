@@ -374,8 +374,9 @@ tramp
 !lab6/testing/our/*
 
 # Project 2 Gitlet/Test Files
+!proj2/testing/**/*
 proj2/gitlet/**/*/java
-!proj2/gitlet/testing/student_tests/*.in
+
 
 # Project 3 Image/Audio/Video Files
 !proj3/**/*.png

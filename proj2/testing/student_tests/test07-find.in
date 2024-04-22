@@ -1,0 +1,30 @@
+# test the log command
+I definitions.inc
+>
+Please enter a command.
+<<<
+> find "hello world"
+Not in an initialized Gitlet directory.
+<<<
+> init
+<<<
+> find
+Incorrect operands.
+<<<
+> find hello world
+Incorrect operands.
+<<<
+
+> find "initial message"
+${ARBLINE}
+<<<*
+
+> find "arbitrary message"
+Found no commit with that message.
+<<<
+
+I create-three-commits.inc
+
+> find "create book.txt"
+${ARBLINE}
+<<<*

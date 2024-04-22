@@ -1,0 +1,112 @@
+# The test examples in this section are referenced from this video.
+# https://youtu.be/JR3OYCMv9b4?si=5mHZXFNABSilw25i
+
+I ../definitions.inc
+
+> init
+<<<
+
++ a merge_test/a
++ b merge_test/b
++ c merge_test/c
++ d merge_test/d
++ e merge_test/e
+
+> add a
+<<<
+
+> add b
+<<<
+
+> add c
+<<<
+
+> add d
+<<<
+
+> add e
+<<<
+
+> commit "commit a b c d e"
+<<<
+
+> branch branch2
+<<<
+
+> checkout branch2
+<<<
+
+> rm c
+<<<
+
+> rm d
+<<<
+
+* c
+* d
+
++ f merge_test/f1
+
+> add f
+<<<
+
++ a merge_test/a1
+
+> add a
+<<<
+
+> commit "rm c d, create f, change a"
+<<<
+
+> checkout master
+<<<
+
+= a merge_test/a
+= b merge_test/b
+= c merge_test/c
+= d merge_test/d
+= e merge_test/e
+
+> branch branch1
+<<<
+
+> checkout branch1
+<<<
+
+> rm c
+<<<
+
+> rm e
+<<<
+
++ g merge_test/g
+
+> add g
+<<<
+
++ b merge_test/b1
+
+> add b
+<<<
+
+> commit "remove c e, create g, change b"
+<<<
+
+> merge branch2
+<<<
+
+= a merge_test/a1
+= b merge_test/b1
+* c
+* d
+* e
+= f merge_test/f1
+= g merge_test/g
+
+
+
+
+
+
+
+

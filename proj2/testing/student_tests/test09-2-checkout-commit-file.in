@@ -1,0 +1,62 @@
+# test checkout [commit id] -- [file name]
+
+I definitions.inc
+
++ wug.txt wug.txt
+
+> init
+<<<
+
+> add wug.txt
+<<<
+
+> commit "wug.txt version1"
+<<<
+
++ wug.txt notwug.txt
+
+> add wug.txt
+<<<
+
+> commit "wug.txt version2"
+<<<
+
+> log
+===
+${COMMIT_HEAD}
+wug.txt version2
+
+===
+${COMMIT_HEAD}
+wug.txt version1
+
+===
+${COMMIT_HEAD}
+initial commit
+
+<<<*
+
+= wug.txt notwug.txt
+
+# UID of second version
+D UID2 "${1}"
+# UID of first version
+D UID1 "${2}"
+
+> checkout ${UID1} -- wug.txt
+<<<
+
+= wug.txt wug.txt
+
+> checkout ${UID2} -- wug.txt
+<<<
+
+= wug.txt notwug.txt
+
+> checkout abcdef -- wug.txt
+No commit with that id exists.
+<<<
+
+> checkout ${UID2} -- hello.txt
+File does not exist in that commit.
+<<<

@@ -1,0 +1,14 @@
+# test the status command
+I definitions.inc
+> init
+<<<
+
+# create book.txt, hello.txt, world.txt
+I create-three-files.inc
+
+> status
+=== Branches ===
+\*master
+
+${ARBLINES}
+<<<*

@@ -1,0 +1,33 @@
+I definitions.inc
+
+> init
+<<<
+
+> rm-branch branch1
+A branch with that name does not exist.
+<<<
+
+> branch branch1
+<<<
+
+> status
+=== Branches ===
+\*master
+branch1
+
+${ARBLINES}
+<<<*
+
+> rm-branch master
+Cannot remove the current branch.
+<<<
+
+> rm-branch branch1
+<<<
+
+> status
+=== Branches ===
+\*master
+
+${ARBLINES}
+<<<*

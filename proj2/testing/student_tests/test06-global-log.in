@@ -1,0 +1,29 @@
+# test the log command
+I definitions.inc
+>
+Please enter a command.
+<<<
+> global-log
+Not in an initialized Gitlet directory.
+<<<
+> init
+<<<
+> global-log hello.txt
+Incorrect operands.
+<<<
+> global-log
+===
+${COMMIT_HEAD}
+initial commit
+<<<*
+
+I create-three-commits.inc
+
+> global-log
+${COMMIT_LOG}
+${COMMIT_LOG}
+${COMMIT_LOG}
+${COMMIT_LOG}
+<<<*
+
+

@@ -1,0 +1,111 @@
+# test the failure condition when merge.
+I ../definitions.inc
+
+> init
+<<<
+
++ apple.txt apple.txt
+
+> add apple.txt
+<<<
+
+> commit "create apple.txt"
+<<<
+
+> branch branch1
+<<<
+
+> checkout branch1
+<<<
+
++ book.txt book.txt
+
+> add book.txt
+<<<
+
+> commit "create book.txt"
+<<<
+
+> merge master
+Given branch is an ancestor of the current branch.
+<<<
+
+> status
+=== Branches ===
+\*branch1
+master
+
+${ARBLINES}
+<<<*
+
+> checkout master
+<<<
+
+* book.txt
+
+> merge branch1
+Current branch fast-forwarded.
+<<<
+
+= book.txt book.txt
+
+> checkout master
+<<<
+
+> branch branch2
+<<<
+
+> checkout branch2
+<<<
+
++ hello.txt hello.txt
+
+> add hello.txt
+<<<
+
+> merge branch1
+You have uncommitted changes.
+<<<
+
+> status
+=== Branches ===
+\*branch2
+branch1
+master
+
+${ARBLINES}
+<<<*
+
+> rm hello.txt
+<<<
+
+- hello.txt
+
+> merge branch3
+A branch with that name does not exist.
+<<<
+
+> status
+=== Branches ===
+\*branch2
+branch1
+master
+
+${ARBLINES}
+<<<*
+
++ book.txt wug.txt
++ notwug.txt notwug.txt
+
+> merge branch1
+There is an untracked file in the way; delete it, or add and commit it first.
+<<<
+
+> status
+=== Branches ===
+\*branch2
+branch1
+master
+
+${ARBLINES}
+<<<*

@@ -1,0 +1,134 @@
+> init
+<<<
+
+I definitions.inc
+I commit-five-files.inc
+
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+
+${ARBLINES}
+<<<*
+
++ hello.txt notwug.txt
+= hello.txt notwug.txt
+
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+hello.txt \(modified\)
+
+${ARBLINES}
+<<<*
+
+> add hello.txt
+<<<
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+
+${ARBLINES}
+<<<*
+
+> rm hello.txt
+<<<
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+hello.txt \(modified\)
+
+${ARBLINES}
+<<<*
+
+> add hello.txt
+<<<
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+
+${ARBLINES}
+<<<*
+
+= hello.txt notwug.txt
+
++ hello.txt hello.txt
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+hello.txt \(modified\)
+
+${ARBLINES}
+<<<*
+
+> add hello.txt
+<<<
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+
+${ARBLINES}
+<<<*
+
++ hello.txt notwug.txt
+- book.txt
+* book.txt
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+book.txt \(deleted\)
+hello.txt \(modified\)
+
+${ARBLINES}
+<<<*
+
+
++ book.txt book.txt
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+hello.txt \(modified\)
+
+${ARBLINES}
+<<<*
+
++ hello.txt hello.txt
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+
+${ARBLINES}
+<<<*
+
++ hello.txt notwug.txt
++ wug.txt notwug.txt
+- book.txt
+- world.txt
++ notwug.txt hello.txt
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+book.txt \(deleted\)
+hello.txt \(modified\)
+notwug.txt \(modified\)
+world.txt \(deleted\)
+wug.txt \(modified\)
+
+${ARBLINES}
+<<<*
+
+> commit "commit"
+No changes added to the commit.
+<<<*
+
+> status
+${ARBLINES}
+=== Modifications Not Staged For Commit ===
+book.txt \(deleted\)
+hello.txt \(modified\)
+notwug.txt \(modified\)
+world.txt \(deleted\)
+wug.txt \(modified\)
+
+${ARBLINES}
+<<<*

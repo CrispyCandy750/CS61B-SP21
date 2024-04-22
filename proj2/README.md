@@ -5,9 +5,7 @@
 In this program, we will implement a mini git which named 'gitlet'.
 [Here](https://sp21.datastructur.es/materials/proj/proj2/proj2) is the spec of this project which contains the demands, including the difference with the real git.
 
-Here is the video you need to view before starting this project which covers the key points of this project.
-
-[![Alt text for your video](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/fvhqn5PeU_Q?si=FjeSkGEZry1Cbiky)
+Here is the [video](https://youtu.be/fvhqn5PeU_Q?si=FjeSkGEZry1Cbiky) you need to view before starting this project which covers the key points of this project.
 
 ## Project Structure
 

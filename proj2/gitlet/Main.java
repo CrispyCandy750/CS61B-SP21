@@ -7,12 +7,6 @@ package gitlet;
  */
 public class Main {
 
-    /**
-     * Usage: java gitlet.Main ARGS, where ARGS contains
-     * <COMMAND> <OPERAND1> <OPERAND2> ...
-     * java gitlet.Main init
-     */
-
     public static void main(String[] args) {
         String cmd = "";
 

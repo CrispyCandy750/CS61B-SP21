@@ -11,13 +11,7 @@ public class GitRepo {
     public static final File GIT_REPO = Utils.join(Repository.CWD, ".gitlet");
     public static final String DEFAULT_INITIAL_BRANCH = "master";
 
-    /**
-     * 1. creates the .git/object/ directory (Commit to do).
-     * 2. creates the initial commit (Commit to do).
-     * 2. creates the index file. (Staged Files to do).
-     * 3. creates the HEAD files. (HEAD to do)
-     * 4. creates the refs. (Refs to do).
-     */
+    /** Initialize the git repository (creates all necessary sub-directories.) */
     public static void init() {
         GIT_REPO.mkdir();
         String initialCommitId = Commit.init();
@@ -32,12 +26,7 @@ public class GitRepo {
         return GIT_REPO.exists();
     }
 
-    /**
-     * 1. Check if the current working version of the file is identical to the version in the
-     * current commit.
-     * 2. Store the file as a blob object
-     * 3. add the Map in the INDEX file.
-     */
+    /** add the file in the staged area. */
     public static String add(MediatorFile file) {
 
         Commit commit = HEADPointer.currentCommit();
@@ -45,7 +34,7 @@ public class GitRepo {
             if (StagingArea.inStagedArea(file.getFileName())) {
                 StagingArea.removeFromStagedArea(file.getFileName());
             }
-            return null;
+            return null; // no message to print
         }
 
         StagingArea.addToStagedArea(file.getFileName(), file.getContent());
@@ -57,13 +46,7 @@ public class GitRepo {
         return commit(message, null);
     }
 
-    /**
-     * 1. get all files in staging area
-     * 2. copy the last commit and change the map
-     * 3. save the commit
-     * 4. clean the staging area
-     * 5. Move the branch
-     */
+    /** Create a commit which has second parent. */
     private static String commit(String message, String secondParent) {
         if (!StagingArea.haveStagedOrRemovedFiles()) {
             return Message.COMMIT_BUT_NO_STAGED_FILE_MESSAGE;
@@ -93,8 +76,6 @@ public class GitRepo {
      * 2. else if the fileName is in the current commit, add it to removed Area and remove it from
      * working copy.
      * 3. else, print "No reason to remove the file."
-     * <p>
-     * Returns "" when add the file to removed area.
      */
     public static String rm(String fileName, Collection<String> filesToRemove) {
 
@@ -329,14 +310,7 @@ public class GitRepo {
         return message;
     }
 
-    /**
-     * Checks out all the files tracked by the given commit.
-     * Removes tracked files that are not present in that commit.
-     * Also moves the current `branch’s head` to that commit node.
-     * The [commit id] may be abbreviated as for checkout. The staging area is cleared.
-     * The command is essentially checkout of an arbitrary commit that also changes the
-     * current branch head.
-     */
+    /** Checks out all the files tracked by the given commit. */
     public static String reset(
             String commitId, Map<String, MediatorFile> filesInWorkingDir,
             List<MediatorFile> filesToWrite, List<String> filesToDelete
@@ -380,26 +354,7 @@ public class GitRepo {
         return message;
     }
 
-    /**
-     * Takes all files in the commit at the head of the given branch,
-     * and puts them in the working directory, overwriting the versions
-     * of the files that are already there if they exist.
-     * <p>
-     * Also, at the end of this command, the given branch will now be considered the
-     * current branch (HEAD). Any files that are tracked in the current branch but
-     * are not present in the checked-out branch are deleted.
-     * <p>
-     * The staging area is cleared, unless the checked-out branch is the current
-     * branch
-     * <p>
-     * If no branch with that name exists, print No such branch exists.
-     * If that branch is the current branch, print No need to checkout
-     * the current branch.
-     * If a working file is untracked in the current branch and would be
-     * overwritten by the checkout, print `There is an untracked file in
-     * the way; delete it, or add and commit it first`. and exit;
-     * perform this check before doing anything else. Do not change the CWD.
-     */
+    /** differentiate files to write and files to delete. */
     private static String populateFilesToWriteOrDelete(
             Commit givenCommit, Map<String, MediatorFile> filesInWorkingDir,
             List<MediatorFile> filesToWrite, List<String> filesToDelete

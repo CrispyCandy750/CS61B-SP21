@@ -14,12 +14,6 @@ import java.util.*;
 
 /** Represents a gitlet commit object and manipulate all commits objects. */
 public class Commit implements Serializable {
-    /**
-     * <p>
-     * List all instance variables of the Commit class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided one example for `message`.
-     */
 
     private static final File COMMITS_DIR = Utils.join(Utils.join(GitRepo.GIT_REPO, "objects"),
             "commits");
@@ -419,8 +413,10 @@ public class Commit implements Serializable {
 
     /* -------------------------- private class & methods -------------------------- */
 
-    /** The Commit Iterator with the reverse commit order starting at specific commit id,
-     * including the second parent. */
+    /**
+     * The Commit Iterator with the reverse commit order starting at specific commit id,
+     * including the second parent.
+     */
     private static class CommitIteratorStartingAtSpecificCommitIncludeSecondParent implements Iterator<Commit> {
         Queue<String> commitIds;
         Set<String> visitedCommitId;
@@ -456,8 +452,10 @@ public class Commit implements Serializable {
     }
 
 
-    /** The Commit Iterator with the reverse commit order starting at specific commit id,
-     * ignore the second parent. */
+    /**
+     * The Commit Iterator with the reverse commit order starting at specific commit id,
+     * ignore the second parent.
+     */
     private static class CommitIteratorStartingAtSpecificCommitIgnoreSecondParent implements Iterator<Commit> {
         String curCommitId;
 
@@ -523,8 +521,8 @@ public class Commit implements Serializable {
     ) {
         return new MediatorFile(fileHasConflict,
                 mergeConflictContent(
-                        currentCommit.getContent(fileHasConflict),
-                        givenCommit.getContent(fileHasConflict)
+                        currentCommit.getContentOrDefault(fileHasConflict, ""),
+                        givenCommit.getContentOrDefault(fileHasConflict, "")
                 )
         );
     }
@@ -542,13 +540,9 @@ public class Commit implements Serializable {
     private static String mergeConflictContent(String currentContent, String givenContent) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("<<<<<<< HEAD\n");
-        if (currentContent != null) {
-            stringBuilder.append(currentContent);
-        }
+        stringBuilder.append(currentContent);
         stringBuilder.append("=======\n");
-        if (givenContent != null) {
-            stringBuilder.append(givenContent);
-        }
+        stringBuilder.append(givenContent);
         stringBuilder.append(">>>>>>>\n");
         return stringBuilder.toString();
     }

@@ -417,7 +417,8 @@ public class Commit implements Serializable {
      * The Commit Iterator with the reverse commit order starting at specific commit id,
      * including the second parent.
      */
-    private static class CommitIteratorStartingAtSpecificCommitIncludeSecondParent implements Iterator<Commit> {
+    private static class CommitIteratorStartingAtSpecificCommitIncludeSecondParent
+            implements Iterator<Commit> {
         Queue<String> commitIds;
         Set<String> visitedCommitId;
 
@@ -456,7 +457,8 @@ public class Commit implements Serializable {
      * The Commit Iterator with the reverse commit order starting at specific commit id,
      * ignore the second parent.
      */
-    private static class CommitIteratorStartingAtSpecificCommitIgnoreSecondParent implements Iterator<Commit> {
+    private static class CommitIteratorStartingAtSpecificCommitIgnoreSecondParent
+            implements Iterator<Commit> {
         String curCommitId;
 
         CommitIteratorStartingAtSpecificCommitIgnoreSecondParent(String startCommitId) {

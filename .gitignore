@@ -375,6 +375,8 @@ tramp
 
 # Project 2 Gitlet/Test Files
 !proj2/testing/**/*
+!proj2/README.md
+!proj2/.image/*
 proj2/gitlet/**/*/java
 
 

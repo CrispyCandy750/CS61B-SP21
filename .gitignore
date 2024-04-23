@@ -373,6 +373,13 @@ tramp
 !lab6/testing/*
 !lab6/testing/our/*
 
+# Project 2 Gitlet/Test Files
+!proj2/testing/**/*
+!proj2/README.md
+!proj2/.image/*
+proj2/gitlet/**/*/java
+
+
 # Project 3 Image/Audio/Video Files
 !proj3/**/*.png
 !proj3/**/*.jpeg

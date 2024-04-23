@@ -1,0 +1,8 @@
+# test how to test
++ text1.txt notwug.txt
++ text2.txt hello.txt
+E text1.txt
+= text1.txt notwug.txt
+= text2.txt hello.txt
+> init
+<<<

@@ -1,0 +1,18 @@
+# test checkout -- [fileName] command
+>
+Please enter a command.
+<<<
+> checkout -- hello.txt
+Not in an initialized Gitlet directory.
+<<<
+> init
+<<<
+> checkout -- param1 param2
+Incorrect operands.
+<<<
+> checkout abcdefadsakdlajdklsajdlasjdlakdjsalkdjsakl -- param1 param2
+Incorrect operands.
+<<<
+> checkout abcdefadsakdlajdklsajdlasjdlakdjsalkdjsakl param2
+Incorrect operands.
+<<<

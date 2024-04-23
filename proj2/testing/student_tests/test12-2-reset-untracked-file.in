@@ -1,0 +1,84 @@
+# test reset and rewrite the untracked file
+I definitions.inc
+
+> init
+<<<
+
++ apple.txt apple.txt
+> add apple.txt
+<<<
+
+> commit "create apple.txt"
+<<<
+
+= apple.txt apple.txt
+
+> rm apple.txt
+<<<
+
+* apple.txt
+
+> commit "remove apple.txt"
+<<<
+
+* apple.txt
+
++ apple.txt book.txt
+
+> log
+===
+${COMMIT_HEAD}
+remove apple.txt
+
+===
+${COMMIT_HEAD}
+create apple.txt
+
+===
+${COMMIT_HEAD}
+initial commit
+
+<<<*
+
+D COMMIT_1 "${2}"
+D COMMIT_2 "${1}"
+
+> reset ${COMMIT_1}
+There is an untracked file in the way; delete it, or add and commit it first.
+<<<
+
+> log
+===
+${COMMIT_HEAD}
+remove apple.txt
+
+===
+${COMMIT_HEAD}
+create apple.txt
+
+===
+${COMMIT_HEAD}
+initial commit
+
+<<<*
+
+= apple.txt book.txt
+
+> add apple.txt
+<<<
+
+> reset ${COMMIT_1}
+<<<
+
+= apple.txt apple.txt
+
+> log
+===
+${COMMIT_HEAD}
+create apple.txt
+
+===
+${COMMIT_HEAD}
+initial commit
+
+<<<*

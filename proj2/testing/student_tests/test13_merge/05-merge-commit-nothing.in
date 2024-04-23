@@ -1,0 +1,33 @@
+# test when commit but no change
+
+> init
+<<<
+
+> branch branch1
+<<<
+
+> checkout branch1
+<<<
+
++ apple.txt apple.txt
+
+> add apple.txt
+<<<
+
+> commit "create apple.txt"
+<<<
+
+> checkout master
+<<<
+
++ apple.txt apple.txt
+
+> add apple.txt
+<<<
+
+> commit "create apple.txt"
+<<<
+
+> merge branch1
+No changes added to the commit.
+<<<

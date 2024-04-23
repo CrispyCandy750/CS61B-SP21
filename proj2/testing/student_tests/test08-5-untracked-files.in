@@ -1,0 +1,78 @@
+# test Untracked files
+I definitions.inc
+I create-five-files.inc
+> init
+<<<
+
+> status
+${ARBLINES}
+=== Untracked Files ===
+book.txt
+hello.txt
+notwug.txt
+world.txt
+wug.txt
+
+<<<*
+
+> add notwug.txt
+<<<
+> status
+${ARBLINES}
+=== Untracked Files ===
+book.txt
+hello.txt
+world.txt
+wug.txt
+
+<<<*
+
+- world.txt
+* world.txt
+> status
+${ARBLINES}
+=== Untracked Files ===
+book.txt
+hello.txt
+wug.txt
+
+<<<*
+
+> rm notwug.txt
+<<<
+> status
+${ARBLINES}
+=== Untracked Files ===
+book.txt
+hello.txt
+notwug.txt
+wug.txt
+
+<<<*
+
++ world.txt world.txt
+E world.txt
+> status
+${ARBLINES}
+=== Untracked Files ===
+book.txt
+hello.txt
+notwug.txt
+world.txt
+wug.txt
+
+<<<*
+
+> add notwug.txt
+<<<
+> commit "first commit"
+<<<
+> status
+${ARBLINES}
+=== Untracked Files ===
+book.txt
+hello.txt
+world.txt
+wug.txt
+
+<<<*

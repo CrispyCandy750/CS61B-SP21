@@ -1,0 +1,61 @@
+# test the status command
+I definitions.inc
+> init
+<<<
+
+I create-five-commits.inc
+
+> status
+${ARBLINES}
+=== Removed Files ===
+
+${ARBLINES}
+<<<*
+
+> rm book.txt
+<<<
+* book.txt
+
+> status
+${ARBLINES}
+=== Removed Files ===
+book.txt
+
+${ARBLINES}
+<<<*
+
+> commit "remove book.txt"
+<<<
+
+* book.txt
+
+> status
+${ARBLINES}
+=== Removed Files ===
+
+${ARBLINES}
+<<<*
+
++ hello.txt notwug.txt
+= hello.txt notwug.txt
+
+> add hello.txt
+<<<
+
+> status
+${ARBLINES}
+=== Removed Files ===
+
+${ARBLINES}
+<<<*
+
+> rm hello.txt
+<<<
+
+> status
+${ARBLINES}
+=== Removed Files ===
+
+${ARBLINES}
+<<<*
+

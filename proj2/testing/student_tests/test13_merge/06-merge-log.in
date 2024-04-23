@@ -1,0 +1,49 @@
+# test the merge log
+
+I ../definitions.inc
+
+> init
+<<<
+
+> branch branch1
+<<<
+
+> checkout branch1
+<<<
+
++ apple.txt apple.txt
+
+> add apple.txt
+<<<
+
+> commit "create apple.txt"
+<<<
+
+> checkout master
+<<<
+
++ hello.txt hello.txt
+
+> add hello.txt
+<<<
+
+> commit "create hello.txt"
+<<<
+
+> merge branch1
+<<<
+
+> log
+===
+${COMMIT_HEAD}
+Merged branch1 into master.
+
+===
+${COMMIT_HEAD}
+create hello.txt
+
+===
+${COMMIT_HEAD}
+initial commit
+
+<<<*

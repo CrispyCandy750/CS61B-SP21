@@ -1,0 +1,42 @@
+# test the branch command.
+I definitions.inc
+>
+Please enter a command.
+<<<
+> branch branch1
+Not in an initialized Gitlet directory.
+<<<
+> init
+<<<
+> branch
+Incorrect operands.
+<<<
+> branch hello world
+Incorrect operands.
+<<<
+
+> branch cool-beans
+<<<
+
+> status
+=== Branches ===
+\*master
+cool-beans
+
+${ARBLINES}
+<<<*
+
+> branch third-branch
+<<<
+> status
+=== Branches ===
+\*master
+cool-beans
+third-branch
+
+${ARBLINES}
+<<<*
+
+> branch cool-beans
+A branch with that name already exists.
+<<<

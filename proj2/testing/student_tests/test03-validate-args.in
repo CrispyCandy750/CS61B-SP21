@@ -1,0 +1,24 @@
+# check if the message printed is correct when argument is wrong.
+
+# condition1: user doesn’t input any arguments
+>
+Please enter a command.
+<<<
+
+# condition2: user inputs a command that doesn’t exist
+> book
+No command with that name exists.
+<<<
+
+# condition3: no .gitlet directory
+> add hello.txt
+Not in an initialized Gitlet directory.
+<<<
+
+> init
+<<<
+
+# condition4: user inputs a command with the wrong number or format of operands
+> add hello.txt book.txt
+Incorrect operands.
+<<<

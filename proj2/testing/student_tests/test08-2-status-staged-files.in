@@ -1,0 +1,82 @@
+# test the status command
+I definitions.inc
+> init
+<<<
+
+# create book.txt, hello.txt, world.txt
+I create-three-files.inc
+
+> status
+${ARBLINES}
+=== Staged Files ===
+
+${ARBLINES}
+<<<*
+
+> add book.txt
+<<<
+> status
+${ARBLINES}
+=== Staged Files ===
+book.txt
+
+${ARBLINES}
+<<<*
+
+> add hello.txt
+<<<
+
+> status
+${ARBLINES}
+=== Staged Files ===
+book.txt
+hello.txt
+
+${ARBLINES}
+<<<*
+
+> rm hello.txt
+<<<
+E hello.txt
+
+> status
+${ARBLINES}
+=== Staged Files ===
+book.txt
+
+${ARBLINES}
+<<<*
+
+> add hello.txt
+<<<
+
+> commit "commit hello.txt and book.txt"
+<<<
+
+> status
+${ARBLINES}
+=== Staged Files ===
+
+${ARBLINES}
+<<<*
+
+> add hello.txt
+<<<
+
+> status
+${ARBLINES}
+=== Staged Files ===
+
+${ARBLINES}
+<<<*
+
+> add world.txt
+<<<
+
+> status
+${ARBLINES}
+=== Staged Files ===
+world.txt
+
+${ARBLINES}
+<<<*

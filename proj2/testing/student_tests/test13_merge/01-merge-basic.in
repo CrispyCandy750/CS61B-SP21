@@ -1,0 +1,16 @@
+# test the merge command
+I ../definitions.inc
+>
+Please enter a command.
+<<<
+> merge
+Incorrect operands.
+<<<
+> init
+<<<
+> merge
+Incorrect operands.
+<<<
+> merge hello world
+Incorrect operands.
+<<<

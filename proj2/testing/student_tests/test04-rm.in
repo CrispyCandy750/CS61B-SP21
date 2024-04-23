@@ -1,0 +1,38 @@
+# test the rm command.
+
+# create the hello.txt world.txt book.txt
+I create-three-files.inc
+>
+Please enter a command.
+<<<
+
+> rm hello.txt
+Not in an initialized Gitlet directory.
+<<<
+> init
+<<<
+> rm
+Incorrect operands.
+<<<
+
+> rm apple.txt
+File does not exist.
+<<<
+> rm hello.txt
+No reason to remove the file.
+<<<
+> add hello.txt
+<<<
+> rm hello.txt
+<<<
+> commit "first commit"
+No changes added to the commit.
+<<<
+> add hello.txt
+<<<
+> commit "first commit"
+<<<
+E hello.txt
+> rm hello.txt
+<<<
+* hello.txt

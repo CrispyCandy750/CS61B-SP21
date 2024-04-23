@@ -1,0 +1,20 @@
+# test the status command
+I definitions.inc
+>
+Please enter a command.
+<<<
+> status
+Not in an initialized Gitlet directory.
+<<<
+> init
+<<<
+> status hello.txt
+Incorrect operands.
+<<<
+
+# create book.txt, hello.txt, world.txt
+I create-three-files.inc
+
+> status
+${ARBLINES}
+<<<*

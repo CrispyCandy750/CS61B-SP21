@@ -1,0 +1,15 @@
+# test the commit command without message and staged file
+> init
+<<<
+> commit
+Please enter a commit message.
+<<<
++ hello.txt hello.txt
+= hello.txt hello.txt
+> commit "first commit"
+No changes added to the commit.
+<<<
+> add hello.txt
+<<<
+> commit "first commit"
+<<<

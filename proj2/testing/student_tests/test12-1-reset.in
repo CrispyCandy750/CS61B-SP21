@@ -1,0 +1,98 @@
+# test the reset command.
+I definitions.inc
+
+>
+Please enter a command.
+<<<
+> reset asjdklajdsslakjdskla
+Not in an initialized Gitlet directory.
+<<<
+> init
+<<<
+> reset
+Incorrect operands.
+<<<
+> reset hello world
+Incorrect operands.
+<<<
+
+
+# hello.txt
+# world.txt
+# book.txt
+# wug.txt
+# notwug.txt
+I create-five-commits.inc
+
+> log
+===
+${COMMIT_HEAD}
+create notwug.txt
+
+===
+${COMMIT_HEAD}
+create wug.txt
+
+===
+${COMMIT_HEAD}
+create book.txt
+
+===
+${COMMIT_HEAD}
+create world.txt
+
+===
+${COMMIT_HEAD}
+create hello.txt
+
+===
+${COMMIT_HEAD}
+initial commit
+
+<<<*
+
+D COMMIT_1 "${5}"
+D COMMIT_2 "${4}"
+D COMMIT_3 "${3}"
+D COMMIT_4 "${2}"
+D COMMIT_5 "${1}"
+
+> reset ${COMMIT_5}
+<<<
+
+> log
+${COMMIT_LOG}
+${COMMIT_LOG}
+${COMMIT_LOG}
+${COMMIT_LOG}
+${COMMIT_LOG}
+${COMMIT_LOG}
+<<<*
+
+> reset ${COMMIT_4}
+<<<
+> log
+${COMMIT_LOG}
+${COMMIT_LOG}
+${COMMIT_LOG}
+${COMMIT_LOG}
+${COMMIT_LOG}
+<<<*
+
++ apple.txt apple.txt
+> reset ${COMMIT_3}
+<<<
+E apple.txt
+
+> add apple.txt
+<<<
+> reset ${COMMIT_2}
+<<<
+* apple.txt
+
+> reset abcdajkdljksaldjsadjaslkdjsal
+No commit with that id exists.
+<<<
+
+
+

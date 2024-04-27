@@ -17,15 +17,6 @@ class Hexagon {
         return sideLength * 3 - 2;
     }
 
-    /** Returns a world filled with a hexagon. */
-    static TETile[][] getHexagon(int sideLength, TETile tile) {
-        TETile[][] tiles = TETile.getTiles(getWidth(sideLength), getHeight(sideLength));
-        Hexagon hexagon = new Hexagon(sideLength);
-        hexagon.addHexagonToWorld(tiles, new Point(0, 0), tile);
-
-        return tiles;
-    }
-
     /* ------------------------ instance variable & method ------------------------ */
 
     final int height;

@@ -54,11 +54,7 @@ public class TETile {
      * @param description The description of the tile, shown in the GUI on hovering over the tile.
      */
     public TETile(char character, Color textColor, Color backgroundColor, String description) {
-        this.character = character;
-        this.textColor = textColor;
-        this.backgroundColor = backgroundColor;
-        this.description = description;
-        this.filepath = null;
+        this(character, textColor, backgroundColor, description, null);
     }
 
     /**

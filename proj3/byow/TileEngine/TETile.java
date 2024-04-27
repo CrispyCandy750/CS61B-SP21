@@ -182,7 +182,23 @@ public class TETile {
             copy[i] = Arrays.copyOf(column, column.length);
             i += 1;
         }
-
         return copy;
+    }
+
+    /** Returns tiles 2D array filled with the Tileset.NOTHING. */
+    public static TETile[][] getTiles(int width, int height) {
+        return getTiles(width, height, Tileset.NOTHING);
+    }
+
+    /** Returns tiles 2D array filled with the specific tile. */
+    public static TETile[][] getTiles(int width, int height, TETile filledTile) {
+        TETile[][] tiles = new TETile[width][height];
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                tiles[x][y] = filledTile;
+            }
+        }
+
+        return tiles;
     }
 }

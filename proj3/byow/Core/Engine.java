@@ -1,13 +1,34 @@
 package byow.Core;
 
+import byow.Core.genration.Hallway;
+import byow.Core.genration.Position;
+import byow.Core.genration.Room;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
+
+import java.util.Random;
 
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+
+    public static final Random RANDOM = new Random(123456);
+
+    public static final TETile WALL_TILE = Tileset.WALL;
+    public static final TETile FLOOR_TILE = Tileset.FLOOR;
+
+    /** Add a room into the world. */
+    public static void addRoom(TETile[][] world, Room room) {
+        DrawUtils.drawRoom(world, room, WALL_TILE, FLOOR_TILE);
+    }
+
+    /** Add a hallway into the world */
+    public static void addHallway(TETile[][] world, Hallway hallway) {
+        DrawUtils.drawHallway(world, hallway, WALL_TILE, FLOOR_TILE);
+    }
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,

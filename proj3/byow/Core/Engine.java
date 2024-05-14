@@ -30,6 +30,11 @@ public class Engine {
         DrawUtils.drawHallway(world, hallway, WALL_TILE, FLOOR_TILE);
     }
 
+    /** Returns a random hallway connecting two rooms. */
+    public static Hallway getHallway(Room room1, Room room2) {
+        return null;
+    }
+
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
      * including inputs from the main menu.

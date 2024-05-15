@@ -63,14 +63,11 @@ public class Room {
         }
     }
 
-    /* ------------------------ private static variable & method ------------------------ */
-        private static final double MAX_RATIO = 0.25;
-        private static final double MIN_RATIO = 0.1;
-
-//    private static final double MAX_RATIO = 0.6;
-//    private static final double MIN_RATIO = 0.4;
-
-    private static final Random RANDOM = Engine.RANDOM;
+    ////////////////////////////////////////////////////////////////
+    // private static variable & method
+    ////////////////////////////////////////////////////////////////
+    private static final double MAX_RATIO = 0.25;
+    private static final double MIN_RATIO = 0.1;
 
     /** The least length of floor must be 1, this is also the width of hallway. */
     private static final int LEN_HALLWAY = 3;
@@ -232,7 +229,8 @@ public class Room {
     /** Returns true if the room1 and room2 are overlap, false otherwise. */
     private static boolean isOverlap(Room room1, Room room2) {
         return !(room2.getBorderPosition(Direction.LEFT) > room1.getBorderPosition(Direction.RIGHT)
-                || room2.getBorderPosition(Direction.RIGHT) < room1.getBorderPosition(Direction.LEFT)
+                || room2.getBorderPosition(Direction.RIGHT) < room1.getBorderPosition(
+                Direction.LEFT)
                 || room2.getBorderPosition(Direction.UP) < room1.getBorderPosition(Direction.DOWN)
                 || room2.getBorderPosition(Direction.DOWN) > room1.getBorderPosition(Direction.UP));
     }
@@ -329,42 +327,9 @@ public class Room {
         }
     }
 
-
-    private class RoomNeighborsIterator implements Iterator<Room> {
-
-        int curDirection;
-        Direction[] directions;
-        Random random;
-
-        RoomNeighborsIterator(Random random) {
-            Direction[] directions = Direction.values();
-            curDirection = 0;
-            this.random = random;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return curDirection < directions.length;
-        }
-
-        @Override
-        public Room next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException("No more neighbor of this rooms");
-            }
-            Room neighbor = Room.generateNeighbor(random, Room.this, directions[curDirection]);
-            moveCurDirection();
-            return neighbor;
-        }
-
-        private void moveCurDirection() {
-            curDirection++;
-        }
-    }
-
-    /* ----------------------------------------------------------------------------------- */
-    /* ------------------------ public instance variable & method ------------------------ */
-    /* ----------------------------------------------------------------------------------- */
+    ////////////////////////////////////////////////////////////////
+    // public instance variable & method
+    ////////////////////////////////////////////////////////////////
 
     @Override
     public String toString() {
@@ -379,18 +344,9 @@ public class Room {
         return neighbors;
     }
 
-    public Iterable<Room> getAllNeighbors(Random random) {
-        return new Iterable<Room>() {
-            @Override
-            public Iterator<Room> iterator() {
-                return new RoomNeighborsIterator(random);
-            }
-        };
-    }
-
-    /* ------------------------------------------------------------------------------------ */
-    /* ------------------------ private instance variable & method ------------------------ */
-    /* ------------------------------------------------------------------------------------ */
+    ////////////////////////////////////////////////////////////////
+    // private instance variable & method
+    ////////////////////////////////////////////////////////////////
     /** The bottom-left point of the room. */
     private Position position;
     /** The width of the room contains the border. */
@@ -471,13 +427,5 @@ public class Room {
     private void addNeighbor(Direction direction, Room neighbor) {
         this.firstNeighbor = neighbor;
         this.firstNeighborDirection = direction;
-    }
-
-    /** Return true if the point is in the room. */
-    private boolean containsPoint(Position point) {
-        return Position.isWithinHorizontally(point, this.getBorderPosition(Direction.LEFT),
-                this.getBorderPosition(Direction.RIGHT))
-                && Position.isWithinVertically(point, this.getBorderPosition(Direction.DOWN),
-                this.getBorderPosition(Direction.UP));
     }
 }

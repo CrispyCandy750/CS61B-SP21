@@ -7,10 +7,12 @@ import byow.Core.version2.Room;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.util.Random;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /** Test the method of the Room class. */
 public class RoomTest {
@@ -18,8 +20,8 @@ public class RoomTest {
     private static final int WORLD_WIDTH = 85;
     private static final int WORLD_HEIGHT = 48;
 
-    //    private static final Random RANDOM = Engine.RANDOM;
-    public static final Random RANDOM = new Random(System.currentTimeMillis());
+    private static final Random RANDOM = Engine.RANDOM;
+    //    public static final Random RANDOM = new Random(System.currentTimeMillis());
     private static final long SLEEP_TIME = 500000;
 
     private static TETile[][] world;

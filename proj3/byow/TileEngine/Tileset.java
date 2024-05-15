@@ -1,18 +1,17 @@
 package byow.TileEngine;
 
 import java.awt.Color;
-import java.util.Iterator;
 
 /**
  * Contains constant tile objects, to avoid having to remake the same tiles in different parts of
  * the code.
- * <p>
+ *
  * You are free to (and encouraged to) create and add your own tiles to this file. This file will
  * be turned in with the rest of your code.
- * <p>
+ *
  * Ex:
- * world[x][y] = Tileset.FLOOR;
- * <p>
+ *      world[x][y] = Tileset.FLOOR;
+ *
  * The style checker may crash when you try to style check this file due to use of unicode
  * characters. This is OK.
  */
@@ -34,56 +33,6 @@ public class Tileset {
     public static final TETile SAND = new TETile('▒', Color.yellow, Color.black, "sand");
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
-
-
-    ////////////////////////////////////////////////////
-    // The class below is made for debugging
-    ////////////////////////////////////////////////////
-
-    public static Iterable<TETile> getNumberIterable() {
-        return new Iterable<TETile>() {
-            @Override
-            public Iterator<TETile> iterator() {
-                return new NumberTileIterator();
-            }
-        };
-    }
-
-    private static class NumberTileIterator implements Iterator<TETile> {
-
-        static final Color[] colors = new Color[]{Color.RED, Color.ORANGE, Color.YELLOW,
-                Color.GREEN, Color.BLUE, Color.PINK};
-        static final char[] numbers = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-
-        private int curColor;
-        private int curNumber;
-
-        NumberTileIterator() {
-            curColor = curNumber = 0;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return curColor < colors.length;
-        }
-
-        @Override
-        public TETile next() {
-            TETile res = new TETile(numbers[curNumber], colors[curColor], Color.black,
-                    numbers[curNumber] + "");
-            moveCur();
-            return res;
-        }
-
-        /** Move the point to the next valid position. */
-        private void moveCur() {
-            curNumber++;
-            if (curNumber >= numbers.length) {
-                curNumber = 0;
-                curColor++;
-            }
-        }
-    }
 }
 
 

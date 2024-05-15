@@ -28,24 +28,6 @@ public class TilesetTest {
         ter.initialize(world.length, world[0].length);
     }
 
-    @Test
-    public void getNumberIterable() throws InterruptedException {
-        int x = 0, y = 0;
-        int width = world.length, height = world[0].length;
-
-        for (TETile tile : Tileset.getNumberIterable()) {
-            world[x++][y] = tile;
-            if (x >= width) {
-                x = 0;
-                y++;
-            }
-        }
-
-        ter.renderFrame(world);
-        Thread.sleep(SLEEP_TIME);
-    }
-
-
     //////////////////////////////////////////////////////////////////////
     // helper function
     //////////////////////////////////////////////////////////////////////

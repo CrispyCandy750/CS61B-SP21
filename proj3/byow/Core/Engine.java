@@ -73,10 +73,6 @@ public class Engine {
         List<Room> addedRooms = new ArrayList<>();
         roomQueue.add(firstRoom);
 
-        // for debug
-        Iterator<TETile> iterator = Tileset.getNumberIterable().iterator();
-        int index = 0;
-
         while (!roomQueue.isEmpty()) {
             Room room = roomQueue.poll();
 
@@ -84,11 +80,6 @@ public class Engine {
                 Room.drawRoomToTiles(tiles, room, WALL_TILE, FLOOR_TILE);
                 roomQueue.addAll(room.getAllNeighborList(RANDOM));
                 addedRooms.add(room);
-                System.out.println(room + " √ " + (index++));
-            } else if (!Room.isOutOfBound(tiles, room)) {
-                System.out.println(room + " ×");
-            } else {
-                System.out.println(room + " ×");
             }
         }
     }

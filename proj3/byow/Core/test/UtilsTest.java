@@ -1,13 +1,11 @@
 package byow.Core.test;
 
 import byow.Core.Utils;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
-import javax.sound.midi.Soundbank;
-import javax.sound.midi.Track;
-import java.net.Socket;
 import java.util.Random;
+
+import static org.junit.Assert.assertTrue;
 
 public class UtilsTest {
 

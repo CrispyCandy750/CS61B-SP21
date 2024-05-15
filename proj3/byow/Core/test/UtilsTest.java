@@ -4,7 +4,6 @@ import byow.Core.Utils;
 import org.junit.Test;
 
 import java.util.Random;
-
 import static org.junit.Assert.assertTrue;
 
 public class UtilsTest {

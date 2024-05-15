@@ -1,23 +1,27 @@
 package byow.Core;
 
+import byow.Core.version2.Direction;
+import byow.Core.version2.Position;
 import byow.Core.version2.Room;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.lang.annotation.Target;
 import java.util.*;
 
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
+    public static final int WIDTH = 85;
+    public static final int HEIGHT = 48;
 
-    public static final Random RANDOM = new Random(123456);
-//    public static final Random RANDOM = new Random(System.currentTimeMillis());
+    //    public static final Random RANDOM = new Random(123456);
+    public static final Random RANDOM = new Random(System.currentTimeMillis());
 
-    public static final TETile WALL_TILE = Tileset.WALL;
-    public static final TETile FLOOR_TILE = Tileset.FLOOR;
+    private static final TETile WALL_TILE = Tileset.WALL;
+    private static final TETile FLOOR_TILE = Tileset.FLOOR;
+    private static final TETile LOCKED_DOOR_TILE = Tileset.LOCKED_DOOR;
 
 
     /**
@@ -57,18 +61,44 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
-        TETile[][] finalWorldFrame = null;
-        return finalWorldFrame;
+        Random random = new Random(parseInput(input));
+        TETile[][] world = generateWorldFilledWithRooms(random, WIDTH, HEIGHT);
+
+        return world;
+    }
+
+    /** Parse the input */
+    private static long parseInput(String input) {
+        input = input.toUpperCase();
+        return parseSeed(input);
+    }
+
+    /**
+     * Parse the seed number.
+     *
+     * @param input a string must start with S.
+     */
+    private static long parseSeed(String input) {
+        return Long.parseLong(input.substring(1, input.indexOf('S')));
+    }
+
+    /** Returns a world filled with random rooms. */
+    private static TETile[][] generateWorldFilledWithRooms(Random random, int width, int height) {
+        TETile[][] world = new TETile[width][height];
+        fillWithBlankTiles(world);
+        fillWithRoomRandomly(random, world);
+        return world;
     }
 
     /** fill the room in the 2D TETile matrix. */
-    public static void fillWithRoomRandomly(TETile[][] tiles) {
-        Room firstRoom = Room.getFirstRoom(RANDOM, tiles);
-        spread(tiles, firstRoom);
+    public static void fillWithRoomRandomly(Random random, TETile[][] tiles) {
+        Room firstRoom = Room.getFirstRoom(random, tiles);
+        BFSSpread(random, tiles, firstRoom);
+        openUpALockedDoor(random, tiles, firstRoom, WALL_TILE, LOCKED_DOOR_TILE);
     }
 
-    /** Spread the room with WFS. */
-    public static void spread(TETile[][] tiles, Room firstRoom) {
+    /** Spread the room with BFS. */
+    private static void BFSSpread(Random random, TETile[][] tiles, Room firstRoom) {
         Queue<Room> roomQueue = new LinkedList<>();
         List<Room> addedRooms = new ArrayList<>();
         roomQueue.add(firstRoom);
@@ -78,10 +108,28 @@ public class Engine {
 
             if (isDrawable(tiles, addedRooms, room)) {
                 Room.drawRoomToTiles(tiles, room, WALL_TILE, FLOOR_TILE);
-                roomQueue.addAll(room.getAllNeighborList(RANDOM));
+                //                roomQueue.addAll(room.getAllNeighborList(random));
+                roomQueue.addAll(Room.generateNewNeighborsList(random, room));
                 addedRooms.add(room);
             }
         }
+    }
+
+    /** Open up a random locked door in the given room. */
+    private static void openUpALockedDoor(Random random, TETile[][] tiles, Room room,
+            TETile wallTile, TETile lockedDoorTile
+    ) {
+        Position randomLockedDoor = getRandomLockedDoor(random, tiles, room, wallTile);
+        DrawUtils.drawATile(tiles, randomLockedDoor, lockedDoorTile);
+    }
+
+    /** get a random door in the given room. */
+    private static Position getRandomLockedDoor(Random random, TETile[][] tiles, Room room,
+            TETile wall
+    ) {
+        Direction[] directions = Direction.values();
+        Direction doorDirection = directions[RandomUtils.uniform(random, 0, directions.length)];
+        return room.getRandomWallTile(random, tiles, doorDirection, wall);
     }
 
     /**
@@ -89,11 +137,11 @@ public class Engine {
      * Returns false if the room is out of the tiles or is overlap with an added room.
      */
     private static boolean isDrawable(TETile[][] tiles, List<Room> addedRooms, Room room) {
-        return !Room.isOutOfBound(tiles, room) && !isOverlap(addedRooms, room);
+        return !Room.isOutOfBound(tiles, room) && !haveConflict(addedRooms, room);
     }
 
     /** Returns true if the room is overlap with the room in the `addedRooms` */
-    private static boolean isOverlap(List<Room> addedRooms, Room room) {
+    private static boolean haveConflict(List<Room> addedRooms, Room room) {
         for (Room addedRoom : addedRooms) {
             if (Room.haveConflict(addedRoom, room)) {
                 return true;
@@ -102,4 +150,19 @@ public class Engine {
         return false;
     }
 
+    /** Fills the given 2D array of tiles with given tiles. */
+    public static void fillWithBlankTiles(TETile[][] tiles) {
+        fillWithGivenTiles(tiles, Tileset.NOTHING);
+    }
+
+    /** Fills the given 2D array of tiles with given tiles. */
+    public static void fillWithGivenTiles(TETile[][] tiles, TETile tile) {
+        int height = tiles[0].length;
+        int width = tiles.length;
+        for (int x = 0; x < width; x += 1) {
+            for (int y = 0; y < height; y += 1) {
+                tiles[x][y] = tile;
+            }
+        }
+    }
 }

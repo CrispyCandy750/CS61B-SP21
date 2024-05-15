@@ -20,8 +20,8 @@ public class RoomTest {
     private static final int WORLD_WIDTH = 85;
     private static final int WORLD_HEIGHT = 48;
 
-    private static final Random RANDOM = Engine.RANDOM;
-    //    public static final Random RANDOM = new Random(System.currentTimeMillis());
+//        private static final Random RANDOM = Engine.RANDOM;
+    public static final Random RANDOM = new Random(System.currentTimeMillis());
     private static final long SLEEP_TIME = 500000;
 
     private static TETile[][] world;
@@ -92,19 +92,19 @@ public class RoomTest {
 
     @Test
     public void fillWithRooms() throws InterruptedException {
-        Engine.fillWithRoomRandomly(world);
+        Engine.fillWithRoomRandomly(RANDOM, world);
         ter.renderFrame(world);
 
         Thread.sleep(SLEEP_TIME);
     }
 
-    @Test
-    public void spread() throws InterruptedException {
-        Engine.spread(world, new Room(new Position(0, 0), 40, 30));
-        ter.renderFrame(world);
-
-        Thread.sleep(SLEEP_TIME);
-    }
+//    @Test
+//    public void spread() throws InterruptedException {
+//        Engine.BFSSpread(RANDOM, world, new Room(new Position(0, 0), 40, 30));
+//        ter.renderFrame(world);
+//
+//        Thread.sleep(SLEEP_TIME);
+//    }
 
     @Test
     public void isOutOfBound() {

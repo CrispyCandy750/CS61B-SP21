@@ -5,14 +5,19 @@ import byow.Core.Engine;
 import byow.Core.RandomUtils;
 import byow.TileEngine.TETile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /** Represents a room "in the tile world" which contains the border. */
 public class Room {
 
-    /** Returns the first room in the tiles. */
+    /**
+     * Returns the first room in the tiles, the width and height of the floor in this room are
+     * more than 1 for opening up a locked door.
+     */
     public static Room getFirstRoom(Random random, TETile[][] tiles) {
-        Room room = getRandomRoomWithSize(random);
+        Room room = getFirstRoomWithSize(random);
 
         int positionX = RandomUtils.uniform(random, tiles.length - room.width);
         int positionY = RandomUtils.uniform(random, tiles[0].length - room.height);
@@ -61,6 +66,20 @@ public class Room {
             //            Door.drawDoorToTiles(tiles, room.door, Tileset.FLOWER);
             Door.drawDoorToTiles(tiles, room.door, floor);
         }
+    }
+
+    /**
+     * Returns of a list containing new neighbors of room except the direction of the first
+     * neighbor.
+     */
+    public static List<Room> generateNewNeighborsList(Random random, Room room) {
+        ArrayList<Room> neighbors = new ArrayList<>();
+        for (Direction direction : Direction.values()) {
+            if (!direction.equals(room.firstNeighborDirection)) {
+                neighbors.add(Room.generateNeighbor(random, room, direction));
+            }
+        }
+        return neighbors;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -217,8 +236,23 @@ public class Room {
     }
 
     /** Returns the room only with size but not position and door. */
-    public static Room getRandomRoomWithSize(Random random) {
+    private static Room getRandomRoomWithSize(Random random) {
         return new Room(getRandomWidth(random), getRandomHeight(random));
+    }
+
+    /** Returns the first room only with size but not position and door. */
+    private static Room getFirstRoomWithSize(Random random) {
+        int width, height;
+        Room randomRoom = getRandomRoomWithSize(random);
+        width = randomRoom.width;
+        height = randomRoom.height;
+        if (width == LEN_HALLWAY) {
+            width++;
+        }
+        if (height == LEN_HALLWAY) {
+            height++;
+        }
+        return new Room(width, height);
     }
 
     /** Returns true if the room1 and room2 is neighbors, false otherwise. */
@@ -336,12 +370,31 @@ public class Room {
         return String.format("%s, w:%d, h:%d", position, width, height);
     }
 
-    public List<Room> getAllNeighborList(Random random) {
-        ArrayList<Room> neighbors = new ArrayList<>();
-        for (Direction direction : Direction.values()) {
-            neighbors.add(Room.generateNeighbor(random, this, direction));
+    /** Returns the position of a random wall tile at given direction. */
+    public Position getRandomWallTile(Random random, TETile[][] tiles, Direction direction,
+            TETile wall
+    ) {
+        int positionX = 0, positionY = 0;
+        switch (direction) {
+            case UP: case DOWN:
+                positionY = this.getBorderPosition(direction);
+                positionX = RandomUtils.uniform(random, this.position.x + 1,
+                        getBorderPosition(Direction.RIGHT) - 1);
+                while (!wall.equals(tiles[positionX][positionY])) {
+                    positionX = RandomUtils.uniform(random, this.position.x + 1,
+                            getBorderPosition(Direction.RIGHT) - 1);
+                }
+                break;
+            case LEFT: case RIGHT:
+                positionX = this.getBorderPosition(direction);
+                positionY = RandomUtils.uniform(random, this.position.y + 1,
+                        getBorderPosition(Direction.UP) - 1);
+                while (!wall.equals(tiles[positionX][positionY])) {
+                    positionY = RandomUtils.uniform(random, this.position.y + 1,
+                            getBorderPosition(Direction.UP) - 1);
+                }
         }
-        return neighbors;
+        return new Position(positionX, positionY);
     }
 
     ////////////////////////////////////////////////////////////////

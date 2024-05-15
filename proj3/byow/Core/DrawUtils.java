@@ -36,4 +36,9 @@ public class DrawUtils {
             tiles[bottomPoint.x][bottomPoint.y + dy] = tile;
         }
     }
+
+    /** Draw a tile at the given position with given tile. */
+    public static void drawATile(TETile[][] tiles, Position position, TETile tile) {
+        tiles[position.x][position.y] = tile;
+    }
 }

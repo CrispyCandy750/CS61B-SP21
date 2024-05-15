@@ -1,6 +1,5 @@
-package byow.Core.genration;
+package byow.Core.version1;
 
-import byow.Core.DrawUtils;
 import byow.Core.Engine;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
@@ -34,8 +33,8 @@ public class MyMain {
         fillWithBlankTiles(world);
         Room room1 = Room.getInstance(new Position(0, 0));
         Room room2 = Room.getInstance(new Position(10, 8));
-        Engine.addRoom(world, room1);
-        Engine.addRoom(world, room2);
+//        Engine.addRoom(world, room1);
+//        Engine.addRoom(world, room2);
 
         Position entrance1 = room2.getRandomEntrance(RANDOM, Direction.DOWN);
         Position entrance2 = room1.getRandomEntrance(RANDOM, entrance1);

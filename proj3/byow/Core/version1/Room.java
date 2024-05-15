@@ -1,4 +1,4 @@
-package byow.Core.genration;
+package byow.Core.version1;
 
 
 import byow.Core.Engine;
@@ -6,12 +6,13 @@ import byow.Core.RandomUtils;
 
 import java.util.Random;
 
+@Deprecated
 /** Represents a room "in the tile world" which contains the border. */
 public class Room {
 
     /** Returns a random-size room anchored at given position. */
     public static Room getInstance(Position position) {
-        return new Room(position, randomWidth(), randomHeight());
+        return new Room(position, getRandomWidth(), getRandomHeight());
     }
 
     public static Room getInstance(Position position, int width, int height) {
@@ -32,12 +33,12 @@ public class Room {
     private static final int MIN_HEIGHT = Math.max((int) (Engine.HEIGHT * MIN_RATIO), MIN_LENGTH);
 
     /** Returns a random width of the room. */
-    private static int randomWidth() {
+    private static int getRandomWidth() {
         return randomLength(MIN_WIDTH, MAX_WIDTH + 1);
     }
 
     /** Returns a random height of the room. */
-    private static int randomHeight() {
+    private static int getRandomHeight() {
         return randomLength(MIN_HEIGHT, MAX_HEIGHT + 1);
     }
 

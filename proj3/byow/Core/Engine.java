@@ -1,13 +1,11 @@
 package byow.Core;
 
-import byow.Core.genration.Hallway;
-import byow.Core.genration.Position;
-import byow.Core.genration.Room;
+import byow.Core.version2.Room;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
-import java.util.Random;
+import java.util.*;
 
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -16,24 +14,11 @@ public class Engine {
     public static final int HEIGHT = 30;
 
     public static final Random RANDOM = new Random(123456);
+//    public static final Random RANDOM = new Random(System.currentTimeMillis());
 
     public static final TETile WALL_TILE = Tileset.WALL;
     public static final TETile FLOOR_TILE = Tileset.FLOOR;
 
-    /** Add a room into the world. */
-    public static void addRoom(TETile[][] world, Room room) {
-        DrawUtils.drawRoom(world, room, WALL_TILE, FLOOR_TILE);
-    }
-
-    /** Add a hallway into the world */
-    public static void addHallway(TETile[][] world, Hallway hallway) {
-        DrawUtils.drawHallway(world, hallway, WALL_TILE, FLOOR_TILE);
-    }
-
-    /** Returns a random hallway connecting two rooms. */
-    public static Hallway getHallway(Room room1, Room room2) {
-        return null;
-    }
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -47,18 +32,18 @@ public class Engine {
      * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The engine should
      * behave exactly as if the user typed these characters into the engine using
      * interactWithKeyboard.
-     *
+     * <p>
      * Recall that strings ending in ":q" should cause the game to quite save. For example,
      * if we do interactWithInputString("n123sss:q"), we expect the game to run the first
      * 7 commands (n123sss) and then quit and save. If we then do
      * interactWithInputString("l"), we should be back in the exact same state.
-     *
+     * <p>
      * In other words, both of these calls:
-     *   - interactWithInputString("n123sss:q")
-     *   - interactWithInputString("lww")
-     *
+     * - interactWithInputString("n123sss:q")
+     * - interactWithInputString("lww")
+     * <p>
      * should yield the exact same world state as:
-     *   - interactWithInputString("n123sssww")
+     * - interactWithInputString("n123sssww")
      *
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
@@ -75,4 +60,55 @@ public class Engine {
         TETile[][] finalWorldFrame = null;
         return finalWorldFrame;
     }
+
+    /** fill the room in the 2D TETile matrix. */
+    public static void fillWithRoomRandomly(TETile[][] tiles) {
+        Room firstRoom = Room.getFirstRoom(RANDOM, tiles);
+        spread(tiles, firstRoom);
+    }
+
+    /** Spread the room with WFS. */
+    public static void spread(TETile[][] tiles, Room firstRoom) {
+        Queue<Room> roomQueue = new LinkedList<>();
+        List<Room> addedRooms = new ArrayList<>();
+        roomQueue.add(firstRoom);
+
+        // for debug
+        Iterator<TETile> iterator = Tileset.getNumberIterable().iterator();
+        int index = 0;
+
+        while (!roomQueue.isEmpty()) {
+            Room room = roomQueue.poll();
+
+            if (isDrawable(tiles, addedRooms, room)) {
+                Room.drawRoomToTiles(tiles, room, WALL_TILE, FLOOR_TILE);
+                roomQueue.addAll(room.getAllNeighborList(RANDOM));
+                addedRooms.add(room);
+                System.out.println(room + " √ " + (index++));
+            } else if (!Room.isOutOfBound(tiles, room)) {
+                System.out.println(room + " ×");
+            } else {
+                System.out.println(room + " ×");
+            }
+        }
+    }
+
+    /**
+     * Returns true if the room can be drawn in the tiles.
+     * Returns false if the room is out of the tiles or is overlap with an added room.
+     */
+    private static boolean isDrawable(TETile[][] tiles, List<Room> addedRooms, Room room) {
+        return !Room.isOutOfBound(tiles, room) && !isOverlap(addedRooms, room);
+    }
+
+    /** Returns true if the room is overlap with the room in the `addedRooms` */
+    private static boolean isOverlap(List<Room> addedRooms, Room room) {
+        for (Room addedRoom : addedRooms) {
+            if (Room.haveConflict(addedRoom, room)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

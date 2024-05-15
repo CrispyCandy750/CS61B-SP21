@@ -1,4 +1,4 @@
-package byow.Core.genration;
+package byow.Core.version1;
 
 /** The direction of turn hallway. */
 public enum TurnDirection {

@@ -1,8 +1,6 @@
-package byow.Core.genration;
+package byow.Core.version1;
 
-import byow.Core.DrawUtils;
 import byow.TileEngine.TETile;
-import edu.princeton.cs.algs4.Draw;
 
 /** A Hallway contains turn. */
 public class TurningHallway implements Hallway {
@@ -25,33 +23,33 @@ public class TurningHallway implements Hallway {
         Position turningPoint = TurnDirection.getTurningPoint(leftPoint, rightPoint, turnDirection);
 
         /* Draw the floor. */
-        DrawUtils.drawTurningLine(tiles, leftPoint, turningPoint, rightPoint, turnDirection, floor);
+        DeprecatedDrawUtils.drawTurningLine(tiles, leftPoint, turningPoint, rightPoint, turnDirection, floor);
 
         /* Draw the wall: each case draw the outer border, middle floor and inner border, respectively. */
         switch (turnDirection) {
             case RIGHT_UP:
-                DrawUtils.drawTurningLine(tiles, leftPoint.shiftY(1), turningPoint.shift(-1, 1),
+                DeprecatedDrawUtils.drawTurningLine(tiles, leftPoint.shiftY(1), turningPoint.shift(-1, 1),
                         rightPoint.shiftX(-1), turnDirection, wall);
-                DrawUtils.drawTurningLine(tiles, leftPoint.shiftY(-1), turningPoint.shift(1, -1),
+                DeprecatedDrawUtils.drawTurningLine(tiles, leftPoint.shiftY(-1), turningPoint.shift(1, -1),
                         rightPoint.shiftX(1), turnDirection, wall);
                 break;
             case RIGHT_DOWN:
-                DrawUtils.drawTurningLine(tiles, leftPoint.shiftY(1), turningPoint.shift(1, 1),
+                DeprecatedDrawUtils.drawTurningLine(tiles, leftPoint.shiftY(1), turningPoint.shift(1, 1),
                         rightPoint.shiftX(1), turnDirection, wall);
 
-                DrawUtils.drawTurningLine(tiles, leftPoint.shiftY(-1), turningPoint.shift(-1, -1),
+                DeprecatedDrawUtils.drawTurningLine(tiles, leftPoint.shiftY(-1), turningPoint.shift(-1, -1),
                         rightPoint.shiftX(-1), turnDirection, wall);
                 break;
             case DOWN_RIGHT:
-                DrawUtils.drawTurningLine(tiles, leftPoint.shiftX(-1), turningPoint.shift(-1, -1),
+                DeprecatedDrawUtils.drawTurningLine(tiles, leftPoint.shiftX(-1), turningPoint.shift(-1, -1),
                         rightPoint.shiftY(-1), turnDirection, wall);
-                DrawUtils.drawTurningLine(tiles, leftPoint.shiftX(-1), turningPoint.shift(1, 1),
+                DeprecatedDrawUtils.drawTurningLine(tiles, leftPoint.shiftX(-1), turningPoint.shift(1, 1),
                         rightPoint.shiftY(1), turnDirection, wall);
                 break;
             case UP_RIGHT:
-                DrawUtils.drawTurningLine(tiles, leftPoint.shiftX(-1), turningPoint.shift(-1, 1),
+                DeprecatedDrawUtils.drawTurningLine(tiles, leftPoint.shiftX(-1), turningPoint.shift(-1, 1),
                         rightPoint.shiftY(1), turnDirection, wall);
-                DrawUtils.drawTurningLine(tiles, leftPoint.shiftX(1), turningPoint.shift(1, -1),
+                DeprecatedDrawUtils.drawTurningLine(tiles, leftPoint.shiftX(1), turningPoint.shift(1, -1),
                         rightPoint.shiftY(-1), turnDirection, wall);
                 break;
         }

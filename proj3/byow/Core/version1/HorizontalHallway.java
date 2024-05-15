@@ -1,6 +1,5 @@
-package byow.Core.genration;
+package byow.Core.version1;
 
-import byow.Core.DrawUtils;
 import byow.TileEngine.TETile;
 
 public class HorizontalHallway implements Hallway {
@@ -15,8 +14,8 @@ public class HorizontalHallway implements Hallway {
     /** Draw this hallway in the 2D tile matrix. */
     @Override
     public void drawToTiles(TETile[][] tiles, TETile wall, TETile floor) {
-        DrawUtils.drawHorizontalLine(tiles, leftPoint.shiftY(1), rightPoint.shiftY(1), wall);
-        DrawUtils.drawHorizontalLine(tiles, leftPoint, rightPoint, floor);
-        DrawUtils.drawHorizontalLine(tiles, leftPoint.shiftY(-1), rightPoint.shiftY(-1), wall);
+        DeprecatedDrawUtils.drawHorizontalLine(tiles, leftPoint.shiftY(1), rightPoint.shiftY(1), wall);
+        DeprecatedDrawUtils.drawHorizontalLine(tiles, leftPoint, rightPoint, floor);
+        DeprecatedDrawUtils.drawHorizontalLine(tiles, leftPoint.shiftY(-1), rightPoint.shiftY(-1), wall);
     }
 }

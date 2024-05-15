@@ -1,9 +1,8 @@
-package byow.Core.genration;
+package byow.Core.version2;
 
 import byow.Core.RandomUtils;
 
 import java.util.Random;
-import java.util.logging.Level;
 
 /** Represents the direction. */
 public enum Direction {
@@ -32,5 +31,16 @@ public enum Direction {
                 return LEFT;
             default: return null;
         }
+    }
+
+    /** Returns the vertical direction of the given direction */
+    public static Direction getVerticalDirection(Direction direction) {
+        switch (direction) {
+            case UP: case DOWN:
+                return RIGHT;
+            case LEFT: case RIGHT:
+                return UP;
+        }
+        return null;
     }
 }

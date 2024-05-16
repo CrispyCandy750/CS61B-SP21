@@ -6,20 +6,6 @@ import byow.TileEngine.TETile;
 public class DrawUtils {
 
     /** Draw a vertical line in the 2D tile matrix at given position with given tile. */
-    public static void drawHorizontalLine(TETile[][] tiles, Position leftPoint, Position rightPoint,
-            TETile tile
-    ) {
-        drawHorizontalLine(tiles, leftPoint, rightPoint.x - leftPoint.x + 1, tile);
-    }
-
-    /** Draw a horizontal line in the 2D tile matrix at given position with given tile. */
-    public static void drawVerticalLine(TETile[][] tiles, Position bottomPoint, Position topPoint,
-            TETile tile
-    ) {
-        drawVerticalLine(tiles, bottomPoint, topPoint.y - bottomPoint.y + 1, tile);
-    }
-
-    /** Draw a vertical line in the 2D tile matrix at given position with given tile. */
     public static void drawHorizontalLine(TETile[][] tiles, Position leftPoint, int length,
             TETile tile
     ) {

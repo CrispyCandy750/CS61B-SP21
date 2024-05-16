@@ -22,6 +22,9 @@ public class RoomTest {
 
 //        private static final Random RANDOM = Engine.RANDOM;
     public static final Random RANDOM = new Random(System.currentTimeMillis());
+
+    private static final TETile WALL_TILE = Tileset.WALL;
+    private static final TETile FLOOR_TILE = Tileset.FLOOR;
     private static final long SLEEP_TIME = 500000;
 
     private static TETile[][] world;
@@ -92,7 +95,7 @@ public class RoomTest {
 
     @Test
     public void fillWithRooms() throws InterruptedException {
-        Engine.fillWithRoomRandomly(RANDOM, world);
+        Engine.fillWithRoomRandomly(RANDOM, world, WALL_TILE, FLOOR_TILE);
         ter.renderFrame(world);
 
         Thread.sleep(SLEEP_TIME);

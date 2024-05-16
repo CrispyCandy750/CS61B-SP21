@@ -18,15 +18,17 @@ public class MemoryGame {
     private Random rand;
     /** Whether or not the game is over. */
     private boolean gameOver;
-    /** Whether or not it is the player's turn. Used in the last section of the
-     * spec, 'Helpful UI'. */
+    /**
+     * Whether or not it is the player's turn. Used in the last section of the
+     * spec, 'Helpful UI'.
+     */
     private boolean playerTurn;
     /** The characters we generate random Strings from. */
     private static final char[] CHARACTERS = "abcdefghijklmnopqrstuvwxyz".toCharArray();
     /** Encouraging phrases. Used in the last section of the spec, 'Helpful UI'. */
     private static final String[] ENCOURAGEMENT = {"You can do this!", "I believe in you!",
-                                                   "You got this!", "You're a star!", "Go Bears!",
-                                                   "Too easy for you!", "Wow, so impressive!"};
+            "You got this!", "You're a star!", "Go Bears!",
+            "Too easy for you!", "Wow, so impressive!"};
 
     public static void main(String[] args) {
         if (args.length < 1) {
@@ -54,16 +56,27 @@ public class MemoryGame {
         StdDraw.enableDoubleBuffering();
 
         //TODO: Initialize random number generator
+        rand = new Random(seed);
     }
 
+    /** Returns a random string of lowercase characters of given length n. */
     public String generateRandomString(int n) {
         //TODO: Generate random string of letters of length n
-        return null;
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            res.append(CHARACTERS[RandomUtils.uniform(rand, CHARACTERS.length)]);
+        }
+        return res.toString();
     }
 
     public void drawFrame(String s) {
         //TODO: Take the string and display it in the center of the screen
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.text(20,30, s);
+        StdDraw.show();
+
         //TODO: If game is not over, display relevant game information at the top of the screen
+
     }
 
     public void flashSequence(String letters) {

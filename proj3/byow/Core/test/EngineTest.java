@@ -9,8 +9,8 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class EngineTest {
-    private static final int WORLD_WIDTH = 85;
-    private static final int WORLD_HEIGHT = 48;
+    private static final int WORLD_WIDTH = 100;
+    private static final int WORLD_HEIGHT = 50;
 
     private static final Random RANDOM = Engine.RANDOM;
     //    public static final Random RANDOM = new Random(System.currentTimeMillis());
@@ -30,8 +30,8 @@ public class EngineTest {
     @Test
     public void interactWithInputString() throws InterruptedException {
 //        9,223,372,036,854,775,807
-        String input = "n9223372036854775804S";
-
+//        String input = "n92233720112375804S";
+        String input = "n" + System.currentTimeMillis() + "s";
         Engine engine = new Engine();
         TETile[][] world = engine.interactWithInputString(input);
         TERenderer ter = new TERenderer();

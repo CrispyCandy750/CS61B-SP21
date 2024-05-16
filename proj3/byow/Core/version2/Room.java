@@ -33,7 +33,7 @@ public class Room {
      * e.g. if direction is LEFT, the neighbor is to the left of the room.
      */
     public static Room generateNeighbor(Random random, Room room, Direction direction) {
-        Room neighbor = generateRandomNeighborSize(random, room, direction);
+        Room neighbor = generateRandomNeighborWithSize(random, room, direction);
 
         /* locate the neighbor randomly. */
         attachNeighborRandomly(random, room, direction, neighbor);
@@ -217,7 +217,9 @@ public class Room {
      * If {@code room.getBorderLen(direction) > LEN_HALLWAY}, returns a hallway whose width is
      * {@code LEN_HALLWAY}
      */
-    private static Room generateRandomNeighborSize(Random random, Room room, Direction direction) {
+    private static Room generateRandomNeighborWithSize(Random random, Room room,
+            Direction direction
+    ) {
         if (room.getBorderLen(direction) > LEN_HALLWAY) {
             return generateRandomHallway(random, direction);
         }
@@ -361,6 +363,10 @@ public class Room {
         }
     }
 
+    private static enum RoomType {
+        HALL_WAY, ROOM;
+    }
+
     ////////////////////////////////////////////////////////////////
     // public instance variable & method
     ////////////////////////////////////////////////////////////////
@@ -378,21 +384,17 @@ public class Room {
         switch (direction) {
             case UP: case DOWN:
                 positionY = this.getBorderPosition(direction);
-                positionX = RandomUtils.uniform(random, this.position.x + 1,
-                        getBorderPosition(Direction.RIGHT) - 1);
-                while (!wall.equals(tiles[positionX][positionY])) {
+                do {
                     positionX = RandomUtils.uniform(random, this.position.x + 1,
                             getBorderPosition(Direction.RIGHT) - 1);
-                }
+                } while (!wall.equals(tiles[positionX][positionY]));
                 break;
             case LEFT: case RIGHT:
                 positionX = this.getBorderPosition(direction);
-                positionY = RandomUtils.uniform(random, this.position.y + 1,
-                        getBorderPosition(Direction.UP) - 1);
-                while (!wall.equals(tiles[positionX][positionY])) {
+                do {
                     positionY = RandomUtils.uniform(random, this.position.y + 1,
                             getBorderPosition(Direction.UP) - 1);
-                }
+                } while (!wall.equals(tiles[positionX][positionY]));
         }
         return new Position(positionX, positionY);
     }

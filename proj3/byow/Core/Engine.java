@@ -16,6 +16,7 @@ public class Engine {
     public static final int WIDTH = 85;
     public static final int HEIGHT = 48;
 
+
     //    public static final Random RANDOM = new Random(123456);
     public static final Random RANDOM = new Random(System.currentTimeMillis());
 
@@ -62,7 +63,8 @@ public class Engine {
         // that works for many different input types.
 
         Random random = new Random(parseInput(input));
-        TETile[][] world = generateWorldFilledWithRooms(random, WIDTH, HEIGHT);
+        TETile[][] world = generateWorldFilledWithRooms(random, WIDTH, HEIGHT, WALL_TILE,
+                FLOOR_TILE);
 
         return world;
     }
@@ -83,15 +85,19 @@ public class Engine {
     }
 
     /** Returns a world filled with random rooms. */
-    private static TETile[][] generateWorldFilledWithRooms(Random random, int width, int height) {
+    private static TETile[][] generateWorldFilledWithRooms(Random random, int width, int height,
+            TETile wall, TETile floor
+    ) {
         TETile[][] world = new TETile[width][height];
         fillWithBlankTiles(world);
-        fillWithRoomRandomly(random, world);
+        fillWithRoomRandomly(random, world, wall, floor);
         return world;
     }
 
     /** fill the room in the 2D TETile matrix. */
-    public static void fillWithRoomRandomly(Random random, TETile[][] tiles) {
+    public static void fillWithRoomRandomly(Random random, TETile[][] tiles, TETile wall,
+            TETile floor
+    ) {
         Room firstRoom = Room.getFirstRoom(random, tiles);
         BFSSpread(random, tiles, firstRoom);
         openUpALockedDoor(random, tiles, firstRoom, WALL_TILE, LOCKED_DOOR_TILE);
